@@ -1,12 +1,9 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence;
 
+import java.lang.invoke.MethodHandles;
+import java.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.invoke.MethodHandles;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class DBConnection {
 
@@ -14,8 +11,6 @@ public class DBConnection {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
 
     private DBConnection(){};
-
-    private static boolean testMode = false;
 
     public static Connection getConnection() {
         if(connection == null) {
@@ -36,7 +31,7 @@ public class DBConnection {
             con = DriverManager.getConnection("jdbc:h2:file:~/sepm;" +
                     "IGNORECASE=TRUE;" +
                     "INIT=runscript from 'classpath:/database/createAndInsert.sql'",
-                "sa", "");
+                "", "");
             LOG.info("Connection to database found");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -44,6 +39,19 @@ public class DBConnection {
         }
 
         return con;
+    }
+
+    public static void closeConnection(){
+        if(connection != null) {
+            try {
+                connection.close();
+                connection = null;
+                LOG.info("Connection to database closed");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                LOG.error("Closing connection failed");
+            }
+        }
     }
 
 }

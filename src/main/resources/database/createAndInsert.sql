@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS vehicle_license_requirement;
+DROP TABLE IF EXISTS vehicle_booking;
+DROP TABLE IF EXISTS vehicle;
+DROP TABLE IF EXISTS booking;
+
 CREATE TABLE IF NOT EXISTS vehicle (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(288) NOT NULL,
@@ -6,8 +11,8 @@ CREATE TABLE IF NOT EXISTS vehicle (
   seats NUMERIC(2,0),
   licenseplate VARCHAR(7),
   type VARCHAR(6) NOT NULL CHECK(type IN ('ENGINE', 'MUSCLE')),
-  power NUMERIC(3,2),
-  hourlyrate NUMERIC(4,2),
+  power NUMERIC(7,3),
+  hourlyrate NUMERIC(5,0),
   createtime TIMESTAMP AS CURRENT_TIMESTAMP NOT NULL,
   deleted BOOLEAN DEFAULT FALSE,
 );
