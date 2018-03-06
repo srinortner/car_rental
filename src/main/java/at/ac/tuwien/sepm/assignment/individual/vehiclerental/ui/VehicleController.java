@@ -1,24 +1,29 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.IllegalVehicleException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 
 public class VehicleController {
 
     private Vehicle currentVehicle;
     private VehicleService currentService;
+    private String currentLicensePlate =null;
+    private boolean currentEngine = false;
 
-    public VehicleController( VehicleService currentService) {
-        this.currentService = currentService;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @FXML
     private TextField addVehicleName;
@@ -31,6 +36,18 @@ public class VehicleController {
 
     @FXML
     private TextField addVehicleSeats;
+
+    @FXML
+    private CheckBox addVehicleLicenseA;
+
+    @FXML
+    private CheckBox addVehicleLicenseB;
+
+    @FXML
+    private Label addVehicleLicenseplateLabel;
+
+    @FXML
+    private Label addVehiclePowerLabel;
 
     @FXML
     private TextField addVehicleLicenseplate;
@@ -53,8 +70,51 @@ public class VehicleController {
     @FXML
     private Button addVehicleAddButton;
 
+
+    public VehicleController( VehicleService currentService) {
+        this.currentService = currentService;
+
+    }
+
+/*    @FXML
+    private void initialize() {
+        addVehiclePower.textProperty().addListener(((observable, oldValue, newValue) -> {
+
+        }));
+    } */
+
     @FXML
-    void saveVehicle(ActionEvent event) {
+    private void addVehicleActivateLicenseplateTextView(ActionEvent event) {
+        if(addVehicleLicenseA.isSelected() || addVehicleLicenseB.isSelected()) {
+            addVehicleLicenseplate.setVisible(true);
+            addVehicleLicenseplateLabel.setOpacity(1);
+            currentLicensePlate = addVehicleLicenseplate.getText();
+        } else if (!addVehicleLicenseB.isSelected() && !addVehicleLicenseA.isSelected()){
+            addVehicleLicenseplate.setVisible(false);
+            addVehicleLicenseplateLabel.setOpacity(0.5);
+            currentLicensePlate = null;
+        }
+    }
+
+    @FXML
+    private void addVehicleActivatePowerTextBox(ActionEvent event) {
+        if(!currentEngine) {
+            addVehiclePower.setVisible(true);
+            addVehiclePowerLabel.setOpacity(1);
+            addVehicleMusclePower.setSelected(false);
+            addVehicleMusclePower.setIndeterminate(false);
+            currentEngine = true;
+        } else if(currentEngine) {
+            addVehiclePower.setVisible(false);
+            addVehiclePowerLabel.setOpacity(0.5);
+            addVehicleEngine.setSelected(false);
+            currentEngine = false;
+        }
+    }
+
+
+    @FXML
+    private void saveVehicle(ActionEvent event) {
         String currentName = addVehicleName.getText();
         int currentBuildyear = Integer.parseInt(addVehicleBuildyear.getText());
         String currentDescription = null;
@@ -62,18 +122,17 @@ public class VehicleController {
             currentDescription = addVehicleDescription.getText();
         }
         int currentSeats = Integer.parseInt(addVehicleSeats.getText());
-        String currentLicensePlate = addVehicleLicenseplate.getText();
-        boolean currentHasEngine = false;
-        if(addVehicleEngine.isSelected()) {
-            currentHasEngine = true;
-        }
         double currentPower = Double.parseDouble(addVehiclePower.getText());
         int currentHourlyRate = Integer.parseInt(addVehicleHourlyRate.getText());
 
         // public Vehicle(String name, int buildyear, String description, int seats, String licenseplate, boolean hasEngine, double power, int hourlyRateCents)
-        currentVehicle = new Vehicle(currentName,currentBuildyear,currentDescription,currentSeats,currentLicensePlate,currentHasEngine,currentPower,currentHourlyRate);
+        currentVehicle = new Vehicle(currentName,currentBuildyear,currentDescription,currentSeats,currentLicensePlate,currentEngine,currentPower,currentHourlyRate);
         currentVehicle.setCreatetime(LocalDateTime.now());
-        currentService.addVehicleToPersistence(currentVehicle);
+        try {
+            currentService.addVehicleToPersistence(currentVehicle);
+        } catch (IllegalVehicleException e) {
+            LOG.error("Vehicle couldn't be added to Persistence!");
+        }
 
     }
 
