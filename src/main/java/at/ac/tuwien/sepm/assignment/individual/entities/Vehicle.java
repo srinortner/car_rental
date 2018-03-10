@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.entities;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.Year;
 
@@ -15,6 +16,7 @@ public class Vehicle {
     private double power;
     private int hourlyRateCents;
     private LocalDateTime createtime;
+    private String picture;
 
     public Vehicle(long id, String name, int buildyear, String description, int seats, String licenseplate, boolean hasEngine, double power, int hourlyRateCents, LocalDateTime createtime) {
         this.id = id;
@@ -118,4 +120,8 @@ public class Vehicle {
     public void setCreatetime(LocalDateTime createtime) {
         this.createtime = createtime;
     }
+
+    public String getPicture() { return picture; }
+
+    public void setPicture(String picture) { this.picture = picture; }
 }

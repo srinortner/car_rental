@@ -10,9 +10,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 
@@ -70,6 +74,12 @@ public class VehicleController {
     @FXML
     private Button addVehicleAddButton;
 
+    @FXML
+    private Button addVehicleAddPictureButton;
+
+    private File picture = null;
+
+
 
     public VehicleController( VehicleService currentService) {
         this.currentService = currentService;
@@ -112,6 +122,29 @@ public class VehicleController {
         }
     }
 
+    @FXML
+    private void addPictureOfVehicle(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        configureFileChooserForPictures(fileChooser);
+        picture = fileChooser.showOpenDialog(addVehicleAddPictureButton.getScene().getWindow());
+       // File file = fileChooser.showSaveDialog(addVehicleAddPictureButton.getScene().getWindow());
+
+
+    }
+
+    private static void configureFileChooserForPictures (FileChooser fileChooser) {
+        fileChooser.setTitle("Save Image of Vehicle");
+        fileChooser.setInitialDirectory(
+            new File(System.getProperty("user.home"))
+        );
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("All Images", "*.*"),
+            new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+            new FileChooser.ExtensionFilter("PNG", "*.png")
+        );
+    }
+
+
 
     @FXML
     private void saveVehicle(ActionEvent event) {
@@ -129,7 +162,7 @@ public class VehicleController {
         currentVehicle = new Vehicle(currentName,currentBuildyear,currentDescription,currentSeats,currentLicensePlate,currentEngine,currentPower,currentHourlyRate);
         currentVehicle.setCreatetime(LocalDateTime.now());
         try {
-            currentService.addVehicleToPersistence(currentVehicle);
+            currentService.addVehicleToPersistence(currentVehicle, picture);
         } catch (IllegalVehicleException e) {
             LOG.error("Vehicle couldn't be added to Persistence!");
         }
