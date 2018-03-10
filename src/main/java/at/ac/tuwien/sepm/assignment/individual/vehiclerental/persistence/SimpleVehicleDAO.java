@@ -22,7 +22,7 @@ public class SimpleVehicleDAO implements VehicleDAO{
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connection.prepareStatement("INSERT INTO VEHICLE VALUES(DEFAULT,?,?,?,?,?,?,?,?,? ,DEFAULT )");
+            preparedStatement = connection.prepareStatement("INSERT INTO VEHICLE VALUES(DEFAULT,?,?,?,?,?,?,?,?,?, ?,DEFAULT )");
             preparedStatement.setString(1,vehicle.getName());
             preparedStatement.setInt(2,vehicle.getBuildyear());
             preparedStatement.setString(3,vehicle.getDescription());
@@ -31,7 +31,8 @@ public class SimpleVehicleDAO implements VehicleDAO{
             preparedStatement.setString(6,vehicle.isHasEngine() ? "Engine" : "Muscle");
             preparedStatement.setDouble(7,vehicle.getPower());
             preparedStatement.setInt(8,vehicle.getHourlyRateCents());
-            preparedStatement.setTimestamp(9, Timestamp.valueOf(vehicle.getCreatetime()));
+            preparedStatement.setString(9,vehicle.getPicture());
+            preparedStatement.setTimestamp(10, Timestamp.valueOf(vehicle.getCreatetime()));
             preparedStatement.executeUpdate();
 
             resultSet = preparedStatement.getGeneratedKeys();

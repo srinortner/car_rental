@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS vehicle (
   type VARCHAR(6) NOT NULL CHECK(type IN ('ENGINE', 'MUSCLE')),
   power NUMERIC(7,3),
   hourlyrate NUMERIC(5,0),
+  picture VARCHAR(100),
   createtime TIMESTAMP AS CURRENT_TIMESTAMP NOT NULL,
   deleted BOOLEAN DEFAULT FALSE,
 );

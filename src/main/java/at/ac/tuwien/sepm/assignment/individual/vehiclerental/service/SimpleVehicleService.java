@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.IllegalPictureException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.IllegalVehicleException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.VehicleDAO;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ public class SimpleVehicleService  implements VehicleService{
     private Validator validator;
     //TODO: absoluten Path ersetzen?
     private static final String imageDirectory = "/media/susi/PersData/Eigene Dateien/UNI/6.Semester/SEPM PR/sepm-individual-assignment-java/src/main/resources/images";
+    private String currentPictureTitle = null;
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
 
@@ -31,9 +33,10 @@ public class SimpleVehicleService  implements VehicleService{
     }
 
     @Override
-    public Vehicle addVehicleToPersistence(Vehicle vehicle, File file) throws IllegalVehicleException{
+    public Vehicle addVehicleToPersistence(Vehicle vehicle, File file) throws IllegalVehicleException, IOException {
         if(file != null) {
-            vehicle.setPicture(addPicture(file));
+            currentPictureTitle = addPicture(file);
+            vehicle.setPicture(currentPictureTitle);
         }
         //TODO: find out why validator doesn't work
      //   if(validator.validateProduct(vehicle)){
@@ -51,12 +54,11 @@ public class SimpleVehicleService  implements VehicleService{
     }
 
     @Override
-    public String addPicture(File file) {
+    public String addPicture(File file) throws IOException {
         String title;
         UUID uuid = UUID.randomUUID();
         title = uuid.toString();
         File destination = new File(imageDirectory + "/" + title);
-        //TODO: check size and measurements
         try {
             BufferedImage picture = ImageIO.read(file);
             int height = picture.getHeight();
@@ -67,12 +69,14 @@ public class SimpleVehicleService  implements VehicleService{
                         Files.copy(file.toPath(), destination.toPath());
                     } else {
                         LOG.error("The Image doesn't have the required mesurements");
+                        throw new IllegalPictureException("The picture entered is invalid");
                     }
                 }
             } else {
                 LOG.error("The Image is too big " + file.length() + "byte");
+                throw new IllegalPictureException("The picture entered is invalid");
             }
-        } catch (IOException e) {
+        } catch (IllegalPictureException e) {
             LOG.error("Picture could not be saved ");
         }
         return title;

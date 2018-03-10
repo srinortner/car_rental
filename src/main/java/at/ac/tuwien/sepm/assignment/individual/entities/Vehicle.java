@@ -29,6 +29,7 @@ public class Vehicle {
         this.power = power;
         this.hourlyRateCents = hourlyRateCents;
         this.createtime = createtime;
+        this.picture = null;
     }
     public Vehicle(String name, int buildyear, String description, int seats, String licenseplate, boolean hasEngine, double power, int hourlyRateCents) {
         this.name = name;
@@ -39,6 +40,7 @@ public class Vehicle {
         this.hasEngine = hasEngine;
         this.power = power;
         this.hourlyRateCents = hourlyRateCents;
+        this.picture = null;
     }
 
     public long getId() {

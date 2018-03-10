@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 
@@ -147,7 +148,7 @@ public class VehicleController {
 
 
     @FXML
-    private void saveVehicle(ActionEvent event) {
+    private void saveVehicle(ActionEvent event) throws IOException {
         String currentName = addVehicleName.getText();
         int currentBuildyear = Integer.parseInt(addVehicleBuildyear.getText());
         String currentDescription = null;
@@ -155,7 +156,10 @@ public class VehicleController {
             currentDescription = addVehicleDescription.getText();
         }
         int currentSeats = Integer.parseInt(addVehicleSeats.getText());
-        double currentPower = Double.parseDouble(addVehiclePower.getText());
+        double currentPower = 0;
+        if(addVehiclePower.getText() != null) {
+            currentPower = Double.parseDouble(addVehiclePower.getText());
+        }
         int currentHourlyRate = Integer.parseInt(addVehicleHourlyRate.getText());
 
         // public Vehicle(String name, int buildyear, String description, int seats, String licenseplate, boolean hasEngine, double power, int hourlyRateCents)
