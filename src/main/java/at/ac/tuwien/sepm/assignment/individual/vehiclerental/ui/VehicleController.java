@@ -1,18 +1,16 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
+import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.IllegalVehicleException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,16 +18,18 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.joining;
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.ButtonType.OK;
 
 public class VehicleController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private Vehicle currentVehicle;
     private VehicleService currentService;
-    private String currentLicensePlate =null;
-    private boolean currentEngine = false;
-
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
+    private String currentLicensePlate = null;
     @FXML
     private TextField addVehicleName;
 
@@ -58,10 +58,10 @@ public class VehicleController {
     private TextField addVehicleLicenseplate;
 
     @FXML
-    private CheckBox addVehicleEngine;
+    private RadioButton rbEngine;
 
     @FXML
-    private CheckBox addVehicleMusclePower;
+    private RadioButton rbMuscle;
 
     @FXML
     private TextField addVehiclePower;
@@ -81,59 +81,12 @@ public class VehicleController {
     private File picture = null;
 
 
-
-    public VehicleController( VehicleService currentService) {
+    public VehicleController(VehicleService currentService) {
         this.currentService = currentService;
 
     }
 
-/*    @FXML
-    private void initialize() {
-        addVehiclePower.textProperty().addListener(((observable, oldValue, newValue) -> {
-
-        }));
-    } */
-
-    @FXML
-    private void addVehicleActivateLicenseplateTextView(ActionEvent event) {
-        if(addVehicleLicenseA.isSelected() || addVehicleLicenseB.isSelected()) {
-            addVehicleLicenseplate.setVisible(true);
-            addVehicleLicenseplateLabel.setOpacity(1);
-            currentLicensePlate = addVehicleLicenseplate.getText();
-        } else if (!addVehicleLicenseB.isSelected() && !addVehicleLicenseA.isSelected()){
-            addVehicleLicenseplate.setVisible(false);
-            addVehicleLicenseplateLabel.setOpacity(0.5);
-            currentLicensePlate = null;
-        }
-    }
-
-    @FXML
-    private void addVehicleActivatePowerTextBox(ActionEvent event) {
-        if(!currentEngine) {
-            addVehiclePower.setVisible(true);
-            addVehiclePowerLabel.setOpacity(1);
-            addVehicleMusclePower.setSelected(false);
-            addVehicleMusclePower.setIndeterminate(false);
-            currentEngine = true;
-        } else if(currentEngine) {
-            addVehiclePower.setVisible(false);
-            addVehiclePowerLabel.setOpacity(0.5);
-            addVehicleEngine.setSelected(false);
-            currentEngine = false;
-        }
-    }
-
-    @FXML
-    private void addPictureOfVehicle(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        configureFileChooserForPictures(fileChooser);
-        picture = fileChooser.showOpenDialog(addVehicleAddPictureButton.getScene().getWindow());
-       // File file = fileChooser.showSaveDialog(addVehicleAddPictureButton.getScene().getWindow());
-
-
-    }
-
-    private static void configureFileChooserForPictures (FileChooser fileChooser) {
+    private static void configureFileChooserForPictures(FileChooser fileChooser) {
         fileChooser.setTitle("Save Image of Vehicle");
         fileChooser.setInitialDirectory(
             new File(System.getProperty("user.home"))
@@ -145,32 +98,87 @@ public class VehicleController {
         );
     }
 
+/*    @FXML
+    private void initialize() {
+        addVehiclePower.textProperty().addListener(((observable, oldValue, newValue) -> {
 
+        }));
+    } */
+
+    @FXML
+    private void initialize() {
+        this.rbEngine.selectedProperty().bindBidirectional(this.addVehiclePower.visibleProperty());
+        this.rbEngine.selectedProperty().addListener((radioButton, wasSelected, isSelected) -> {
+            if(isSelected) {
+                    addVehiclePowerLabel.setOpacity(1);
+                } else {
+                    addVehiclePower.clear();
+                    addVehiclePowerLabel.setOpacity(0.5);
+                }
+        });
+    }
+
+    @FXML
+    private void addVehicleActivateLicenseplateTextView(ActionEvent event) {
+        if (addVehicleLicenseA.isSelected() || addVehicleLicenseB.isSelected()) {
+            addVehicleLicenseplate.setVisible(true);
+            addVehicleLicenseplateLabel.setOpacity(1);
+            currentLicensePlate = addVehicleLicenseplate.getText();
+        } else if (!addVehicleLicenseB.isSelected() && !addVehicleLicenseA.isSelected()) {
+            addVehicleLicenseplate.setVisible(false);
+            addVehicleLicenseplateLabel.setOpacity(0.5);
+            currentLicensePlate = null;
+        }
+    }
+
+    @FXML
+    private void addPictureOfVehicle(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        configureFileChooserForPictures(fileChooser);
+        picture = fileChooser.showOpenDialog(addVehicleAddPictureButton.getScene().getWindow());
+        // File file = fileChooser.showSaveDialog(addVehicleAddPictureButton.getScene().getWindow());
+
+
+    }
 
     @FXML
     private void saveVehicle(ActionEvent event) throws IOException {
         String currentName = addVehicleName.getText();
-        int currentBuildyear = Integer.parseInt(addVehicleBuildyear.getText());
+        Integer currentBuildyear = parseInt(addVehicleBuildyear.getText());
         String currentDescription = null;
-        if(addVehicleDescription.getText() != null) {
+        if (addVehicleDescription.getText() != null && !addVehicleDescription.getText().isEmpty()) {
             currentDescription = addVehicleDescription.getText();
         }
-        int currentSeats = Integer.parseInt(addVehicleSeats.getText());
-        double currentPower = 0;
-        if(addVehiclePower.getText() != null) {
-            currentPower = Double.parseDouble(addVehiclePower.getText());
-        }
-        int currentHourlyRate = Integer.parseInt(addVehicleHourlyRate.getText());
+        Integer currentSeats = parseInt(addVehicleSeats.getText());
+        Double currentPower = parseDouble(addVehiclePower.getText());
+        Integer currentHourlyRate = parseInt(addVehicleHourlyRate.getText());
 
         // public Vehicle(String name, int buildyear, String description, int seats, String licenseplate, boolean hasEngine, double power, int hourlyRateCents)
-        currentVehicle = new Vehicle(currentName,currentBuildyear,currentDescription,currentSeats,currentLicensePlate,currentEngine,currentPower,currentHourlyRate);
-        currentVehicle.setCreatetime(LocalDateTime.now());
+        PowerSource powerSource = rbEngine.isSelected() ? PowerSource.ENGINE : PowerSource.MUSCLE;
+        currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats, currentLicensePlate, powerSource, currentPower, currentHourlyRate, LocalDateTime.now());
         try {
             currentService.addVehicleToPersistence(currentVehicle, picture);
-        } catch (IllegalVehicleException e) {
-            LOG.error("Vehicle couldn't be added to Persistence!");
+        } catch (InvalidVehicleException e) {
+            LOG.error("Vehicle couldn't be added to Persistence! {}", e.getMessage());
+            new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
         }
 
+    }
+
+    public Integer parseInt(String text) {
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public Double parseDouble(String text) {
+        try {
+            return Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
 }

@@ -28,7 +28,7 @@ public class DBConnection {
             LOG.error("Class.forName failed");
         }
         try {
-            con = DriverManager.getConnection("jdbc:h2:file:~/sepm;" +
+            con = DriverManager.getConnection("jdbc:h2:file:~/.sepm/database/sepm;" +
                     "IGNORECASE=TRUE;" +
                     "INIT=runscript from 'classpath:/database/createAndInsert.sql'",
                 "", "");

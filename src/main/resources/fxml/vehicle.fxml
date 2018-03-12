@@ -4,10 +4,13 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
@@ -36,11 +39,6 @@
                   <Insets left="50.0" />
                </padding>
             </CheckBox>
-            <CheckBox fx:id="addVehicleMusclePower" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#addVehicleActivatePowerTextBox" text="Muscle Power" GridPane.columnIndex="1" GridPane.rowIndex="6">
-               <padding>
-                  <Insets left="85.0" />
-               </padding>
-            </CheckBox>
             <Label text="Name:" />
             <Label text="Buildyear:" GridPane.rowIndex="1" />
             <Label text="Description:" GridPane.rowIndex="2" />
@@ -54,13 +52,22 @@
             <TextField fx:id="addVehicleDescription" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <TextField fx:id="addVehicleSeats" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextField fx:id="addVehicleLicenseplate" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <CheckBox fx:id="addVehicleEngine" mnemonicParsing="false" onAction="#addVehicleActivatePowerTextBox" text="Engine" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <TextField fx:id="addVehiclePower" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="7" />
             <TextField fx:id="addVehicleHourlyRate" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <Label text="License:" GridPane.rowIndex="4" />
             <CheckBox fx:id="addVehicleLicenseA" mnemonicParsing="false" onAction="#addVehicleActivateLicenseplateTextView" text="A" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label text="Picture:" GridPane.rowIndex="9" />
             <Button fx:id="addVehicleAddPictureButton" mnemonicParsing="false" onAction="#addPictureOfVehicle" prefHeight="26.0" prefWidth="271.0" text="Add Picture" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+               <children>
+                  <RadioButton fx:id="rbEngine" mnemonicParsing="false" selected="true" text="Engine">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="powerSource" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="rbMuscle" mnemonicParsing="false" selected="true" text="Muscle" toggleGroup="$powerSource" />
+               </children>
+            </HBox>
          </children>
       </GridPane>
       <Label alignment="TOP_CENTER" layoutX="211.0" layoutY="34.0" text="Add New Vehicle">

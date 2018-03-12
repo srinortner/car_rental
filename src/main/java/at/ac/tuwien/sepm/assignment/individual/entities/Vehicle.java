@@ -6,48 +6,50 @@ import java.time.Year;
 
 public class Vehicle {
 
-    private long id;
+    private Long id;
     private String name;
-    private int buildyear;
+    private Integer buildyear;
     private String description;
-    private int seats;
+    private Integer seats;
     private String licenseplate;
-    private boolean hasEngine;
-    private double power;
-    private int hourlyRateCents;
+    private PowerSource powerSource;
+    private Double power;
+    private Integer hourlyRateCents;
     private LocalDateTime createtime;
     private String picture;
 
-    public Vehicle(long id, String name, int buildyear, String description, int seats, String licenseplate, boolean hasEngine, double power, int hourlyRateCents, LocalDateTime createtime) {
+    public Vehicle(String name, Integer buildyear, String description, Integer seats, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, LocalDateTime createtime) {
+        this.name = name;
+        this.buildyear = buildyear;
+        this.description = description;
+        this.seats = seats;
+        this.licenseplate = licenseplate;
+        this.powerSource = powerSource;
+        this.power = power;
+        this.hourlyRateCents = hourlyRateCents;
+        this.createtime = createtime;
+        this.picture = picture;
+    }
+
+    public Vehicle(Long id, String name, Integer buildyear, String description, Integer seats, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, LocalDateTime createtime) {
         this.id = id;
         this.name = name;
         this.buildyear = buildyear;
         this.description = description;
         this.seats = seats;
         this.licenseplate = licenseplate;
-        this.hasEngine = hasEngine;
+        this.powerSource = powerSource;
         this.power = power;
         this.hourlyRateCents = hourlyRateCents;
         this.createtime = createtime;
-        this.picture = null;
-    }
-    public Vehicle(String name, int buildyear, String description, int seats, String licenseplate, boolean hasEngine, double power, int hourlyRateCents) {
-        this.name = name;
-        this.buildyear = buildyear;
-        this.description = description;
-        this.seats = seats;
-        this.licenseplate = licenseplate;
-        this.hasEngine = hasEngine;
-        this.power = power;
-        this.hourlyRateCents = hourlyRateCents;
-        this.picture = null;
+        this.picture = picture;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -59,11 +61,11 @@ public class Vehicle {
         this.name = name;
     }
 
-    public int getBuildyear() {
+    public Integer getBuildyear() {
         return buildyear;
     }
 
-    public void setBuildyear(int buildyear) {
+    public void setBuildyear(Integer buildyear) {
         this.buildyear = buildyear;
     }
 
@@ -75,11 +77,11 @@ public class Vehicle {
         this.description = description;
     }
 
-    public int getSeats() {
+    public Integer getSeats() {
         return seats;
     }
 
-    public void setSeats(int seats) {
+    public void setSeats(Integer seats) {
         this.seats = seats;
     }
 
@@ -91,27 +93,27 @@ public class Vehicle {
         this.licenseplate = licenseplate;
     }
 
-    public boolean isHasEngine() {
-        return hasEngine;
+    public PowerSource getPowerSource() {
+        return powerSource;
     }
 
-    public void setHasEngine(boolean hasEngine) {
-        this.hasEngine = hasEngine;
+    public void setPowerSource(PowerSource powerSource) {
+        this.powerSource = powerSource;
     }
 
-    public double getPower() {
+    public Double getPower() {
         return power;
     }
 
-    public void setPower(double power) {
+    public void setPower(Double power) {
         this.power = power;
     }
 
-    public int getHourlyRateCents() {
+    public Integer getHourlyRateCents() {
         return hourlyRateCents;
     }
 
-    public void setHourlyRateCents(int hourlyRateCents) {
+    public void setHourlyRateCents(Integer hourlyRateCents) {
         this.hourlyRateCents = hourlyRateCents;
     }
 
@@ -123,7 +125,28 @@ public class Vehicle {
         this.createtime = createtime;
     }
 
-    public String getPicture() { return picture; }
+    public String getPicture() {
+        return picture;
+    }
 
-    public void setPicture(String picture) { this.picture = picture; }
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", buildyear=" + buildyear +
+            ", description='" + description + '\'' +
+            ", seats=" + seats +
+            ", licenseplate='" + licenseplate + '\'' +
+            ", powerSource=" + powerSource +
+            ", power=" + power +
+            ", hourlyRateCents=" + hourlyRateCents +
+            ", createtime=" + createtime +
+            ", picture='" + picture + '\'' +
+            '}';
+    }
 }
