@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
+package at.ac.tuwien.sepm.assignment.individual.vehiclerental.util;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
@@ -14,7 +14,13 @@ import static java.util.Objects.isNull;
 
 public class Validator {
 
-    protected void validateVehicle(Vehicle vehicle) throws InvalidVehicleException {
+    private Validator() {
+        // intentionally empty cause Validator is a Utility class
+    }
+
+    //TODO: Kennzeichen wenn Fuehrerschein, Leistung wenn motorisiert, und Motor check
+
+    public static void validateVehicle(Vehicle vehicle) throws InvalidVehicleException {
         List<String> constraintViolations = new ArrayList<>();
         if (vehicle == null) {
             constraintViolations.add("Vehicle must not be null");
