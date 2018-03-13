@@ -29,7 +29,11 @@ public class SimpleVehicleDAO implements VehicleDAO{
             preparedStatement.setInt(4,vehicle.getSeats());
             preparedStatement.setString(5,vehicle.getLicenseplate());
             preparedStatement.setString(6,vehicle.getPowerSource().toString());
-            preparedStatement.setDouble(7,vehicle.getPower());
+            if(vehicle.getPower() == null) {
+                preparedStatement.setNull(7, Types.NULL);
+            } else {
+                preparedStatement.setDouble(7,vehicle.getPower());
+            }
             preparedStatement.setInt(8,vehicle.getHourlyRateCents());
             preparedStatement.setString(9,vehicle.getPicture());
             preparedStatement.setTimestamp(10, Timestamp.valueOf(vehicle.getCreatetime()));

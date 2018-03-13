@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.util;
 
+import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
 import org.slf4j.Logger;
@@ -18,8 +19,6 @@ public class Validator {
         // intentionally empty cause Validator is a Utility class
     }
 
-    //TODO: Kennzeichen wenn Fuehrerschein, Leistung wenn motorisiert, und Motor check
-
     public static void validateVehicle(Vehicle vehicle) throws InvalidVehicleException {
         List<String> constraintViolations = new ArrayList<>();
         if (vehicle == null) {
@@ -33,6 +32,15 @@ public class Validator {
             }
             if (isNull(vehicle.getHourlyRateCents()) || vehicle.getHourlyRateCents() < 0) {
                 constraintViolations.add("Hourly price must be a valid number greater than zero!");
+            }
+            if (vehicle.getPowerSource().equals(PowerSource.ENGINE) && isNull(vehicle.getPower())) {
+                constraintViolations.add("The power mustn't be null!");
+            }
+            if(isNull(vehicle.getPowerSource())) {
+                constraintViolations.add("Type mustn't be emptry!");
+            }
+            if(!vehicle.getLicenseType().isEmpty() && vehicle.getLicenseplate().equals("")){
+                constraintViolations.add("This vehicle must have a licenseplate!");
             }
         }
         if (!constraintViolations.isEmpty()) {

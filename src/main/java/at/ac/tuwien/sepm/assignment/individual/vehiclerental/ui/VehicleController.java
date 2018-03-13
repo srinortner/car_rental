@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
+import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
@@ -15,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseDouble;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
@@ -45,6 +48,9 @@ public class VehicleController {
 
     @FXML
     private CheckBox addVehicleLicenseB;
+
+    @FXML
+    private CheckBox addVehicleLicenseC;
 
     @FXML
     private Label addVehicleLicenseplateLabel;
@@ -96,12 +102,6 @@ public class VehicleController {
         );
     }
 
-/*    @FXML
-    private void initialize() {
-        addVehiclePower.textProperty().addListener(((observable, oldValue, newValue) -> {
-
-        }));
-    } */
 
     @FXML
     private void initialize() {
@@ -148,12 +148,27 @@ public class VehicleController {
             currentDescription = addVehicleDescription.getText();
         }
         Integer currentSeats = parseInt(addVehicleSeats.getText());
+
+        List<LicenseType> currentLicenseType = new LinkedList<>();
+        if(addVehicleLicenseA.isSelected()) {
+            currentLicenseType.add(LicenseType.A);
+        }
+        if (addVehicleLicenseB.isSelected()){
+            currentLicenseType.add(LicenseType.B);
+        }
+        if (addVehicleLicenseC.isSelected()) {
+            currentLicenseType.add(LicenseType.C);
+        }
+        if(!currentLicenseType.isEmpty()) {
+            currentLicensePlate = addVehicleLicenseplate.getText();
+        }
+
         Double currentPower = parseDouble(addVehiclePower.getText());
         Integer currentHourlyRate = parseInt(addVehicleHourlyRate.getText());
-
-        // public Vehicle(String name, int buildyear, String description, int seats, String licenseplate, boolean hasEngine, double power, int hourlyRateCents)
         PowerSource powerSource = rbEngine.isSelected() ? PowerSource.ENGINE : PowerSource.MUSCLE;
-        currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats, currentLicensePlate, powerSource, currentPower, currentHourlyRate, LocalDateTime.now());
+
+        currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats,currentLicenseType, currentLicensePlate, powerSource, currentPower, currentHourlyRate, LocalDateTime.now());
+
         try {
             currentService.addVehicleToPersistence(currentVehicle, picture);
         } catch (InvalidVehicleException e) {

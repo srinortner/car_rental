@@ -34,12 +34,17 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
+            <CheckBox fx:id="addVehicleLicenseC" mnemonicParsing="false" onAction="#addVehicleActivateLicenseplateTextView" text="C" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <padding>
+                  <Insets left="100.0" />
+               </padding>
+            </CheckBox>
             <CheckBox fx:id="addVehicleLicenseB" mnemonicParsing="false" onAction="#addVehicleActivateLicenseplateTextView" text="B" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <padding>
                   <Insets left="50.0" />
                </padding>
             </CheckBox>
-            <Label text="Name:" />
+            <Label alignment="CENTER" text="Name:" />
             <Label text="Buildyear:" GridPane.rowIndex="1" />
             <Label text="Description:" GridPane.rowIndex="2" />
             <Label text="Number of Seats:" GridPane.rowIndex="3" />

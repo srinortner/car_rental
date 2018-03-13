@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.assignment.individual.entities;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.List;
 
 public class Vehicle {
 
@@ -11,6 +12,8 @@ public class Vehicle {
     private Integer buildyear;
     private String description;
     private Integer seats;
+
+    private List<LicenseType> licenseType;
     private String licenseplate;
     private PowerSource powerSource;
     private Double power;
@@ -18,11 +21,12 @@ public class Vehicle {
     private LocalDateTime createtime;
     private String picture;
 
-    public Vehicle(String name, Integer buildyear, String description, Integer seats, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, LocalDateTime createtime) {
+    public Vehicle(String name, Integer buildyear, String description, Integer seats, List<LicenseType> licenseType, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, LocalDateTime createtime) {
         this.name = name;
         this.buildyear = buildyear;
         this.description = description;
         this.seats = seats;
+        this.licenseType = licenseType;
         this.licenseplate = licenseplate;
         this.powerSource = powerSource;
         this.power = power;
@@ -31,12 +35,13 @@ public class Vehicle {
         this.picture = picture;
     }
 
-    public Vehicle(Long id, String name, Integer buildyear, String description, Integer seats, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, LocalDateTime createtime) {
+    public Vehicle(Long id, String name, Integer buildyear, String description, Integer seats,List<LicenseType> licenseType, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, LocalDateTime createtime) {
         this.id = id;
         this.name = name;
         this.buildyear = buildyear;
         this.description = description;
         this.seats = seats;
+        this.licenseType = licenseType;
         this.licenseplate = licenseplate;
         this.powerSource = powerSource;
         this.power = power;
@@ -131,6 +136,14 @@ public class Vehicle {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public List<LicenseType> getLicenseType() {
+        return licenseType;
+    }
+
+    public void setLicenseType(List<LicenseType> licenseType) {
+        this.licenseType = licenseType;
     }
 
     @Override
