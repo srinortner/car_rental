@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS vehicle (
 
 CREATE TABLE vehicle_license_requirement (
   vehicle_id BIGINT NOT NULL,
-  license VARCHAR(1) NOT NULL CHECK(license IN ('A', 'B', 'C')),
+  license VARCHAR(1) CHECK(license IN ('A', 'B', 'C')),
   FOREIGN KEY (vehicle_id) references vehicle(id),
 );
 

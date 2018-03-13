@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -149,7 +150,7 @@ public class VehicleController {
         }
         Integer currentSeats = parseInt(addVehicleSeats.getText());
 
-        List<LicenseType> currentLicenseType = new LinkedList<>();
+        List<LicenseType> currentLicenseType = new ArrayList<>();
         if(addVehicleLicenseA.isSelected()) {
             currentLicenseType.add(LicenseType.A);
         }

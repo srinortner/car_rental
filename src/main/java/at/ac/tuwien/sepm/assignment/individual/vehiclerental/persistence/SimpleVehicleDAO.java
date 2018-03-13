@@ -1,8 +1,10 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence;
 
+import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static java.util.Objects.isNull;
 
 import java.lang.invoke.MethodHandles;
 import java.sql.*;
@@ -51,6 +53,39 @@ public class SimpleVehicleDAO implements VehicleDAO{
         } catch (SQLException e) {
             LOG.error("Vehicle couldn't be added to database!");
         }
+
+        int numberOfLicenseRequirements = 0;
+        if(!isNull(vehicle.getLicenseType().size())){
+           numberOfLicenseRequirements = vehicle.getLicenseType().size();
+        }
+        while (numberOfLicenseRequirements > 0) {
+            LicenseType lt = vehicle.getLicenseType().get(numberOfLicenseRequirements-1);
+            addLicenseRequirementsToDatabase(vehicle.getId(),lt);
+            numberOfLicenseRequirements--;
+        }
         return vehicle;
+    }
+
+    public void addLicenseRequirementsToDatabase(Long id, LicenseType licenseType) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("INSERT INTO vehicle_license_requirement VALUES (?,?)");
+            preparedStatement.setLong(1,id);
+            preparedStatement.setString(2,licenseType.toString());
+            preparedStatement.executeUpdate();
+
+            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet.next();
+
+            resultSet.close();
+            preparedStatement.close();
+
+            LOG.info("License Requirement added to Database!");
+
+        } catch (SQLException e) {
+            LOG.error("License Requirement couldn't be added to database!");
+        }
     }
 }
