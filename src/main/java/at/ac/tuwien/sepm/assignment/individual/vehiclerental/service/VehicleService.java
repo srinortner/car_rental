@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidV
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public interface VehicleService {
 
@@ -12,5 +13,6 @@ public interface VehicleService {
 
     String addPicture(File file) throws IOException;
 
+    List<Vehicle> getListOfVehiclesFromPersistence();
 
 }

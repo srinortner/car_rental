@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="792.0" prefWidth="1247.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.TableViewController">
+   <children>
+      <TableView fx:id="tableViewVehicles" layoutX="57.0" layoutY="101.0" prefHeight="454.0" prefWidth="1134.0">
+        <columns>
+          <TableColumn fx:id="idColumn" prefWidth="42.0" text="ID" />
+          <TableColumn fx:id="nameColumn" prefWidth="108.0" text="NAME" />
+            <TableColumn fx:id="buildyearColumn" prefWidth="94.0" text="BUILDYEAR" />
+            <TableColumn fx:id="descriptionColumn" prefWidth="240.0" text="DESCRIPTION" />
+            <TableColumn fx:id="seatsColumn" minWidth="0.0" prefWidth="58.0" text="SEATS" />
+            <TableColumn fx:id="licenseColumn" prefWidth="68.0" text="LICENSE" />
+            <TableColumn fx:id="licenseplateColumn" prefWidth="127.0" text="LICENSEPLATE" />
+            <TableColumn fx:id="typeColumn" prefWidth="94.0" text="TYPE" />
+            <TableColumn fx:id="powerColumn" prefWidth="65.0" text="POWER" />
+            <TableColumn fx:id="hourlyrateColumn" prefWidth="50.0" text="RATE" />
+            <TableColumn fx:id="pictureColumn" prefWidth="109.0" text="PICTURE" />
+            <TableColumn fx:id="createtimeColumn" prefWidth="78.0" text="TIME" />
+        </columns>
+      </TableView>
+      <Button fx:id="NewEntryTableView" layoutX="972.0" layoutY="566.0" mnemonicParsing="false" text="New Entry" />
+      <Button fx:id="EditEntryTableView" layoutX="1073.0" layoutY="566.0" mnemonicParsing="false" text="Edit" />
+      <Button fx:id="DeleteEntryTableView" layoutX="1130.0" layoutY="566.0" mnemonicParsing="false" text="Delete" />
+      <Label layoutX="579.0" layoutY="56.0" text="Vehicles">
+         <font>
+            <Font name="System Bold" size="19.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

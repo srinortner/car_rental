@@ -131,4 +131,11 @@ public class SimpleVehicleService implements VehicleService {
             return UUID.randomUUID().toString();
         }
     }
+
+    public List<Vehicle> getListOfVehiclesFromPersistence() {
+        List<Vehicle> newVehicleList = vehicleDAO.getAllVehiclesFromDatabase();
+        return  newVehicleList;
+    }
+
+
 }

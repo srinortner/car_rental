@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS vehicle (
   hourlyrate NUMERIC(5,0),
   picture VARCHAR(100),
   createtime TIMESTAMP AS CURRENT_TIMESTAMP NOT NULL,
+  uuid_for_editing VARCHAR(288) NOT NULL,
   deleted BOOLEAN DEFAULT FALSE,
 );
 

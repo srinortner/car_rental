@@ -1,9 +1,8 @@
 package at.ac.tuwien.sepm.assignment.individual.entities;
 
-import java.io.File;
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.util.List;
+import java.util.UUID;
 
 public class Vehicle {
 
@@ -21,6 +20,10 @@ public class Vehicle {
     private LocalDateTime createtime;
     private String picture;
 
+    //stays the same in every new version of the vehicle if it is edited
+    private String UUIDForEditing;
+
+
     public Vehicle(String name, Integer buildyear, String description, Integer seats, List<LicenseType> licenseType, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, LocalDateTime createtime) {
         this.name = name;
         this.buildyear = buildyear;
@@ -33,21 +36,23 @@ public class Vehicle {
         this.hourlyRateCents = hourlyRateCents;
         this.createtime = createtime;
         this.picture = picture;
+        this.UUIDForEditing = UUID.randomUUID().toString();
     }
 
-    public Vehicle(Long id, String name, Integer buildyear, String description, Integer seats,List<LicenseType> licenseType, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, LocalDateTime createtime) {
+    public Vehicle(Long id, String name, Integer buildyear, String description, Integer seats, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, String picture, LocalDateTime createtime) {
         this.id = id;
         this.name = name;
         this.buildyear = buildyear;
         this.description = description;
         this.seats = seats;
-        this.licenseType = licenseType;
+        //this.licenseType = licenseType;
         this.licenseplate = licenseplate;
         this.powerSource = powerSource;
         this.power = power;
         this.hourlyRateCents = hourlyRateCents;
         this.createtime = createtime;
         this.picture = picture;
+        this.UUIDForEditing = UUID.randomUUID().toString();
     }
 
     public Long getId() {
@@ -144,6 +149,14 @@ public class Vehicle {
 
     public void setLicenseType(List<LicenseType> licenseType) {
         this.licenseType = licenseType;
+    }
+
+    public String getUUIDForEditing() {
+        return UUIDForEditing;
+    }
+
+    public void setUUIDForEditing(String UUIDForEditing) {
+        this.UUIDForEditing = UUIDForEditing;
     }
 
     @Override
