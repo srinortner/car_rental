@@ -38,6 +38,8 @@ public class VehicleController {
     private VehicleService currentService;
     private String currentLicensePlate = null;
 
+    private TableViewController tableViewController;
+
     @FXML
     private TextField addVehicleName;
 
@@ -90,10 +92,13 @@ public class VehicleController {
     private Button addVehicleAddPictureButton;
 
     private File picture = null;
+    private Stage primaryStage;
 
 
-    public VehicleController(VehicleService currentService) {
+    public VehicleController(VehicleService currentService, TableViewController tableViewController, Stage primaryStage) {
         this.currentService = currentService;
+        this.tableViewController = tableViewController;
+        this.primaryStage = primaryStage;
 
     }
 
@@ -187,27 +192,28 @@ public class VehicleController {
 
     @FXML
     private void openTableView(ActionEvent event) {
-        final TableViewController tableViewController = new TableViewController(currentService);
        // Stage stage = new Stage();
 
-        try {
+      /*  try {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Parent parent = FXMLLoader.load(getClass().getResource("fxml/tableview.fxml"));
+            Parent parent = FXMLLoader.load(getClass().getResource("/fxml/tableview.fxml"));
             Scene scene = new Scene(parent);
-        //    stage.initOwner(addVehicleBackButton.getScene().getWindow());
+        //   stage.initOwner(addVehicleBackButton.getScene().getWindow());
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+        } */
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Vehicles");
+            primaryStage.show();
+
+        } catch (IOException e) {
+           LOG.error("Stage couldn't be changed");
         }
-    //    final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/tableview.fxml"));
-     //   fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
-
-
-
-       //     stage.setScene(new Scene(fxmlLoader.load()));
-        //    stage.setTitle("Vehicles");
-         //   stage.show();
 
     }
 

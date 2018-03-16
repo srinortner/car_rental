@@ -8,6 +8,7 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.SimpleV
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.VehicleDAO;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleVehicleService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.DetailViewController;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.TableViewController;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.VehicleController;
 import javafx.application.Application;
@@ -39,14 +40,16 @@ public final class MainApplication extends Application {
 
         VehicleDAO vehicleDAO = new SimpleVehicleDAO();
         VehicleService vehicleService = new SimpleVehicleService(vehicleDAO);
-      //  VehicleController vehicleController = new VehicleController(vehicleService);
-        TableViewController tableViewController = new TableViewController(vehicleService);
+        DetailViewController detailViewController = new DetailViewController(vehicleService);
+        TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, primaryStage);
+        VehicleController vehicleController = new VehicleController(vehicleService, tableViewController, primaryStage);
+
 
         // prepare fxml loader to inject controller
-     /*   FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/vehicle.fxml"));
-        fxmlLoader.setControllerFactory(param -> param.isInstance(vehicleController) ? vehicleController : null);*/
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
-        fxmlLoader.setControllerFactory(param -> param.isInstance(tableViewController) ? tableViewController : null);
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/vehicle.fxml"));
+        fxmlLoader.setControllerFactory(param -> param.isInstance(vehicleController) ? vehicleController : null);
+      /*  FXMLLoader fxmlLoader2 = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
+        fxmlLoader.setControllerFactory(param -> param.isInstance(tableViewController) ? tableViewController : null); */
         primaryStage.setScene(new Scene(fxmlLoader.load()));
 
         // show application

@@ -5,20 +5,34 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleServ
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 public class TableViewController {
 
     private VehicleService currentService;
     private List<Vehicle> vehicleList;
+    private DetailViewController detailViewController;
+    private Stage primaryStage;
 
-    public TableViewController(VehicleService currentService) {
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    public TableViewController(VehicleService currentService, DetailViewController detailViewController, Stage primaryStage) {
         this.currentService = currentService;
+        this.detailViewController = detailViewController;
+        this.primaryStage = primaryStage;
     }
 
     @FXML
@@ -64,7 +78,7 @@ public class TableViewController {
     private Button NewEntryTableView;
 
     @FXML
-    private Button EditEntryTableView;
+    private Button DetailsTableView;
 
     @FXML
     private Button DeleteEntryTableView;
@@ -88,6 +102,22 @@ public class TableViewController {
         List<Vehicle> temp = currentService.getListOfVehiclesFromPersistence();
         vehicleData = FXCollections.observableArrayList(temp);
         tableViewVehicles.setItems(vehicleData);
+
+    }
+
+    @FXML
+    void openDetailView(ActionEvent event) {
+        detailViewController.fill(vehicleList.get(0));
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/detailview.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(detailViewController) ? detailViewController : null);
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Details");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage couldn't be changed to DetailView");
+        }
 
     }
 
