@@ -95,14 +95,15 @@ public class SimpleVehicleDAO implements VehicleDAO {
         }
     }
 
+    //TODO: Führerscheine auslesen
     public List<Vehicle> getAllVehiclesFromDatabase() {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<Vehicle> vehicleList = null;
 
         try {
-            preparedStatement = connection.prepareStatement("SELECT id,name,BUILDYEAR,DESCRIPTION,SEATS,LICENSEPLATE,TYPE,POWER,PICTURE,CREATETIME WHERE DELETE = ?;");
-            preparedStatement.setBoolean(12, false);
+            preparedStatement = connection.prepareStatement("SELECT id,name,BUILDYEAR,DESCRIPTION,SEATS,LICENSEPLATE,TYPE,POWER,hourlyrate,PICTURE,CREATETIME FROM VEHICLE WHERE DELETED = ?;");
+            preparedStatement.setBoolean(1, false);
             resultSet = preparedStatement.executeQuery();
             vehicleList = getDataFromResultSet(resultSet);
 

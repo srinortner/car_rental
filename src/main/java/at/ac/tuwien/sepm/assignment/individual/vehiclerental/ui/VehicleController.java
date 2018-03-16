@@ -7,8 +7,13 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidV
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +37,7 @@ public class VehicleController {
     private Vehicle currentVehicle;
     private VehicleService currentService;
     private String currentLicensePlate = null;
+
     @FXML
     private TextField addVehicleName;
 
@@ -176,6 +182,32 @@ public class VehicleController {
             LOG.error("Vehicle couldn't be added to Persistence! {}", e.getMessage());
             new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
         }
+
+    }
+
+    @FXML
+    private void openTableView(ActionEvent event) {
+        final TableViewController tableViewController = new TableViewController(currentService);
+       // Stage stage = new Stage();
+
+        try {
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Parent parent = FXMLLoader.load(getClass().getResource("fxml/tableview.fxml"));
+            Scene scene = new Scene(parent);
+        //    stage.initOwner(addVehicleBackButton.getScene().getWindow());
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    //    final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/tableview.fxml"));
+     //   fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
+
+
+
+       //     stage.setScene(new Scene(fxmlLoader.load()));
+        //    stage.setTitle("Vehicles");
+         //   stage.show();
 
     }
 

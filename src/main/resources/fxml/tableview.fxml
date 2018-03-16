@@ -11,7 +11,6 @@
    <children>
       <TableView fx:id="tableViewVehicles" layoutX="57.0" layoutY="101.0" prefHeight="454.0" prefWidth="1134.0">
         <columns>
-          <TableColumn fx:id="idColumn" prefWidth="42.0" text="ID" />
           <TableColumn fx:id="nameColumn" prefWidth="108.0" text="NAME" />
             <TableColumn fx:id="buildyearColumn" prefWidth="94.0" text="BUILDYEAR" />
             <TableColumn fx:id="descriptionColumn" prefWidth="240.0" text="DESCRIPTION" />
@@ -22,7 +21,7 @@
             <TableColumn fx:id="powerColumn" prefWidth="65.0" text="POWER" />
             <TableColumn fx:id="hourlyrateColumn" prefWidth="50.0" text="RATE" />
             <TableColumn fx:id="pictureColumn" prefWidth="109.0" text="PICTURE" />
-            <TableColumn fx:id="createtimeColumn" prefWidth="78.0" text="TIME" />
+            <TableColumn fx:id="createtimeColumn" prefWidth="120.0" text="TIME" />
         </columns>
       </TableView>
       <Button fx:id="NewEntryTableView" layoutX="972.0" layoutY="566.0" mnemonicParsing="false" text="New Entry" />
