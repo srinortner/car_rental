@@ -18,6 +18,8 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
     private Connection connection = DBConnection.getConnection();
+    private boolean editing = false;
+
 
     @Override
     public Vehicle addVehicleToDatabase(Vehicle vehicle) {
@@ -29,7 +31,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connection.prepareStatement("INSERT INTO VEHICLE VALUES(DEFAULT,?,?,?,?,?,?,?,?,?, ?,?,DEFAULT )");
+            preparedStatement = connection.prepareStatement("INSERT INTO VEHICLE VALUES(DEFAULT,?,?,?,?,?,?,?,?,?,?,?,?,DEFAULT )");
             preparedStatement.setString(1, vehicle.getName());
             preparedStatement.setInt(2, vehicle.getBuildyear());
             preparedStatement.setString(3, vehicle.getDescription());
@@ -45,6 +47,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
             preparedStatement.setString(9, vehicle.getPicture());
             preparedStatement.setTimestamp(10, Timestamp.valueOf(vehicle.getCreatetime()));
             preparedStatement.setString(11, vehicle.getUUIDForEditing());
+            preparedStatement.setTimestamp(12, Timestamp.valueOf(vehicle.getEdittime()));
             preparedStatement.executeUpdate();
 
             resultSet = preparedStatement.getGeneratedKeys();
@@ -53,7 +56,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
             resultSet.close();
             preparedStatement.close();
-
+            editing = false;
             LOG.info("Vehicle added to database.");
 
         } catch (SQLException e) {
@@ -111,6 +114,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
             preparedStatement.executeUpdate();
             preparedStatement.close();
+            editing = true;
             LOG.info("Vehicle is updated!");
         } catch (SQLException e) {
             LOG.error("Vehicle couldn't be updated!");
@@ -127,7 +131,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
         List<Vehicle> vehicleList = null;
 
         try {
-            preparedStatement = connection.prepareStatement("SELECT id,name,BUILDYEAR,DESCRIPTION,SEATS,LICENSEPLATE,TYPE,POWER,hourlyrate,PICTURE,CREATETIME FROM VEHICLE WHERE DELETED = ?;");
+            preparedStatement = connection.prepareStatement("SELECT id,name,BUILDYEAR,DESCRIPTION,SEATS,LICENSEPLATE,TYPE,POWER,hourlyrate,PICTURE,CREATETIME,uuid_for_editing, edittime FROM VEHICLE WHERE DELETED = ?;");
             preparedStatement.setBoolean(1, false);
             resultSet = preparedStatement.executeQuery();
             vehicleList = getDataFromResultSet(resultSet);
@@ -156,6 +160,8 @@ public class SimpleVehicleDAO implements VehicleDAO {
                 Integer currentHourlyRate = resultSet.getInt(9);
                 String currentPicture = resultSet.getString(10);
                 Timestamp currentCreateTime = resultSet.getTimestamp(11);
+                String currentUuidForEditing = resultSet.getString(12);
+                Timestamp currentEdittime = resultSet.getTimestamp(13);
 
                 PowerSource type = PowerSource.MUSCLE;
                 if (currentType.equals("ENGINE")) {
@@ -164,8 +170,10 @@ public class SimpleVehicleDAO implements VehicleDAO {
                     type = PowerSource.MUSCLE;
                 }
                 LocalDateTime time = currentCreateTime.toLocalDateTime();
+                LocalDateTime edittime = currentEdittime.toLocalDateTime();
 
-                Vehicle currentVehicle = new Vehicle(currentID, currentName, currentYear, currentDescription, currentSeats, currentLicenseplate, type, currentPower, currentHourlyRate, currentPicture, time);
+                Vehicle currentVehicle = new Vehicle(currentID, currentName, currentYear, currentDescription, currentSeats, currentLicenseplate, type, currentPower, currentHourlyRate, currentPicture, time, edittime);
+                currentVehicle.setUUIDForEditing(currentUuidForEditing);
                 currentVehicleList.add(currentVehicle);
             }
         } catch (SQLException e) {

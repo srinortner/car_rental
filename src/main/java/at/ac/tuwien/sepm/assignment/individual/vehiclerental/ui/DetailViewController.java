@@ -233,7 +233,8 @@ public class DetailViewController {
             powerSource = PowerSource.MUSCLE;
         }
 
-        Vehicle currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats,currentLicenseType, currentLicensePlate, powerSource, currentPower, currentHourlyRate, vehicle.getCreatetime());
+        Vehicle currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats,currentLicenseType, currentLicensePlate, powerSource, currentPower, currentHourlyRate, vehicle.getCreatetime(), LocalDateTime.now());
+        currentVehicle.setUUIDForEditing(vehicle.getUUIDForEditing());
 
         try {
             vehicleService.passEditedVehicleToPersistence(currentVehicle,null,vehicle);

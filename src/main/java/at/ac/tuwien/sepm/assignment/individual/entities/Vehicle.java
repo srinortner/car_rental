@@ -24,7 +24,10 @@ public class Vehicle {
     private String UUIDForEditing;
 
 
-    public Vehicle(String name, Integer buildyear, String description, Integer seats, List<LicenseType> licenseType, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, LocalDateTime createtime) {
+    private LocalDateTime edittime;
+
+
+    public Vehicle(String name, Integer buildyear, String description, Integer seats, List<LicenseType> licenseType, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, LocalDateTime createtime, LocalDateTime edittime) {
         this.name = name;
         this.buildyear = buildyear;
         this.description = description;
@@ -37,9 +40,10 @@ public class Vehicle {
         this.createtime = createtime;
         this.picture = picture;
         this.UUIDForEditing = UUID.randomUUID().toString();
+        this.edittime = edittime;
     }
 
-    public Vehicle(Long id, String name, Integer buildyear, String description, Integer seats, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, String picture, LocalDateTime createtime) {
+    public Vehicle(Long id, String name, Integer buildyear, String description, Integer seats, String licenseplate, PowerSource powerSource, Double power, Integer hourlyRateCents, String picture, LocalDateTime createtime, LocalDateTime edittime) {
         this.id = id;
         this.name = name;
         this.buildyear = buildyear;
@@ -53,6 +57,7 @@ public class Vehicle {
         this.createtime = createtime;
         this.picture = picture;
         this.UUIDForEditing = UUID.randomUUID().toString();
+        this.edittime = edittime;
     }
 
     public Long getId() {
@@ -158,6 +163,15 @@ public class Vehicle {
     public void setUUIDForEditing(String UUIDForEditing) {
         this.UUIDForEditing = UUIDForEditing;
     }
+
+    public LocalDateTime getEdittime() {
+        return edittime;
+    }
+
+    public void setEdittime(LocalDateTime edittime) {
+        this.edittime = edittime;
+    }
+
 
     @Override
     public String toString() {

@@ -179,7 +179,7 @@ public class VehicleController {
         Integer currentHourlyRate = parseInt(addVehicleHourlyRate.getText());
         PowerSource powerSource = rbEngine.isSelected() ? PowerSource.ENGINE : PowerSource.MUSCLE;
 
-        currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats,currentLicenseType, currentLicensePlate, powerSource, currentPower, currentHourlyRate, LocalDateTime.now());
+        currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats,currentLicenseType, currentLicensePlate, powerSource, currentPower, currentHourlyRate, LocalDateTime.now(), LocalDateTime.now());
 
 
         try {

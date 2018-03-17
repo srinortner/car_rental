@@ -14,8 +14,9 @@ CREATE TABLE IF NOT EXISTS vehicle (
   power NUMERIC(7,3),
   hourlyrate NUMERIC(5,0),
   picture VARCHAR(100),
-  createtime TIMESTAMP AS CURRENT_TIMESTAMP NOT NULL,
+  createtime TIMESTAMP NOT NULL,
   uuid_for_editing VARCHAR(288) NOT NULL,
+  edittime TIMESTAMP NOT NULL,
   deleted BOOLEAN DEFAULT FALSE,
 );
 
@@ -23,9 +24,9 @@ INSERT INTO vehicle
 SELECT * FROM (
 SELECT * FROM vehicle WHERE FALSE
 
-UNION SELECT 1, 'Seat', 2001, 'Car', 4, 'AB12345','ENGINE', 100, 120, NULL, '2018-10-01 10:22:00', 'cardefault1', False
-UNION SELECT 2, 'Honda', 2005, 'Another Car', 3, 'AB22334', 'ENGINE', 100, 120, NULL, '2018-10-01 10:23:00', 'cardefault2', False
-UNION SELECT 3, 'Mountainbike', 2011, 'Bike', 1, NULL, 'MUSCLE', 20, 90, NULL, '2018-10-01 10:24:00', 'bikedefault1', false
+UNION SELECT 1, 'Seat', 2001, 'Car', 4, 'AB12345','ENGINE', 100, 120, NULL, '2018-10-01 10:22:00', 'cardefault1','2018-10-01 10:22:00', False
+UNION SELECT 2, 'Honda', 2005, 'Another Car', 3, 'AB22334', 'ENGINE', 100, 120, NULL, '2018-10-01 10:23:00', 'cardefault2','2018-10-01 10:23:00', False
+UNION SELECT 3, 'Mountainbike', 2011, 'Bike', 1, NULL, 'MUSCLE', 20, 90, NULL, '2018-10-01 10:24:00', 'bikedefault1','2018-10-01 10:24:00', false
 );
 
 CREATE TABLE vehicle_license_requirement (
