@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Cell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
@@ -32,6 +33,7 @@ public class TableViewController {
     public TableViewController(VehicleService currentService, DetailViewController detailViewController, Stage primaryStage) {
         this.currentService = currentService;
         this.detailViewController = detailViewController;
+        detailViewController.setTableViewController(this);
         this.primaryStage = primaryStage;
     }
 
@@ -56,7 +58,6 @@ public class TableViewController {
     @FXML
     private TableColumn<Vehicle, String> licenseplateColumn;
 
-    //TODO: Enum?
     @FXML
     private TableColumn<Vehicle, String> typeColumn;
 
@@ -71,6 +72,10 @@ public class TableViewController {
 
     @FXML
     private TableColumn<Vehicle, String> createtimeColumn;
+
+    @FXML
+    private TableColumn<Vehicle, String> edittimeColumn;
+
 
     private ObservableList<Vehicle> vehicleData = FXCollections.observableArrayList();
 
@@ -91,13 +96,15 @@ public class TableViewController {
         buildyearColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBuildyear().toString()));
         descriptionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
         seatsColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getSeats().toString()));
-       // licenseColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLicenseType().toString()));
+        licenseColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLicenseType().toString()));
         licenseplateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLicenseplate()));
         typeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPowerSource().toString()));
         powerColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPower().toString()));
         hourlyrateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getHourlyRateCents().toString()));
         pictureColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPicture()));
         createtimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCreatetime().toString()));
+        edittimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEdittime().toString()));
+
 
         List<Vehicle> temp = currentService.getListOfVehiclesFromPersistence();
         vehicleData = FXCollections.observableArrayList(temp);
@@ -113,7 +120,8 @@ public class TableViewController {
         try {
             primaryStage.setScene(new Scene(fxmlLoader.load()));
             primaryStage.setTitle("Details");
-            detailViewController.fill(vehicleList.get(0));
+            int row = tableViewVehicles.getSelectionModel().getFocusedIndex();
+            detailViewController.fill(vehicleList.get(row));
             primaryStage.show();
 
         } catch (IOException e) {

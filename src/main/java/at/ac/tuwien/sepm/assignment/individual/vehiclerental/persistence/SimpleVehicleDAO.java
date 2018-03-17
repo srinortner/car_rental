@@ -98,6 +98,45 @@ public class SimpleVehicleDAO implements VehicleDAO {
         }
     }
 
+    public List<LicenseType> getLicenseRequirements(Long id) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<LicenseType> licenseList = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("SELECT LICENSE FROM VEHICLE_LICENSE_REQUIREMENT WHERE VEHICLE_ID = ?");
+            preparedStatement.setLong(1,id);
+            resultSet = preparedStatement.executeQuery();
+            licenseList = getLicenseRequirementsFromResultSet(resultSet);
+        } catch (SQLException e) {
+           LOG.error("License requirements couldn't be loaded from database!");
+        }
+
+        return licenseList;
+    }
+
+    public List<LicenseType> getLicenseRequirementsFromResultSet(ResultSet resultSet) {
+        List<LicenseType> currentlist = new ArrayList<>();
+
+        try {
+            while (resultSet.next()) {
+                String currentLicense = resultSet.getString(1);
+                if(currentLicense.equals("A")){
+                    currentlist.add(LicenseType.A);
+                }
+                if(currentLicense.equals("B")){
+                    currentlist.add(LicenseType.B);
+                }
+                if(currentLicense.equals("C")){
+                    currentlist.add(LicenseType.C);
+                }
+            }
+        } catch (SQLException e) {
+            LOG.error("Error while trying to load license requirements from reslutSet");
+        }
+        return currentlist;
+    }
+
     public void editVehicle(Vehicle newVehicle, Vehicle oldVehicle) {
 
         if (oldVehicle == null) {
@@ -171,9 +210,10 @@ public class SimpleVehicleDAO implements VehicleDAO {
                 }
                 LocalDateTime time = currentCreateTime.toLocalDateTime();
                 LocalDateTime edittime = currentEdittime.toLocalDateTime();
-
+                List<LicenseType> licenseList = getLicenseRequirements(currentID);
                 Vehicle currentVehicle = new Vehicle(currentID, currentName, currentYear, currentDescription, currentSeats, currentLicenseplate, type, currentPower, currentHourlyRate, currentPicture, time, edittime);
                 currentVehicle.setUUIDForEditing(currentUuidForEditing);
+                currentVehicle.setLicenseType(licenseList);
                 currentVehicleList.add(currentVehicle);
             }
         } catch (SQLException e) {

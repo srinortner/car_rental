@@ -8,6 +8,8 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidV
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -15,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.h2.store.fs.FilePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +41,13 @@ public class DetailViewController {
 
     private File picture = null;
     private Vehicle vehicle = null;
+    private Stage primaryStage = null;
+    private  TableViewController tableViewController = null;
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
 
-    public DetailViewController(VehicleService vehicleService) {
-
+    public DetailViewController(VehicleService vehicleService, Stage primaryStage) {
         this.vehicleService = vehicleService;
+        this.primaryStage = primaryStage;
     }
 
     @FXML
@@ -150,7 +155,16 @@ public class DetailViewController {
 
     @FXML
     private void backToTableView(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Vehicles");
+            primaryStage.show();
 
+        } catch (IOException e) {
+            LOG.error("Stage for Tableview couldn't be changed");
+        }
     }
 
     @FXML
@@ -251,5 +265,12 @@ public class DetailViewController {
         this.vehicle = vehicle;
     }
 
+    public TableViewController getTableViewController() {
+        return tableViewController;
+    }
+
+    public void setTableViewController(TableViewController tableViewController) {
+        this.tableViewController = tableViewController;
+    }
 }
 

@@ -40,7 +40,7 @@ public final class MainApplication extends Application {
 
         VehicleDAO vehicleDAO = new SimpleVehicleDAO();
         VehicleService vehicleService = new SimpleVehicleService(vehicleDAO);
-        DetailViewController detailViewController = new DetailViewController(vehicleService);
+        DetailViewController detailViewController = new DetailViewController(vehicleService,primaryStage);
         TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, primaryStage);
         VehicleController vehicleController = new VehicleController(vehicleService, tableViewController, primaryStage);
 
