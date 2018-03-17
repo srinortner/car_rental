@@ -107,12 +107,13 @@ public class TableViewController {
 
     @FXML
     void openDetailView(ActionEvent event) {
-        detailViewController.fill(vehicleList.get(0));
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/detailview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(detailViewController) ? detailViewController : null);
+
         try {
             primaryStage.setScene(new Scene(fxmlLoader.load()));
             primaryStage.setTitle("Details");
+            detailViewController.fill(vehicleList.get(0));
             primaryStage.show();
 
         } catch (IOException e) {

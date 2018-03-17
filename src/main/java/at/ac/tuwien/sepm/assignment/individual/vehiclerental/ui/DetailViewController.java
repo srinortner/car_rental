@@ -1,18 +1,21 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
 
+import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
+import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleVehicleService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import org.h2.store.fs.FilePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +24,12 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseDouble;
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
 
 public class DetailViewController {
 
@@ -64,7 +73,20 @@ public class DetailViewController {
     private TextField hourlyRateDetailView;
 
     @FXML
+    private CheckBox licenseCCheckBoxEdit;
+
+    @FXML
+    private CheckBox licenseBCheckBoxEdit;
+
+    @FXML
+    private CheckBox licenseACheckBoxEdit;
+
+    @FXML
     private Label createTimeDetailView;
+
+    @FXML
+    private Label noPictureLabelDetailView;
+
 
     @FXML
     private ImageView imageViewDetailView;
@@ -84,12 +106,6 @@ public class DetailViewController {
 
     private static final Path imagePath = Paths.get(System.getProperty("user.home"),"/.sepm/images");
 
-    private void initialize() {
-
-        changePictureButtonDetailView.setVisible(false);
-        saveButtonDetailView.setVisible(false);
-
-    }
 
     public void fill(Vehicle vehicle){
         this.vehicle = vehicle;
@@ -101,7 +117,11 @@ public class DetailViewController {
         descriptionDetailView.setEditable(false);
         seatsDetailView.setText(vehicle.getSeats().toString());
         seatsDetailView.setEditable(false);
-        licenseRequirementsDetailView.setText(vehicle.getLicenseType().toString());
+        if(vehicle.getLicenseType() == null) {
+            licenseRequirementsDetailView.setText("None");
+        } else {
+            licenseRequirementsDetailView.setText(vehicle.getLicenseType().toString());
+        }
         licenseRequirementsDetailView.setEditable(false);
         licenseplateDetailView.setText(vehicle.getLicenseplate());
         licenseplateDetailView.setEditable(false);
@@ -112,8 +132,20 @@ public class DetailViewController {
         hourlyRateDetailView.setText(vehicle.getHourlyRateCents().toString());
         hourlyRateDetailView.setEditable(false);
         createTimeDetailView.setText(vehicle.getCreatetime().toString());
-        Image image = new Image(imagePath + "/" + vehicle.getPicture());
-        imageViewDetailView.setImage(image);
+        //TODO: find out why picture is not shown
+        if(vehicle.getPicture() != null) {
+            String path = imagePath + "/" + vehicle.getPicture();
+            File file = new File(path);
+            Image image = new Image("file:" + path);
+            imageViewDetailView.setImage(image);
+        //    imageViewDetailView.setFitHeight(200);
+          //  imageViewDetailView.setFitWidth(150);
+            imageViewDetailView.setVisible(true);
+            noPictureLabelDetailView.setVisible(false);
+        } else {
+            noPictureLabelDetailView.setVisible(true);
+        }
+
     }
 
     @FXML
@@ -123,27 +155,29 @@ public class DetailViewController {
 
     @FXML
     void editVehicle(ActionEvent event) {
-        nameDetailView.setText(vehicle.getName());
+        nameDetailView.setDisable(false);
         nameDetailView.setEditable(true);
-        buildyearDetailView.setText(vehicle.getBuildyear().toString());
+        buildyearDetailView.setDisable(false);
         buildyearDetailView.setEditable(true);
-        descriptionDetailView.setText(vehicle.getDescription());
+        descriptionDetailView.setDisable(false);
         descriptionDetailView.setEditable(true);
-        seatsDetailView.setText(vehicle.getSeats().toString());
+        seatsDetailView.setDisable(false);
         seatsDetailView.setEditable(true);
-        licenseRequirementsDetailView.setText(vehicle.getLicenseType().toString());
-        licenseRequirementsDetailView.setEditable(true);
-        licenseplateDetailView.setText(vehicle.getLicenseplate());
+        licenseACheckBoxEdit.setVisible(true);
+        licenseBCheckBoxEdit.setVisible(true);
+        licenseCCheckBoxEdit.setVisible(true);
+        licenseRequirementsDetailView.setVisible(false);
+        licenseplateDetailView.setDisable(false);
         licenseplateDetailView.setEditable(true);
-        powerSourceDetailView.setText(vehicle.getPowerSource().toString());
+        //TODO: Validieren
         powerSourceDetailView.setEditable(true);
-        powerDetailView.setText(vehicle.getPower().toString());
+        powerDetailView.setDisable(false);
         powerDetailView.setEditable(true);
-        hourlyRateDetailView.setText(vehicle.getHourlyRateCents().toString());
+        hourlyRateDetailView.setDisable(false);
         hourlyRateDetailView.setEditable(true);
 
-        changePictureButtonDetailView.setVisible(true);
-        saveButtonDetailView.setVisible(true);
+        changePictureButtonDetailView.setDisable(false);
+        saveButtonDetailView.setDisable(false);
     }
 
     @FXML
@@ -167,12 +201,44 @@ public class DetailViewController {
 
     @FXML
     private void saveChanges(ActionEvent event) {
+        String currentName = nameDetailView.getText();
+        Integer currentBuildyear = parseInt(buildyearDetailView.getText());
+        String currentDescription = null;
+        if (descriptionDetailView.getText() != null && !descriptionDetailView.getText().isEmpty()) {
+            currentDescription = descriptionDetailView.getText();
+        }
+        Integer currentSeats = parseInt(seatsDetailView.getText());
+        String currentLicensePlate = null;
+
+        List<LicenseType> currentLicenseType = new ArrayList<>();
+        if(licenseACheckBoxEdit.isSelected()) {
+            currentLicenseType.add(LicenseType.A);
+        }
+        if (licenseBCheckBoxEdit.isSelected()){
+            currentLicenseType.add(LicenseType.B);
+        }
+        if (licenseCCheckBoxEdit.isSelected()) {
+            currentLicenseType.add(LicenseType.C);
+        }
+        if(!currentLicenseType.isEmpty()) {
+            currentLicensePlate = licenseplateDetailView.getText();
+        }
+
+        Double currentPower = parseDouble(powerDetailView.getText());
+        Integer currentHourlyRate = parseInt(hourlyRateDetailView.getText());
+        PowerSource powerSource = null;
+        if(powerSourceDetailView.equals("ENGINE")){
+            powerSource = PowerSource.ENGINE;
+        } else {
+            powerSource = PowerSource.MUSCLE;
+        }
+
+        Vehicle currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats,currentLicenseType, currentLicensePlate, powerSource, currentPower, currentHourlyRate, vehicle.getCreatetime());
+
         try {
-            vehicleService.addVehicleToPersistence(vehicle,picture);
+            vehicleService.passEditedVehicleToPersistence(currentVehicle,null,vehicle);
         } catch (InvalidVehicleException e) {
-            LOG.error("The vehicle you are trying to add is invalid!");
-        } catch (IOException e) {
-            LOG.error("Vehicle couldn't be added to persistence!");
+            LOG.error("Vehicle couldn't be passed to Service");
         }
     }
 

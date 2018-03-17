@@ -8,5 +8,7 @@ public interface VehicleDAO {
 
     Vehicle addVehicleToDatabase(Vehicle vehicle);
 
-    public List<Vehicle> getAllVehiclesFromDatabase();
+    List<Vehicle> getAllVehiclesFromDatabase();
+
+    void editVehicle(Vehicle newVehicle, Vehicle oldVehicle);
 }

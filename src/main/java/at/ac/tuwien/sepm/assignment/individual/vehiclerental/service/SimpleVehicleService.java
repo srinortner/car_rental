@@ -55,6 +55,20 @@ public class SimpleVehicleService implements VehicleService {
         return vehicleDAO.addVehicleToDatabase(vehicle);
     }
 
+    public void passEditedVehicleToPersistence(Vehicle newVehicle, File picture, Vehicle oldVehicle) throws InvalidVehicleException {
+        if (picture != null) {
+            try {
+                currentPictureTitle = addPicture(picture);
+            } catch (IOException e) {
+                LOG.error("Picture couldn't be added to Vehicle");
+            }
+        }
+            newVehicle.setPicture(currentPictureTitle);
+       //     validateVehicle(newVehicle);
+            vehicleDAO.editVehicle(newVehicle,oldVehicle);
+
+    }
+
     /**
      * copies file from user source to destiantion directory, is called by addVehicleToPersistence
      * @param file
@@ -65,6 +79,7 @@ public class SimpleVehicleService implements VehicleService {
     public String addPicture(File file) throws IOException {
         if (file != null) {
             String title = createSha1Hash(file);
+            String fileExtention = getFileExtention(file.getAbsolutePath().toString());
             File destinationFile = new File(imageDestinationPath.toFile(), title);
             if(destinationFile.exists()) {
                 LOG.debug("File already exists, using existing file");
@@ -91,10 +106,19 @@ public class SimpleVehicleService implements VehicleService {
                     LOG.error("Picture could not be saved ");
                 }
             }
-            return title;
+            return title + "." + fileExtention;
         } else {
             throw new IllegalPictureException("The picture entered is invalid");
         }
+    }
+
+    private String getFileExtention (String filepath) {
+        String ext = "";
+        int lastDot = filepath.lastIndexOf('.');
+        if (lastDot>0) {
+            ext = filepath.substring(lastDot+1);
+        }
+        return ext;
     }
 
     /**

@@ -44,7 +44,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
             preparedStatement.setInt(8, vehicle.getHourlyRateCents());
             preparedStatement.setString(9, vehicle.getPicture());
             preparedStatement.setTimestamp(10, Timestamp.valueOf(vehicle.getCreatetime()));
-            preparedStatement.setString(11,vehicle.getUUIDForEditing());
+            preparedStatement.setString(11, vehicle.getUUIDForEditing());
             preparedStatement.executeUpdate();
 
             resultSet = preparedStatement.getGeneratedKeys();
@@ -95,6 +95,31 @@ public class SimpleVehicleDAO implements VehicleDAO {
         }
     }
 
+    public void editVehicle(Vehicle newVehicle, Vehicle oldVehicle) {
+
+        if (oldVehicle == null) {
+            LOG.warn("Vehicle in addVehicleToDatabase is null!");
+        }
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("UPDATE VEHICLE SET DELETED = ? WHERE ID = ? ");
+            preparedStatement.setBoolean(1, true);
+            preparedStatement.setLong(2, oldVehicle.getId());
+
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+            LOG.info("Vehicle is updated!");
+        } catch (SQLException e) {
+            LOG.error("Vehicle couldn't be updated!");
+        }
+
+        addVehicleToDatabase(newVehicle);
+
+    }
+
     //TODO: Führerscheine auslesen
     public List<Vehicle> getAllVehiclesFromDatabase() {
         PreparedStatement preparedStatement = null;
@@ -133,14 +158,14 @@ public class SimpleVehicleDAO implements VehicleDAO {
                 Timestamp currentCreateTime = resultSet.getTimestamp(11);
 
                 PowerSource type = PowerSource.MUSCLE;
-                if(currentType.equals("ENGINE")) {
+                if (currentType.equals("ENGINE")) {
                     type = PowerSource.ENGINE;
                 } else {
                     type = PowerSource.MUSCLE;
                 }
                 LocalDateTime time = currentCreateTime.toLocalDateTime();
 
-                Vehicle currentVehicle = new Vehicle(currentID,currentName,currentYear,currentDescription,currentSeats,currentLicenseplate,type,currentPower,currentHourlyRate,currentPicture,time);
+                Vehicle currentVehicle = new Vehicle(currentID, currentName, currentYear, currentDescription, currentSeats, currentLicenseplate, type, currentPower, currentHourlyRate, currentPicture, time);
                 currentVehicleList.add(currentVehicle);
             }
         } catch (SQLException e) {

@@ -15,4 +15,6 @@ public interface VehicleService {
 
     List<Vehicle> getListOfVehiclesFromPersistence();
 
+    void passEditedVehicleToPersistence(Vehicle newVehicle, File picture, Vehicle oldVehicle) throws InvalidVehicleException;
+
 }

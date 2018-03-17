@@ -181,6 +181,7 @@ public class VehicleController {
 
         currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats,currentLicenseType, currentLicensePlate, powerSource, currentPower, currentHourlyRate, LocalDateTime.now());
 
+
         try {
             currentService.addVehicleToPersistence(currentVehicle, picture);
         } catch (InvalidVehicleException e) {

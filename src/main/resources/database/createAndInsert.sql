@@ -34,6 +34,14 @@ CREATE TABLE vehicle_license_requirement (
   FOREIGN KEY (vehicle_id) references vehicle(id),
 );
 
+INSERT INTO vehicle_license_requirement
+SELECT * FROM (
+SELECT * FROM vehicle_license_requirement WHERE FALSE
+
+UNION SELECT 1, 'B'
+UNION SELECT 2, 'B'
+);
+
 CREATE TABLE IF NOT EXISTS booking (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
 );
