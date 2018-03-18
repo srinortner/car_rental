@@ -137,10 +137,11 @@ public class DetailViewController {
         hourlyRateDetailView.setText(vehicle.getHourlyRateCents().toString());
         hourlyRateDetailView.setEditable(false);
         createTimeDetailView.setText(vehicle.getCreatetime().toString());
-        //TODO: find out why picture is not shown
         if(vehicle.getPicture() != null) {
             String path = imagePath + "/" + vehicle.getPicture();
+           // String path = "/home/susi/.sepm/images/85bd8d0fa9d0d58a6d05c3360f565210f3d9eaae";
             File file = new File(path);
+            boolean test = file.exists();
             Image image = new Image("file:" + path);
             imageViewDetailView.setImage(image);
         //    imageViewDetailView.setFitHeight(200);
@@ -155,6 +156,7 @@ public class DetailViewController {
 
     @FXML
     private void backToTableView(ActionEvent event) {
+        fill(vehicle);
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
         try {
@@ -199,6 +201,8 @@ public class DetailViewController {
         FileChooser fileChooser = new FileChooser();
         configureFileChooserForPictures(fileChooser);
         picture = fileChooser.showOpenDialog(changePictureButtonDetailView.getScene().getWindow());
+        Image image = new Image("file:" + picture.getAbsolutePath());
+        imageViewDetailView.setImage(image);
     }
 
     private static void configureFileChooserForPictures(FileChooser fileChooser) {
@@ -251,7 +255,7 @@ public class DetailViewController {
         currentVehicle.setUUIDForEditing(vehicle.getUUIDForEditing());
 
         try {
-            vehicleService.passEditedVehicleToPersistence(currentVehicle,null,vehicle);
+            vehicleService.passEditedVehicleToPersistence(currentVehicle,picture,vehicle);
         } catch (InvalidVehicleException e) {
             LOG.error("Vehicle couldn't be passed to Service");
         }

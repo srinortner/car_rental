@@ -80,7 +80,7 @@ public class SimpleVehicleService implements VehicleService {
         if (file != null) {
             String title = createSha1Hash(file);
             String fileExtention = getFileExtention(file.getAbsolutePath().toString());
-            File destinationFile = new File(imageDestinationPath.toFile(), title);
+            File destinationFile = new File(imageDestinationPath.toFile(), title+ "." + fileExtention);
             if(destinationFile.exists()) {
                 LOG.debug("File already exists, using existing file");
             } else {
