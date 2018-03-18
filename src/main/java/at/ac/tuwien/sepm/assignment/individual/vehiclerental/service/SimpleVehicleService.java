@@ -64,7 +64,7 @@ public class SimpleVehicleService implements VehicleService {
             }
         }
             newVehicle.setPicture(currentPictureTitle);
-       //     validateVehicle(newVehicle);
+            validateVehicle(newVehicle);
             vehicleDAO.editVehicle(newVehicle,oldVehicle);
 
     }

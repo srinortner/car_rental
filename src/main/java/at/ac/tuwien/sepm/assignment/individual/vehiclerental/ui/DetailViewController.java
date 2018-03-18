@@ -10,10 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -33,6 +30,9 @@ import java.util.List;
 
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseDouble;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
+import static java.util.stream.Collectors.joining;
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.ButtonType.OK;
 
 public class DetailViewController {
 
@@ -185,7 +185,7 @@ public class DetailViewController {
         licenseRequirementsDetailView.setVisible(false);
         licenseplateDetailView.setDisable(false);
         licenseplateDetailView.setEditable(true);
-        //TODO: Validieren
+        powerSourceDetailView.setDisable(false);
         powerSourceDetailView.setEditable(true);
         powerDetailView.setDisable(false);
         powerDetailView.setEditable(true);
@@ -258,6 +258,7 @@ public class DetailViewController {
             vehicleService.passEditedVehicleToPersistence(currentVehicle,picture,vehicle);
         } catch (InvalidVehicleException e) {
             LOG.error("Vehicle couldn't be passed to Service");
+            new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
         }
     }
 
