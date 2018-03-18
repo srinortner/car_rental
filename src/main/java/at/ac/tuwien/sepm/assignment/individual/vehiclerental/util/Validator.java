@@ -33,9 +33,9 @@ public class Validator {
             if (isNull(vehicle.getHourlyRateCents()) || vehicle.getHourlyRateCents() < 0) {
                 constraintViolations.add("Hourly price must be a valid number greater than zero!");
             }
-            if(!vehicle.getPowerSource().toString().equals("ENGINE") || !vehicle.getPowerSource().toString().equals("MUSCLE")) {
-                constraintViolations.add("Power source must either be ENGINE or MUSCLE");
-            }
+        //    if(!vehicle.getPowerSource().toString().equals("ENGINE") || !vehicle.getPowerSource().toString().equals("MUSCLE")) {
+         //       constraintViolations.add("Power source must either be ENGINE or MUSCLE");
+         //   }
             if (vehicle.getPowerSource().equals(PowerSource.ENGINE) && isNull(vehicle.getPower())) {
                 constraintViolations.add("The power mustn't be null!");
             }

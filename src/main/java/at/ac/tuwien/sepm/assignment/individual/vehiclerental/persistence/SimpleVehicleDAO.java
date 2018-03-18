@@ -139,7 +139,14 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
     public void editVehicle(Vehicle newVehicle, Vehicle oldVehicle) {
 
-        if (oldVehicle == null) {
+        deleteVehicleFromDatabase(oldVehicle);
+        addVehicleToDatabase(newVehicle);
+
+    }
+
+
+    public void deleteVehicleFromDatabase(Vehicle vehicle) {
+        if (vehicle == null) {
             LOG.warn("Vehicle in addVehicleToDatabase is null!");
         }
 
@@ -149,7 +156,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
         try {
             preparedStatement = connection.prepareStatement("UPDATE VEHICLE SET DELETED = ? WHERE ID = ? ");
             preparedStatement.setBoolean(1, true);
-            preparedStatement.setLong(2, oldVehicle.getId());
+            preparedStatement.setLong(2, vehicle.getId());
 
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -158,12 +165,9 @@ public class SimpleVehicleDAO implements VehicleDAO {
         } catch (SQLException e) {
             LOG.error("Vehicle couldn't be updated!");
         }
-
-        addVehicleToDatabase(newVehicle);
-
     }
 
-    //TODO: Führerscheine auslesen
+
     public List<Vehicle> getAllVehiclesFromDatabase() {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;

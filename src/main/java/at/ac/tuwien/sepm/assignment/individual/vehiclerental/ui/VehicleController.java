@@ -159,7 +159,11 @@ public class VehicleController {
         if (addVehicleDescription.getText() != null && !addVehicleDescription.getText().isEmpty()) {
             currentDescription = addVehicleDescription.getText();
         }
-        Integer currentSeats = parseInt(addVehicleSeats.getText());
+       //TODO: Avoid NullPointer when no seats are selected:  Integer currentSeats = null;
+        Integer currentSeats = 0;
+        if(addVehicleSeats.getText() != null && !addVehicleSeats.getText().isEmpty()) {
+            currentSeats = parseInt(addVehicleSeats.getText());
+        }
 
         List<LicenseType> currentLicenseType = new ArrayList<>();
         if(addVehicleLicenseA.isSelected()) {

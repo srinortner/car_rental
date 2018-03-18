@@ -11,4 +11,6 @@ public interface VehicleDAO {
     List<Vehicle> getAllVehiclesFromDatabase();
 
     void editVehicle(Vehicle newVehicle, Vehicle oldVehicle);
+
+    void deleteVehicleFromDatabase(Vehicle vehicle);
 }

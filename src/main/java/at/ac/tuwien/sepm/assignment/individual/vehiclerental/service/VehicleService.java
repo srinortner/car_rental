@@ -17,4 +17,6 @@ public interface VehicleService {
 
     void passEditedVehicleToPersistence(Vehicle newVehicle, File picture, Vehicle oldVehicle) throws InvalidVehicleException;
 
+    void deleteVehicleFromPersistence(Vehicle vehicle);
+
 }

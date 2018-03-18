@@ -69,6 +69,12 @@ public class SimpleVehicleService implements VehicleService {
 
     }
 
+    public void deleteVehicleFromPersistence(Vehicle vehicle) {
+        if(vehicle != null) {
+            vehicleDAO.deleteVehicleFromDatabase(vehicle);
+        }
+    }
+
     /**
      * copies file from user source to destiantion directory, is called by addVehicleToPersistence
      * @param file

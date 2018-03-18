@@ -9,9 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.Optional;
 
 public class TableViewController {
 
@@ -108,6 +107,7 @@ public class TableViewController {
         List<Vehicle> temp = currentService.getListOfVehiclesFromPersistence();
         vehicleData = FXCollections.observableArrayList(temp);
         tableViewVehicles.setItems(vehicleData);
+        tableViewVehicles.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
     }
 
@@ -128,6 +128,30 @@ public class TableViewController {
         }
 
     }
+
+    @FXML
+    void deleteEntry(ActionEvent event) {
+        ObservableList<Integer> selectedVehicles= tableViewVehicles.getSelectionModel().getSelectedIndices();
+
+        for (Integer row: selectedVehicles
+             ) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Dialog");
+            alert.setHeaderText("The vehicle will be deleted");
+            alert.setContentText("Are you sure you want to delete " + vehicleList.get(row).getName() + "?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                currentService.deleteVehicleFromPersistence(vehicleList.get(row));
+            } else {
+                alert.close();
+            }
+        }
+        //TODO: better option?
+        initialize();
+
+    }
+
 
 
 }
