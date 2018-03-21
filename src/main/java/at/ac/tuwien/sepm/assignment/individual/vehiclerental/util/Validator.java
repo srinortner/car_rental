@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.util;
 
+import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
 import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import java.util.Objects;
 import static java.util.Objects.isNull;
 
 public class Validator {
+
 
     private Validator() {
         // intentionally empty cause Validator is a Utility class
@@ -33,9 +36,6 @@ public class Validator {
             if (isNull(vehicle.getHourlyRateCents()) || vehicle.getHourlyRateCents() < 0) {
                 constraintViolations.add("Hourly price must be a valid number greater than zero!");
             }
-        //    if(!vehicle.getPowerSource().toString().equals("ENGINE") || !vehicle.getPowerSource().toString().equals("MUSCLE")) {
-         //       constraintViolations.add("Power source must either be ENGINE or MUSCLE");
-         //   }
             if (vehicle.getPowerSource().equals(PowerSource.ENGINE) && isNull(vehicle.getPower())) {
                 constraintViolations.add("The power mustn't be null!");
             }
@@ -48,6 +48,15 @@ public class Validator {
         }
         if (!constraintViolations.isEmpty()) {
             throw new InvalidVehicleException(constraintViolations);
+        }
+    }
+
+    public static void validateBooking(Booking booking) throws InvalidBookingException {
+        List<String> constraintViolations = new ArrayList<>();
+        if (booking == null) {
+            constraintViolations.add("Booking must not be null");
+        } else {
+            //TODO: validate cardnumbers
         }
     }
 

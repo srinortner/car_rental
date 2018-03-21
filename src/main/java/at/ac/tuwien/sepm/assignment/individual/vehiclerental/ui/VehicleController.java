@@ -159,8 +159,7 @@ public class VehicleController {
         if (addVehicleDescription.getText() != null && !addVehicleDescription.getText().isEmpty()) {
             currentDescription = addVehicleDescription.getText();
         }
-       //TODO: Avoid NullPointer when no seats are selected:  Integer currentSeats = null;
-        Integer currentSeats = 0;
+        Integer currentSeats = null;
         if(addVehicleSeats.getText() != null && !addVehicleSeats.getText().isEmpty()) {
             currentSeats = parseInt(addVehicleSeats.getText());
         }

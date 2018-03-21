@@ -45,6 +45,15 @@ UNION SELECT 2, 'B'
 
 CREATE TABLE IF NOT EXISTS booking (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(288) NOT NULL,
+  paymentnumber VARCHAR(288) NOT NULL,
+  startdate DATE NOT NULL,
+  enddate DATE NOT NULL,
+  vehicles VARCHAR(288) NOT NULL,
+  total_price NUMERIC(100,0) NOT NULL,
+  type VARCHAR(6) NOT NULL CHECK(type IN ('BOOKED', 'PAID', 'CANCELED')),
+  createtime TIMESTAMP NOT NULL,
+
 );
 
 CREATE TABLE IF NOT EXISTS vehicle_booking (
@@ -52,6 +61,7 @@ CREATE TABLE IF NOT EXISTS vehicle_booking (
   booking_id BIGINT NOT NULL,
   FOREIGN KEY (vehicle_id) references vehicle(id),
   FOREIGN KEY (booking_id) references booking(id),
+  vehicle_price NUMERIC(1000,0),
   license_number TEXT,
   license_date TIMESTAMP,
 );

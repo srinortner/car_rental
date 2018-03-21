@@ -35,7 +35,11 @@ public class SimpleVehicleDAO implements VehicleDAO {
             preparedStatement.setString(1, vehicle.getName());
             preparedStatement.setInt(2, vehicle.getBuildyear());
             preparedStatement.setString(3, vehicle.getDescription());
-            preparedStatement.setInt(4, vehicle.getSeats());
+            if(vehicle.getSeats() == null) {
+                preparedStatement.setString(4,null);
+            } else {
+                preparedStatement.setInt(4, vehicle.getSeats());
+            }
             preparedStatement.setString(5, vehicle.getLicenseplate());
             preparedStatement.setString(6, vehicle.getPowerSource().toString());
             if (vehicle.getPower() == null) {

@@ -92,6 +92,11 @@ public class DetailViewController {
     @FXML
     private Label noPictureLabelDetailView;
 
+    @FXML
+    private RadioButton engineButtonEdit;
+
+    @FXML
+    private RadioButton muscleButtonEdit;
 
     @FXML
     private ImageView imageViewDetailView;
@@ -111,6 +116,10 @@ public class DetailViewController {
 
     private static final Path imagePath = Paths.get(System.getProperty("user.home"),"/.sepm/images");
 
+    @FXML
+    public void initialize(){
+        this.muscleButtonEdit.selectedProperty().bindBidirectional(this.powerDetailView.disableProperty());
+    }
 
     public void fill(Vehicle vehicle){
         this.vehicle = vehicle;
@@ -139,13 +148,10 @@ public class DetailViewController {
         createTimeDetailView.setText(vehicle.getCreatetime().toString());
         if(vehicle.getPicture() != null) {
             String path = imagePath + "/" + vehicle.getPicture();
-           // String path = "/home/susi/.sepm/images/85bd8d0fa9d0d58a6d05c3360f565210f3d9eaae";
-            File file = new File(path);
-            boolean test = file.exists();
+          //  File file = new File(path);
+          //  boolean test = file.exists();
             Image image = new Image("file:" + path);
             imageViewDetailView.setImage(image);
-        //    imageViewDetailView.setFitHeight(200);
-          //  imageViewDetailView.setFitWidth(150);
             imageViewDetailView.setVisible(true);
             noPictureLabelDetailView.setVisible(false);
         } else {
@@ -185,9 +191,10 @@ public class DetailViewController {
         licenseRequirementsDetailView.setVisible(false);
         licenseplateDetailView.setDisable(false);
         licenseplateDetailView.setEditable(true);
-        powerSourceDetailView.setDisable(false);
-        powerSourceDetailView.setEditable(true);
-        powerDetailView.setDisable(false);
+        powerSourceDetailView.setVisible(false);
+        muscleButtonEdit.setVisible(true);
+        engineButtonEdit.setVisible(true);
+       // powerDetailView.setDisable(false);
         powerDetailView.setEditable(true);
         hourlyRateDetailView.setDisable(false);
         hourlyRateDetailView.setEditable(true);
@@ -244,14 +251,16 @@ public class DetailViewController {
 
         Double currentPower = parseDouble(powerDetailView.getText());
         Integer currentHourlyRate = parseInt(hourlyRateDetailView.getText());
-        PowerSource powerSource = null;
-        if(powerSourceDetailView.equals("ENGINE")){
-            powerSource = PowerSource.ENGINE;
-        } else {
-            powerSource = PowerSource.MUSCLE;
+        PowerSource currentPowerSource = null;
+        if(muscleButtonEdit.isSelected()) {
+            currentPowerSource = PowerSource.MUSCLE;
+            currentPower = null;
+        }
+        if(engineButtonEdit.isSelected()) {
+            currentPowerSource = PowerSource.ENGINE;
         }
 
-        Vehicle currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats,currentLicenseType, currentLicensePlate, powerSource, currentPower, currentHourlyRate, vehicle.getCreatetime(), LocalDateTime.now());
+        Vehicle currentVehicle = new Vehicle(currentName, currentBuildyear, currentDescription, currentSeats,currentLicenseType, currentLicensePlate, currentPowerSource, currentPower, currentHourlyRate, vehicle.getCreatetime(), LocalDateTime.now());
         currentVehicle.setUUIDForEditing(vehicle.getUUIDForEditing());
 
         try {

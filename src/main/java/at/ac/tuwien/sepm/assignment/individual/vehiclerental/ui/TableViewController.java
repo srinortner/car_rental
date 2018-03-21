@@ -87,6 +87,9 @@ public class TableViewController {
     private Button DeleteEntryTableView;
 
     @FXML
+    private Button newBookingButtonTableView;
+
+    @FXML
     private void initialize() {
         this.vehicleList = currentService.getListOfVehiclesFromPersistence();
 
@@ -149,6 +152,13 @@ public class TableViewController {
         }
         //TODO: better option?
         initialize();
+
+    }
+
+
+
+    @FXML
+    void changeToNewBookingView(ActionEvent event) {
 
     }
 
