@@ -21,7 +21,7 @@ public class SimpleBookingService implements BookingService{
     }
 
     public Booking addBookingToPersistence(Booking booking) throws InvalidBookingException {
-    //   validateBooking(booking);
+       validateBooking(booking);
        return bookingDAO.addBookingToDatabase(booking);
     }
 

@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.assignment.individual.entities;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 public class Booking {
@@ -17,6 +16,13 @@ public class Booking {
     private Integer totalPrice;
     private BookingStatus status;
     private LocalDateTime createtime;
+    private LocalDate licensedateA;
+    private LocalDate licensedateB;
+    private LocalDate licensedateC;
+    private String licensenumberA;
+    private String licensenumberB;
+    private String licensenumberC;
+    private List<LicenseType> personLicenseList;
 
 
 
@@ -122,5 +128,61 @@ public class Booking {
 
     public void setCreatetime(LocalDateTime createtime) {
         this.createtime = createtime;
+    }
+
+    public LocalDate getLicensedateA() {
+        return licensedateA;
+    }
+
+    public void setLicensedateA(LocalDate licensedateA) {
+        this.licensedateA = licensedateA;
+    }
+
+    public LocalDate getLicensedateB() {
+        return licensedateB;
+    }
+
+    public void setLicensedateB(LocalDate licensedateB) {
+        this.licensedateB = licensedateB;
+    }
+
+    public LocalDate getLicensedateC() {
+        return licensedateC;
+    }
+
+    public void setLicensedateC(LocalDate licensedateC) {
+        this.licensedateC = licensedateC;
+    }
+
+    public List<LicenseType> getPersonLicenseList() {
+        return personLicenseList;
+    }
+
+    public void setPersonLicenseList(List<LicenseType> personLicenseList) {
+        this.personLicenseList = personLicenseList;
+    }
+
+    public String getLicensenumberA() {
+        return licensenumberA;
+    }
+
+    public void setLicensenumberA(String licensenumberA) {
+        this.licensenumberA = licensenumberA;
+    }
+
+    public String getLicensenumberB() {
+        return licensenumberB;
+    }
+
+    public void setLicensenumberB(String licensenumberB) {
+        this.licensenumberB = licensenumberB;
+    }
+
+    public String getLicensenumberC() {
+        return licensenumberC;
+    }
+
+    public void setLicensenumberC(String licensenumberC) {
+        this.licensenumberC = licensenumberC;
     }
 }

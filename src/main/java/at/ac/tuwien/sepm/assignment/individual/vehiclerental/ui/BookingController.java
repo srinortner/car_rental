@@ -1,18 +1,19 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
 
-import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
-import at.ac.tuwien.sepm.assignment.individual.entities.BookingStatus;
-import at.ac.tuwien.sepm.assignment.individual.entities.PaymentType;
-import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.entities.*;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,15 +21,31 @@ import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.stream.Collectors.joining;
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.ButtonType.OK;
+
 public class BookingController {
 
     private List<Vehicle> vehicleList = null;
     private BookingService currentService;
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private TableViewController tableViewController;
+    private Stage primaryStage;
 
-    public BookingController(BookingService currentService) {
+    public TableViewController getTableViewController() {
+        return tableViewController;
+    }
+
+    public void setTableViewController(TableViewController tableViewController) {
+        this.tableViewController = tableViewController;
+
+    }
+
+    public BookingController(BookingService currentService, Stage primaryStage) {
         this.currentService = currentService;
+        this.primaryStage = primaryStage;
     }
 
     public List<Vehicle> getVehicleList() {
@@ -79,7 +96,7 @@ public class BookingController {
     private Button backButtonBooking;
 
     @FXML
-    private Button vehiclesButtonBooking;
+    private Button bookingsButtonBooking;
 
     @FXML
     private CheckBox CLicenseCheckBox;
@@ -106,7 +123,7 @@ public class BookingController {
     private TextField licenseNumberB;
 
     @FXML
-    private TextField licensenumberC;
+    private TextField licenseNumberC;
 
     @FXML
     private Spinner<Integer> fromHourPicker;
@@ -139,6 +156,8 @@ public class BookingController {
             pricesPerVehicle.add(vehicle.getHourlyRateCents());
         }
         pricesOfBooking.setText(pricesPerVehicle.toString());
+        toDatePickerBooking.setValue(LocalDate.now());
+        fromDatePickerBooking.setValue(LocalDate.now());
 
 
         SpinnerValueFactory<Integer> valueFactoryHour =
@@ -260,13 +279,18 @@ public class BookingController {
         }
         String currentPaymentNumber = paymentNumberBooking.getText();
 
-        LocalDate fromDate= fromDatePickerBooking.getValue();
-        LocalTime fromTime = LocalTime.of(fromHourPicker.getValue(), fromMinutePicker.getValue());
-        LocalDateTime currentStartDate = LocalDateTime.of(fromDate,fromTime);
+        LocalDateTime currentStartDate = null;
+            LocalDate fromDate = fromDatePickerBooking.getValue();
+            LocalTime fromTime = LocalTime.of(fromHourPicker.getValue(), fromMinutePicker.getValue());
+            currentStartDate = LocalDateTime.of(fromDate, fromTime);
 
-        LocalDate toDate= toDatePickerBooking.getValue();
-        LocalTime toTime = LocalTime.of(toHourPicker.getValue(), toMinutePicker.getValue());
-        LocalDateTime currentEndDate = LocalDateTime.of(toDate,toTime);
+
+        LocalDateTime currentEndDate = null;
+
+            LocalDate toDate = toDatePickerBooking.getValue();
+            LocalTime toTime = LocalTime.of(toHourPicker.getValue(), toMinutePicker.getValue());
+            currentEndDate = LocalDateTime.of(toDate, toTime);
+
 
         int dailyPrice = 0;
         for (Vehicle vehicle : vehicleList) {
@@ -276,9 +300,11 @@ public class BookingController {
         int pricePerMinute = (dailyPrice / 24) / 60;
         Integer currentTotalPrice = 0;
         LocalDateTime i = currentStartDate;
-        while (!i.equals(currentEndDate)) {
-            currentTotalPrice += pricePerMinute;
-            i = i.plusMinutes(1);
+
+            while (!i.equals(currentEndDate)) {
+                currentTotalPrice += pricePerMinute;
+                i = i.plusMinutes(1);
+
         }
 
 
@@ -291,16 +317,67 @@ public class BookingController {
             currentStatus = BookingStatus.CANCELED;
         }
 
-        //String name, PaymentType paymentType, String paymentNumber, LocalDate startDate, LocalDate endDate, List<Vehicle> bookedVehicles, Integer totalPrice, BookingStatus status
+        List<LicenseType> currentPersonLicenseList = new LinkedList<>();
         currentBooking = new Booking(currentName, currentPaymentType, currentPaymentNumber, currentStartDate, currentEndDate, vehicleList, currentTotalPrice, currentStatus, LocalDateTime.now());
-
-        try {
-            currentService.addBookingToPersistence(currentBooking);
-        } catch (InvalidBookingException e) {
-            LOG.error("Booking couldn't be added to Persistence! {}", e.getMessage());
+        if(ALicenseCheckBox.isSelected()){
+            currentPersonLicenseList.add(LicenseType.A);
+            currentBooking.setLicensedateA(ALicenseDateBooking.getValue());
+            currentBooking.setLicensenumberA(licenseNumberA.getText());
         }
+        if(BLicenseCheckBox.isSelected()){
+            currentPersonLicenseList.add(LicenseType.B);
+            currentBooking.setLicensedateB(BLicenseDateBooking.getValue());
+            currentBooking.setLicensenumberA(licenseNumberB.getText());
+        }
+        if(CLicenseCheckBox.isSelected()){
+            currentPersonLicenseList.add(LicenseType.C);
+            currentBooking.setLicensedateC(CLicenseDateBooking.getValue());
+            currentBooking.setLicensenumberA(licenseNumberC.getText());
+        }
+        currentBooking.setPersonLicenseList(currentPersonLicenseList);
 
-        saveLicenseInformation();
+
+            if (!cancelingPossible(currentStartDate)) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Dialog");
+                alert.setHeaderText("Free canceling will not be possible for this booking!");
+                alert.setContentText("Do you want to continue the booking anyways?");
+
+                if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+                    //String name, PaymentType paymentType, String paymentNumber, LocalDate startDate, LocalDate endDate, List<Vehicle> bookedVehicles, Integer totalPrice, BookingStatus status
+
+                    try {
+                        currentService.addBookingToPersistence(currentBooking);
+                    } catch (InvalidBookingException e) {
+                        LOG.error("Booking couldn't be added to Persistence! {}", e.getMessage());
+                        new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
+                    }
+                } else {
+                    alert.close();
+                    returnToVehicleTableView();
+                }
+            } else {
+
+                try {
+                    currentService.addBookingToPersistence(currentBooking);
+                    saveLicenseInformation();
+                } catch (InvalidBookingException e) {
+                    LOG.error("Booking couldn't be added to Persistence! {}", e.getMessage());
+                    new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
+                }
+                returnToVehicleTableView();
+            }
+
+    }
+
+    private boolean cancelingPossible(LocalDateTime starttime) {
+        if(paidRadioButton.isSelected()) {
+            return false;
+        }
+        if(LocalDateTime.now().plusWeeks(1).isAfter(starttime)) {
+            return false;
+        }
+        return true;
     }
 
     private void saveLicenseInformation() {
@@ -312,13 +389,11 @@ public class BookingController {
                 currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), licenseNumberB.getText(), BLicenseDateBooking.getValue());
             }
             if(CLicenseCheckBox.isSelected()){
-                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), licensenumberC.getText(), CLicenseDateBooking.getValue());
+                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), licenseNumberC.getText(), CLicenseDateBooking.getValue());
             }
         }
 
     }
-
-
 
     @FXML
     private void openBookingTableView(ActionEvent event) {
@@ -327,7 +402,20 @@ public class BookingController {
 
     @FXML
     private void openVehicleTableView(ActionEvent event) {
+        returnToVehicleTableView();
+    }
 
+    private void returnToVehicleTableView() {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Vehicles");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage for Tableview couldn't be changed");
+        }
     }
 
 

@@ -37,7 +37,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <RadioButton fx:id="canceledRadioButton" mnemonicParsing="false" text="Canceled" GridPane.columnIndex="1" GridPane.rowIndex="10">
+            <RadioButton fx:id="canceledRadioButton" disable="true" mnemonicParsing="false" text="Canceled" GridPane.columnIndex="1" GridPane.rowIndex="10">
                <padding>
                   <Insets left="160.0" />
                </padding>
@@ -66,12 +66,12 @@
             <Label text="Hourly prices per vehicle:" GridPane.rowIndex="9" />
             <Label fx:id="pricesOfBooking" text="None" GridPane.columnIndex="1" GridPane.rowIndex="9" />
             <Label text="Status:" GridPane.rowIndex="10" />
-            <RadioButton fx:id="paidRadioButton" mnemonicParsing="false" text="Paid" toggleGroup="$bookingtype" GridPane.columnIndex="1" GridPane.rowIndex="10">
+            <RadioButton fx:id="paidRadioButton" disable="true" mnemonicParsing="false" text="Paid" toggleGroup="$bookingtype" GridPane.columnIndex="1" GridPane.rowIndex="10">
                <padding>
                   <Insets left="90.0" />
                </padding>
             </RadioButton>
-            <RadioButton fx:id="bookedRadioButton" mnemonicParsing="false" text="Booked" toggleGroup="$bookingtype" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <RadioButton fx:id="bookedRadioButton" mnemonicParsing="false" selected="true" text="Booked" toggleGroup="$bookingtype" GridPane.columnIndex="1" GridPane.rowIndex="10" />
             <Label text="License:" GridPane.rowIndex="1" />
             <CheckBox fx:id="CLicenseCheckBox" mnemonicParsing="false" text="C" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <padding>
@@ -129,7 +129,7 @@
                         <Insets left="7.0" right="5.0" />
                      </padding>
                   </Label>
-                  <TextField fx:id="licensenumberC" />
+                  <TextField fx:id="licenseNumberC" />
                </children>
             </HBox>
          </children>
@@ -140,7 +140,7 @@
          </font>
       </Label>
       <Button fx:id="saveButtonBooking" layoutX="712.0" layoutY="510.0" mnemonicParsing="false" onAction="#saveBooking" text="Save" />
-      <Button fx:id="backButtonBooking" layoutX="857.0" layoutY="510.0" mnemonicParsing="false" onAction="#openBookingTableView" text="Back" />
-      <Button fx:id="vehiclesButtonBooking" layoutX="773.0" layoutY="510.0" mnemonicParsing="false" onAction="#openVehicleTableView" text="Vehicles" />
+      <Button fx:id="backButtonBooking" layoutX="857.0" layoutY="510.0" mnemonicParsing="false" onAction="#openVehicleTableView" text="Back" />
+      <Button fx:id="bookingsButtonBooking" layoutX="773.0" layoutY="510.0" mnemonicParsing="false" onAction="#openBookingTableView" text="Bookings" />
    </children>
 </AnchorPane>

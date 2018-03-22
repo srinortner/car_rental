@@ -37,6 +37,7 @@ public class TableViewController {
         this.detailViewController = detailViewController;
         this.bookingController = bookingController;
         detailViewController.setTableViewController(this);
+        bookingController.setTableViewController(this);
         this.primaryStage = primaryStage;
     }
 
@@ -161,7 +162,6 @@ public class TableViewController {
 
     @FXML
     void changeToNewBookingView(ActionEvent event) {
-
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingController) ? bookingController : null);
         final List<Vehicle> selectedVehicles = tableViewVehicles.getSelectionModel().getSelectedItems();

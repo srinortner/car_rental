@@ -40,7 +40,7 @@ SELECT * FROM (
 SELECT * FROM vehicle_license_requirement WHERE FALSE
 
 UNION SELECT 1, 'B'
-UNION SELECT 2, 'B'
+UNION SELECT 2, 'C'
 );
 
 CREATE TABLE IF NOT EXISTS booking (
