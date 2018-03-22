@@ -5,6 +5,10 @@ import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
+import org.apache.commons.validator.routines.CreditCardValidator;
+import org.apache.commons.validator.routines.IBANValidator;
+import org.apache.commons.validator.routines.checkdigit.CheckDigit;
+import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +21,9 @@ import static java.util.Objects.isNull;
 
 public class Validator {
 
+
+    private static final CreditCardValidator CREDIT_CARD_VALIDATOR = new CreditCardValidator();
+    private static final IBANValidator IBAN_VALIDATOR = new IBANValidator();
 
     private Validator() {
         // intentionally empty cause Validator is a Utility class
@@ -56,7 +63,12 @@ public class Validator {
         if (booking == null) {
             constraintViolations.add("Booking must not be null");
         } else {
-            //TODO: validate cardnumbers
+            if(!CREDIT_CARD_VALIDATOR.isValid(booking.getPaymentNumber())) {
+                constraintViolations.add("Creditcardnumber is invalid!");
+            }
+            if(!IBAN_VALIDATOR.isValid(booking.getPaymentNumber())) {
+                constraintViolations.add("IBAN is invalid!");
+            }
         }
     }
 

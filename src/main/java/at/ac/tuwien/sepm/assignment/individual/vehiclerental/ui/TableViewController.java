@@ -17,20 +17,25 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
-import java.util.Optional;
+
+import static java.util.stream.Collectors.joining;
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.ButtonType.OK;
 
 public class TableViewController {
 
     private VehicleService currentService;
     private List<Vehicle> vehicleList;
     private DetailViewController detailViewController;
+    private BookingController bookingController;
     private Stage primaryStage;
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public TableViewController(VehicleService currentService, DetailViewController detailViewController, Stage primaryStage) {
+    public TableViewController(VehicleService currentService, DetailViewController detailViewController, BookingController bookingController, Stage primaryStage) {
         this.currentService = currentService;
         this.detailViewController = detailViewController;
+        this.bookingController = bookingController;
         detailViewController.setTableViewController(this);
         this.primaryStage = primaryStage;
     }
@@ -134,24 +139,21 @@ public class TableViewController {
 
     @FXML
     void deleteEntry(ActionEvent event) {
-        ObservableList<Integer> selectedVehicles= tableViewVehicles.getSelectionModel().getSelectedIndices();
+        final ObservableList<Vehicle> selectedVehicles= tableViewVehicles.getSelectionModel().getSelectedItems();
 
-        for (Integer row: selectedVehicles
-             ) {
+        for (Vehicle vehicleToDelete: selectedVehicles) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation Dialog");
             alert.setHeaderText("The vehicle will be deleted");
-            alert.setContentText("Are you sure you want to delete " + vehicleList.get(row).getName() + "?");
+            alert.setContentText("Are you sure you want to delete " + vehicleToDelete.getName() + "?");
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
-                currentService.deleteVehicleFromPersistence(vehicleList.get(row));
+            if ( alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK){
+                currentService.deleteVehicleFromPersistence(vehicleToDelete);
+                tableViewVehicles.getItems().removeAll(selectedVehicles);
             } else {
                 alert.close();
             }
         }
-        //TODO: better option?
-        initialize();
 
     }
 
@@ -160,6 +162,23 @@ public class TableViewController {
     @FXML
     void changeToNewBookingView(ActionEvent event) {
 
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingController) ? bookingController : null);
+        final List<Vehicle> selectedVehicles = tableViewVehicles.getSelectionModel().getSelectedItems();
+
+        if(selectedVehicles.isEmpty()) {
+            new Alert(ERROR,"Please select the vehicles for your booking!", OK).showAndWait();
+        }
+        bookingController.setVehicleList(selectedVehicles);
+
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("New Booking");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage couldn't be changed to Booking");
+        }
     }
 
 

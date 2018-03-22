@@ -4,10 +4,15 @@ import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.universe.service.SimpleUniverseService;
 import at.ac.tuwien.sepm.assignment.individual.universe.service.UniverseService;
 import at.ac.tuwien.sepm.assignment.individual.universe.ui.UniverseController;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.BookingDAO;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.SimpleBookingDAO;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.SimpleVehicleDAO;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.VehicleDAO;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleBookingService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleVehicleService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.BookingController;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.DetailViewController;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.TableViewController;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.VehicleController;
@@ -39,9 +44,12 @@ public final class MainApplication extends Application {
       //  UniverseController universeController = new UniverseController(universeService);
 
         VehicleDAO vehicleDAO = new SimpleVehicleDAO();
+        BookingDAO bookingDAO = new SimpleBookingDAO();
+        BookingService bookingService = new SimpleBookingService(bookingDAO);
         VehicleService vehicleService = new SimpleVehicleService(vehicleDAO);
         DetailViewController detailViewController = new DetailViewController(vehicleService,primaryStage);
-        TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, primaryStage);
+        BookingController bookingController = new BookingController(bookingService);
+        TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, bookingController, primaryStage);
         VehicleController vehicleController = new VehicleController(vehicleService, tableViewController, primaryStage);
 
 
