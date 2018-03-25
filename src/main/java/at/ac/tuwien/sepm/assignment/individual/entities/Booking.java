@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.entities;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,18 +24,18 @@ public class Booking {
     private String licensenumberB;
     private String licensenumberC;
     private List<LicenseType> personLicenseList;
+    private String vehicleString;
 
 
 
-    public Booking(Long id, String name, PaymentType paymentType, String paymentNumber, LocalDateTime startDate, LocalDateTime endDate, List<Vehicle> bookedVehicles, Integer totalPrice, BookingStatus status) {
+    public Booking(Long id,String name, String paymentNumber, LocalDateTime startDate, LocalDateTime endDate, String bookedVehicles, Integer totalPrice, BookingStatus status, Timestamp createtime) {
         this.id = id;
         this.name = name;
-        this.paymentType = paymentType;
         this.paymentNumber = paymentNumber;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.bookedVehicles = bookedVehicles;
         this.totalPrice = totalPrice;
+        this.vehicleString = bookedVehicles;
         this.status = status;
     }
 

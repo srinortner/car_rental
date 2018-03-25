@@ -12,10 +12,7 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingServ
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleBookingService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleVehicleService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.BookingController;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.DetailViewController;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.TableViewController;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.VehicleController;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -48,7 +45,8 @@ public final class MainApplication extends Application {
         BookingService bookingService = new SimpleBookingService(bookingDAO);
         VehicleService vehicleService = new SimpleVehicleService(vehicleDAO);
         DetailViewController detailViewController = new DetailViewController(vehicleService,primaryStage);
-        BookingController bookingController = new BookingController(bookingService,primaryStage);
+        BookingTableViewController bookingTableViewController = new BookingTableViewController(bookingService);
+        BookingController bookingController = new BookingController(bookingService,bookingTableViewController,primaryStage);
         TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, bookingController, primaryStage);
         VehicleController vehicleController = new VehicleController(vehicleService, tableViewController, primaryStage);
 

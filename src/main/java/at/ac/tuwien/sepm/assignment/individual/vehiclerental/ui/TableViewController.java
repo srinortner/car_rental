@@ -168,16 +168,17 @@ public class TableViewController {
 
         if(selectedVehicles.isEmpty()) {
             new Alert(ERROR,"Please select the vehicles for your booking!", OK).showAndWait();
-        }
-        bookingController.setVehicleList(selectedVehicles);
+        } else {
+            bookingController.setVehicleList(selectedVehicles);
 
-        try {
-            primaryStage.setScene(new Scene(fxmlLoader.load()));
-            primaryStage.setTitle("New Booking");
-            primaryStage.show();
+            try {
+                primaryStage.setScene(new Scene(fxmlLoader.load()));
+                primaryStage.setTitle("New Booking");
+                primaryStage.show();
 
-        } catch (IOException e) {
-            LOG.error("Stage couldn't be changed to Booking");
+            } catch (IOException e) {
+                LOG.error("Stage couldn't be changed to Booking");
+            }
         }
     }
 

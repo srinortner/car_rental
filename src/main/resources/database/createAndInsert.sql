@@ -56,6 +56,14 @@ CREATE TABLE IF NOT EXISTS booking (
 
 );
 
+INSERT INTO booking
+SELECT * FROM (
+SELECT * FROM booking WHERE FALSE
+
+UNION SELECT 1, 'Ash Ketchum', '4532642579652817', '2018-10-04 10:22:00', '2018-10-05 10:22:00', '[Seat ]', 2000, 'BOOKED', '2018-10-01 10:22:00'
+UNION SELECT 2, 'Misty',  '4532642579652817', '2018-10-06 10:22:00', '2018-10-07 10:22:00', '[Seat ]', 2000, 'BOOKED', '2018-10-01 10:22:00'
+);
+
 CREATE TABLE IF NOT EXISTS vehicle_booking (
   vehicle_id BIGINT NOT NULL,
   booking_id BIGINT NOT NULL,
@@ -63,4 +71,12 @@ CREATE TABLE IF NOT EXISTS vehicle_booking (
   FOREIGN KEY (booking_id) references booking(id),
   license_number TEXT,
   license_date DATE,
+);
+
+INSERT INTO vehicle_booking
+SELECT * FROM (
+SELECT * FROM vehicle_booking WHERE FALSE
+
+UNION SELECT 1, 1, 12345, '2015-10-04'
+UNION SELECT 1, 2, 12344, '2015-10-04'
 );

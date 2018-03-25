@@ -32,6 +32,7 @@ public class BookingController {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private TableViewController tableViewController;
+    private BookingTableViewController bookingTableViewController;
     private Stage primaryStage;
 
     public TableViewController getTableViewController() {
@@ -43,8 +44,9 @@ public class BookingController {
 
     }
 
-    public BookingController(BookingService currentService, Stage primaryStage) {
+    public BookingController(BookingService currentService, BookingTableViewController bookingTableViewController, Stage primaryStage) {
         this.currentService = currentService;
+        this.bookingTableViewController = bookingTableViewController;
         this.primaryStage = primaryStage;
     }
 
@@ -88,6 +90,9 @@ public class BookingController {
 
     @FXML
     private Label totalPriceOfBooking;
+
+    @FXML
+    private Label createTimeLabelBooking;
 
     @FXML
     private Button saveButtonBooking;
@@ -146,7 +151,29 @@ public class BookingController {
     @FXML
     private RadioButton canceledRadioButton;
 
+    @FXML
+    private TableView<?> tableViewBookedVehicles;
+
+    @FXML
+    private TableColumn<?, ?> vehicleNameColumn;
+
+    @FXML
+    private TableColumn<?, ?> vehicleBuildyearColumn;
+
+    @FXML
+    private TableColumn<?, ?> VehicleLicenseplateColumn;
+
+    @FXML
+    private TableColumn<?, ?> VehiclePriceColumn;
+
+    @FXML
+    private Button editButtonBookings;
+
+
     private Booking currentBooking = null;
+
+    private LocalDateTime currentStartTime = null;
+    private LocalDateTime currentEndTime = null;
 
     @FXML
     private void initialize() {
@@ -279,29 +306,32 @@ public class BookingController {
         }
         String currentPaymentNumber = paymentNumberBooking.getText();
 
-        LocalDateTime currentStartDate = null;
+
             LocalDate fromDate = fromDatePickerBooking.getValue();
             LocalTime fromTime = LocalTime.of(fromHourPicker.getValue(), fromMinutePicker.getValue());
-            currentStartDate = LocalDateTime.of(fromDate, fromTime);
+            currentStartTime = LocalDateTime.of(fromDate, fromTime);
 
 
-        LocalDateTime currentEndDate = null;
+
 
             LocalDate toDate = toDatePickerBooking.getValue();
             LocalTime toTime = LocalTime.of(toHourPicker.getValue(), toMinutePicker.getValue());
-            currentEndDate = LocalDateTime.of(toDate, toTime);
+            currentEndTime = LocalDateTime.of(toDate, toTime);
 
-
+            boolean vehiclesAvailable = true;
         int dailyPrice = 0;
         for (Vehicle vehicle : vehicleList) {
             dailyPrice += vehicle.getHourlyRateCents() * 24;
+            if(!checkAvailiabilityOfVehicle(vehicle.getId())){
+                vehiclesAvailable = false;
+            }
         }
 
         int pricePerMinute = (dailyPrice / 24) / 60;
         Integer currentTotalPrice = 0;
-        LocalDateTime i = currentStartDate;
+        LocalDateTime i = currentStartTime;
 
-            while (!i.equals(currentEndDate)) {
+            while (!i.equals(currentEndTime)) {
                 currentTotalPrice += pricePerMinute;
                 i = i.plusMinutes(1);
 
@@ -318,7 +348,7 @@ public class BookingController {
         }
 
         List<LicenseType> currentPersonLicenseList = new LinkedList<>();
-        currentBooking = new Booking(currentName, currentPaymentType, currentPaymentNumber, currentStartDate, currentEndDate, vehicleList, currentTotalPrice, currentStatus, LocalDateTime.now());
+        currentBooking = new Booking(currentName, currentPaymentType, currentPaymentNumber, currentStartTime, currentEndTime, vehicleList, currentTotalPrice, currentStatus, LocalDateTime.now());
         if(ALicenseCheckBox.isSelected()){
             currentPersonLicenseList.add(LicenseType.A);
             currentBooking.setLicensedateA(ALicenseDateBooking.getValue());
@@ -327,17 +357,17 @@ public class BookingController {
         if(BLicenseCheckBox.isSelected()){
             currentPersonLicenseList.add(LicenseType.B);
             currentBooking.setLicensedateB(BLicenseDateBooking.getValue());
-            currentBooking.setLicensenumberA(licenseNumberB.getText());
+            currentBooking.setLicensenumberB(licenseNumberB.getText());
         }
         if(CLicenseCheckBox.isSelected()){
             currentPersonLicenseList.add(LicenseType.C);
             currentBooking.setLicensedateC(CLicenseDateBooking.getValue());
-            currentBooking.setLicensenumberA(licenseNumberC.getText());
+            currentBooking.setLicensenumberC(licenseNumberC.getText());
         }
         currentBooking.setPersonLicenseList(currentPersonLicenseList);
 
-
-            if (!cancelingPossible(currentStartDate)) {
+        if(vehiclesAvailable) {
+            if (!cancelingPossible()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Confirmation Dialog");
                 alert.setHeaderText("Free canceling will not be possible for this booking!");
@@ -367,14 +397,17 @@ public class BookingController {
                 }
                 returnToVehicleTableView();
             }
+        } else {
+            new Alert(ERROR, "One of the vehicles is already booked during that time, please select another time!", OK).showAndWait();
+        }
 
     }
 
-    private boolean cancelingPossible(LocalDateTime starttime) {
+    private boolean cancelingPossible() {
         if(paidRadioButton.isSelected()) {
             return false;
         }
-        if(LocalDateTime.now().plusWeeks(1).isAfter(starttime)) {
+        if(LocalDateTime.now().plusWeeks(1).isAfter(currentStartTime)) {
             return false;
         }
         return true;
@@ -395,9 +428,37 @@ public class BookingController {
 
     }
 
+    private boolean checkAvailiabilityOfVehicle (Long id) {
+        boolean isAvailable = true;
+        List<Booking> allBookingsOfVehicle;
+        allBookingsOfVehicle = currentService.getBookingsForVehicleFromPersistence(id);
+        for (Booking booking: allBookingsOfVehicle) {
+         if(isAvailable) {
+             if (booking.getStartDate().isBefore(currentStartTime) && booking.getEndDate().isBefore(currentEndTime)){
+                 isAvailable = true;
+             } else if (booking.getStartDate().isAfter(currentStartTime) && booking.getEndDate().isAfter(currentEndTime)){
+                 isAvailable = true;
+             } else {
+                 isAvailable = false;
+             }
+         }
+        }
+        return isAvailable;
+    }
+
     @FXML
     private void openBookingTableView(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking_tableview.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingTableViewController) ? bookingTableViewController : null);
 
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Bookings");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage for Tableview couldn't be changed");
+        }
     }
 
     @FXML
@@ -417,6 +478,12 @@ public class BookingController {
             LOG.error("Stage for Tableview couldn't be changed");
         }
     }
+
+    @FXML
+    void editBooking(ActionEvent event) {
+
+    }
+
 
 
 }

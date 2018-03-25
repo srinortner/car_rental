@@ -6,8 +6,10 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.Booking
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.print.Book;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
+import java.util.List;
 
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Validator.validateBooking;
 
@@ -27,5 +29,14 @@ public class SimpleBookingService implements BookingService{
 
     public void addLicenseInformationToPersistence (Long vehicleId, Long bookingId, String licensenumber, LocalDate licensedate) {
         bookingDAO.addLicenseToDatabase(vehicleId,bookingId,licensenumber,licensedate);
+    }
+
+    public List<Booking> getBookingsForVehicleFromPersistence(Long vehicleID){
+        List<Booking> bookingList = bookingDAO.getAllBookingsOfVehicle(vehicleID);
+        return bookingList;
+    }
+
+    public List<Booking> getAllBookingsFromPersistence(){
+        return bookingDAO.getAllBookingsFromDatabase();
     }
 }
