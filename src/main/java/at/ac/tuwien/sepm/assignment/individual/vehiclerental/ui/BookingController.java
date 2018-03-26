@@ -21,6 +21,7 @@ import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.ButtonType.OK;
@@ -434,12 +435,22 @@ public class BookingController {
         allBookingsOfVehicle = currentService.getBookingsForVehicleFromPersistence(id);
         for (Booking booking: allBookingsOfVehicle) {
          if(isAvailable) {
-             if (booking.getStartDate().isBefore(currentStartTime) && booking.getEndDate().isBefore(currentEndTime)){
-                 isAvailable = true;
-             } else if (booking.getStartDate().isAfter(currentStartTime) && booking.getEndDate().isAfter(currentEndTime)){
-                 isAvailable = true;
+             if(booking.getPaidtime() == null) {
+                 if (booking.getStartDate().isBefore(currentStartTime) && booking.getEndDate().isBefore(currentEndTime)) {
+                     isAvailable = true;
+                 } else if (booking.getStartDate().isAfter(currentStartTime) && booking.getEndDate().isAfter(currentEndTime)) {
+                     isAvailable = true;
+                 } else {
+                     isAvailable = false;
+                 }
              } else {
-                 isAvailable = false;
+                 if (booking.getStartDate().isBefore(currentStartTime) && booking.getPaidtime().toLocalDateTime().isBefore(currentEndTime)) {
+                     isAvailable = true;
+                 } else if (booking.getStartDate().isAfter(currentStartTime) && booking.getPaidtime().toLocalDateTime().isAfter(currentEndTime)) {
+                     isAvailable = true;
+                 } else {
+                     isAvailable = false;
+                 }
              }
          }
         }

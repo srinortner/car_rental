@@ -39,4 +39,8 @@ public class SimpleBookingService implements BookingService{
     public List<Booking> getAllBookingsFromPersistence(){
         return bookingDAO.getAllBookingsFromDatabase();
     }
+
+    public void finishBookingInPersistence(Booking booking){
+        bookingDAO.finishBooking(booking);
+    }
 }

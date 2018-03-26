@@ -25,10 +25,11 @@ public class Booking {
     private String licensenumberC;
     private List<LicenseType> personLicenseList;
     private String vehicleString;
+    private Timestamp paidtime;
 
 
 
-    public Booking(Long id,String name, String paymentNumber, LocalDateTime startDate, LocalDateTime endDate, String bookedVehicles, Integer totalPrice, BookingStatus status, Timestamp createtime) {
+    public Booking(Long id, String name, String paymentNumber, LocalDateTime startDate, LocalDateTime endDate, String bookedVehicles, Integer totalPrice, BookingStatus status, Timestamp createtime, Timestamp paidtime) {
         this.id = id;
         this.name = name;
         this.paymentNumber = paymentNumber;
@@ -37,9 +38,10 @@ public class Booking {
         this.totalPrice = totalPrice;
         this.vehicleString = bookedVehicles;
         this.status = status;
+        this.paidtime = paidtime;
     }
 
-    public Booking(String name, PaymentType paymentType, String paymentNumber, LocalDateTime startDate, LocalDateTime endDate, List<Vehicle> bookedVehicles, Integer totalPrice, BookingStatus status, LocalDateTime createtime) {
+    public Booking(String name, PaymentType paymentType, String paymentNumber, LocalDateTime startDate, LocalDateTime endDate, List<Vehicle> bookedVehicles, Integer totalPrice, BookingStatus status, LocalDateTime createtime ) {
         this.name = name;
         this.paymentType = paymentType;
         this.paymentNumber = paymentNumber;
@@ -49,6 +51,8 @@ public class Booking {
         this.totalPrice = totalPrice;
         this.status = status;
         this.createtime = createtime;
+        this.paidtime = null;
+
     }
 
     public Long getId() {
@@ -185,5 +189,13 @@ public class Booking {
 
     public void setLicensenumberC(String licensenumberC) {
         this.licensenumberC = licensenumberC;
+    }
+
+    public Timestamp getPaidtime() {
+        return paidtime;
+    }
+
+    public void setPaidtime(Timestamp paidtime) {
+        this.paidtime = paidtime;
     }
 }

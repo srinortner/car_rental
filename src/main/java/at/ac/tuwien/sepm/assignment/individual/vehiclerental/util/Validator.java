@@ -103,23 +103,25 @@ public class Validator {
         //checks if the person booking the vehicle has the license for it for more than 3 years
         for (Vehicle vehicle: booking.getBookedVehicles()) {
             for(int i = 0; i <= vehicle.getLicenseType().size()-1; i++) {
+                boolean hasA = false;
+                boolean hasB = false;
+                boolean hasC = false;
                 if(vehicle.getLicenseType().get(i) == LicenseType.A) {
                     if(booking.getPersonLicenseList().contains(LicenseType.A)) {
+                        hasA = true;
                         if(booking.getLicensenumberA() == null) {
                             constraintViolations.add("Please add A-licensenumber!");
                         }
                         if(booking.getLicensedateA() == null){
                             constraintViolations.add("Please add A-licensedate!");
                         }
-                        LocalDate today = LocalDate.now();
-                        if (today.plusYears(3).isBefore(booking.getLicensedateA())) {
-                            constraintViolations.add("You are not allowed to book this vehicle!");
-                        }
+
                     } else {
                         constraintViolations.add("You are missing a A-license to book this vehicle!");
                     }
                 }
                 if(vehicle.getLicenseType().get(i) == LicenseType.B) {
+                    hasB = true;
                     if(!(booking.getPersonLicenseList().contains(LicenseType.B))) {
                         constraintViolations.add("You are missing a B-license to book this vehicle!");
                     }
@@ -131,6 +133,7 @@ public class Validator {
                     }
                 }
                 if(vehicle.getLicenseType().get(i) == LicenseType.C) {
+                    hasC = true;
                     if(booking.getPersonLicenseList().contains(LicenseType.C)) {
                         if(booking.getLicensenumberC() == null) {
                             constraintViolations.add("Please add C-licensenumber!");
@@ -138,12 +141,21 @@ public class Validator {
                         if(booking.getLicensedateC() == null){
                             constraintViolations.add("Please add C-licensedate!");
                         }
-                        LocalDate today = LocalDate.now();
-                        if (today.plusYears(3).isBefore(booking.getLicensedateC())) {
-                            constraintViolations.add("You are not allowed to book this vehicle!");
-                        }
+
                     } else {
                         constraintViolations.add("You are missing a C-license to book this vehicle!");
+                    }
+                }
+
+                if(hasA && !hasB && !hasC) {
+                    LocalDate today = LocalDate.now();
+                    if (today.plusYears(3).isBefore(booking.getLicensedateA())) {
+                        constraintViolations.add("You are not allowed to book this vehicle!");
+                    }
+                } else if(hasC && !hasB && !hasA) {
+                    LocalDate today = LocalDate.now();
+                    if (today.plusYears(3).isBefore(booking.getLicensedateC())) {
+                        constraintViolations.add("You are not allowed to book this vehicle!");
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
+import at.ac.tuwien.sepm.assignment.individual.entities.BookingStatus;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
 import javafx.beans.property.SimpleStringProperty;
@@ -8,12 +9,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 
 import java.util.List;
+
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.ButtonType.OK;
 
 public class BookingTableViewController {
 
@@ -65,11 +66,11 @@ public class BookingTableViewController {
         toColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEndDate().toString()));
         statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
         totalPriceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTotalPrice().toString()));
-
+        fromColumn.setSortType(TableColumn.SortType.DESCENDING);
         List<Booking> temp = currentService.getAllBookingsFromPersistence();
         bookingData = FXCollections.observableArrayList(temp);
         bookingTableView.setItems(bookingData);
-        bookingTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
 
     }
 
@@ -80,7 +81,14 @@ public class BookingTableViewController {
 
     @FXML
     void finishBooking(ActionEvent event) {
-
+        Booking selectedBooking = bookingTableView.getSelectionModel().getSelectedItem();
+        if(!selectedBooking.getStatus().equals(BookingStatus.BOOKED)){
+            new Alert(ERROR,"This booking is already finished!", OK).showAndWait();
+        } else {
+            currentService.finishBookingInPersistence(selectedBooking);
+            selectedBooking.setStatus(BookingStatus.PAID);
+            bookingTableView.refresh();
+        }
     }
 
     @FXML

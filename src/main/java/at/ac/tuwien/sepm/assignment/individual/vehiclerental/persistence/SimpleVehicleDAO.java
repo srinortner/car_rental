@@ -191,7 +191,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
         return vehicleList;
     }
 
-    public List<Vehicle> getDataFromResultSet(ResultSet resultSet) {
+    private List<Vehicle> getDataFromResultSet(ResultSet resultSet) {
         List<Vehicle> currentVehicleList = new ArrayList<>();
 
         try {
@@ -230,4 +230,6 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
         return currentVehicleList;
     }
+
+
 }

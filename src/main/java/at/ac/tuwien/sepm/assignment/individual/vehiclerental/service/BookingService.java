@@ -15,4 +15,6 @@ public interface BookingService {
     List<Booking> getBookingsForVehicleFromPersistence(Long vehicleID);
 
     List<Booking> getAllBookingsFromPersistence();
+
+    void finishBookingInPersistence(Booking booking);
 }
