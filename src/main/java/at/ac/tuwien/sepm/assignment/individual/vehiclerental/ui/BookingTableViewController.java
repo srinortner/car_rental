@@ -76,6 +76,14 @@ public class BookingTableViewController {
 
     @FXML
     void cancelBooking(ActionEvent event) {
+        Booking selectedBooking = bookingTableView.getSelectionModel().getSelectedItem();
+        if (!selectedBooking.getStatus().equals(BookingStatus.BOOKED)) {
+            new Alert(ERROR, "This booking can't be canceled!", OK).showAndWait();
+        } else {
+            currentService.cancelBookingInPersistence(selectedBooking);
+            selectedBooking.setStatus(BookingStatus.CANCELED);
+            bookingTableView.refresh();
+        }
 
     }
 

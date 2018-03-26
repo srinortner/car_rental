@@ -26,6 +26,7 @@ public class Booking {
     private List<LicenseType> personLicenseList;
     private String vehicleString;
     private Timestamp paidtime;
+    private int cancelingFeeInPercent = 0;
 
 
 
@@ -197,5 +198,13 @@ public class Booking {
 
     public void setPaidtime(Timestamp paidtime) {
         this.paidtime = paidtime;
+    }
+
+    public int getCancelingFeeInPercent() {
+        return cancelingFeeInPercent;
+    }
+
+    public void setCancelingFeeInPercent(int cancelingFeeInPercent) {
+        this.cancelingFeeInPercent = cancelingFeeInPercent;
     }
 }

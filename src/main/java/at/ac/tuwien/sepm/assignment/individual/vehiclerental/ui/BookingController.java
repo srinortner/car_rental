@@ -434,7 +434,7 @@ public class BookingController {
         List<Booking> allBookingsOfVehicle;
         allBookingsOfVehicle = currentService.getBookingsForVehicleFromPersistence(id);
         for (Booking booking: allBookingsOfVehicle) {
-         if(isAvailable) {
+         if(isAvailable && !(booking.getStatus() == BookingStatus.CANCELED)) {
              if(booking.getPaidtime() == null) {
                  if (booking.getStartDate().isBefore(currentStartTime) && booking.getEndDate().isBefore(currentEndTime)) {
                      isAvailable = true;

@@ -17,4 +17,6 @@ public interface BookingService {
     List<Booking> getAllBookingsFromPersistence();
 
     void finishBookingInPersistence(Booking booking);
+
+    void cancelBookingInPersistence(Booking booking);
 }

@@ -253,7 +253,6 @@ public class SimpleBookingDAO implements BookingDAO{
         }
 
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
 
         try {
             preparedStatement = connection.prepareStatement("UPDATE BOOKING SET TYPE = ?, PAIDTIME = ? WHERE ID = ?");
@@ -267,5 +266,27 @@ public class SimpleBookingDAO implements BookingDAO{
         } catch (SQLException e) {
             LOG.error("Booking status couldn't be updated!");
         }
+    }
+
+    public void cancelBooking(Booking booking){
+        if(booking == null) {
+            LOG.warn("Booking is null!");
+        }
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("UPDATE BOOKING SET TYPE = ?, TOTAL_PRICE = ? WHERE ID = ?");
+            preparedStatement.setString(1, "CANCELED");
+            preparedStatement.setInt(2,booking.getTotalPrice());
+            preparedStatement.setLong(3, booking.getId());
+            preparedStatement.executeUpdate();
+
+            preparedStatement.close();
+            LOG.info("Booking was updated");
+        } catch (SQLException e) {
+            LOG.error("Booking status couldn't be updated");
+        }
+
+
     }
 }
