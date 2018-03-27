@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS vehicle_booking (
   booking_id BIGINT NOT NULL,
   FOREIGN KEY (vehicle_id) references vehicle(id),
   FOREIGN KEY (booking_id) references booking(id),
+  license VARCHAR(1) CHECK(license IN ('A', 'B', 'C')),
   license_number TEXT,
   license_date DATE,
 );
@@ -78,6 +79,6 @@ INSERT INTO vehicle_booking
 SELECT * FROM (
 SELECT * FROM vehicle_booking WHERE FALSE
 
-UNION SELECT 1, 1, 12345, '2015-10-04'
-UNION SELECT 1, 2, 12344, '2015-10-04'
+UNION SELECT 1, 1, 'B', 12345, '2015-10-04'
+UNION SELECT 1, 2, 'C',12344, '2015-10-04'
 );

@@ -10,7 +10,7 @@ public interface BookingService {
 
     Booking addBookingToPersistence(Booking booking) throws InvalidBookingException;
 
-    void addLicenseInformationToPersistence (Long vehicleId, Long bookingId, String licensenumber, LocalDate licensedate);
+    void addLicenseInformationToPersistence (Long vehicleId, Long bookingId,String licensetype, String licensenumber, LocalDate licensedate);
 
     List<Booking> getBookingsForVehicleFromPersistence(Long vehicleID);
 
@@ -19,4 +19,6 @@ public interface BookingService {
     void finishBookingInPersistence(Booking booking);
 
     void cancelBookingInPersistence(Booking booking);
+
+    void getLicenseDataFromPersistence(Booking booking);
 }

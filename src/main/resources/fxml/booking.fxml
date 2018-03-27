@@ -64,9 +64,9 @@
             <TextField fx:id="paymentNumberBooking" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <Label text="From:" GridPane.rowIndex="6" />
             <Label text="To:" GridPane.rowIndex="7" />
-            <Label text="Vehicles:" GridPane.rowIndex="10" />
+            <Label fx:id="vehiclesLabel" text="Vehicles:" GridPane.rowIndex="10" />
             <Label fx:id="vehiclesOfBooking" text="None" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-            <Label text="Hourly prices per vehicle:" GridPane.rowIndex="11" />
+            <Label fx:id="hourlyPricesLabel" text="Hourly prices per vehicle:" GridPane.rowIndex="11" />
             <Label fx:id="pricesOfBooking" text="None" GridPane.columnIndex="1" GridPane.rowIndex="11" />
             <Label text="Status:" GridPane.rowIndex="8" />
             <RadioButton fx:id="paidRadioButton" disable="true" mnemonicParsing="false" text="Paid" toggleGroup="$bookingtype" GridPane.columnIndex="1" GridPane.rowIndex="8">
@@ -110,6 +110,7 @@
                   <DatePicker fx:id="fromDatePickerBooking" prefHeight="26.0" prefWidth="150.0" />
                   <Spinner fx:id="fromHourPicker" prefWidth="75.0" />
                   <Spinner fx:id="fromMinutePicker" layoutX="78.0" layoutY="10.0" prefWidth="75.0" />
+                  <HBox />
                </children>
             </HBox>
             <Label text="Licensenumber:" GridPane.rowIndex="2" />

@@ -9,7 +9,7 @@ public interface BookingDAO {
 
     Booking addBookingToDatabase (Booking booking);
 
-    void addLicenseToDatabase (Long vehicleId, Long bookingId, String licensenumber, LocalDate licensedate);
+    void addLicenseToDatabase (Long vehicleId, Long bookingId,String licensetype, String licensenumber, LocalDate licensedate);
     List<Booking> getAllBookingsOfVehicle (Long id);
     List<Booking> getAllBookingsFromDatabase();
     void finishBooking(Booking booking);

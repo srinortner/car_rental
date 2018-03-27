@@ -27,8 +27,8 @@ public class SimpleBookingService implements BookingService{
        return bookingDAO.addBookingToDatabase(booking);
     }
 
-    public void addLicenseInformationToPersistence (Long vehicleId, Long bookingId, String licensenumber, LocalDate licensedate) {
-        bookingDAO.addLicenseToDatabase(vehicleId,bookingId,licensenumber,licensedate);
+    public void addLicenseInformationToPersistence (Long vehicleId, Long bookingId, String licensetype, String licensenumber, LocalDate licensedate) {
+        bookingDAO.addLicenseToDatabase(vehicleId,bookingId,licensetype,licensenumber,licensedate);
     }
 
     public List<Booking> getBookingsForVehicleFromPersistence(Long vehicleID){
@@ -62,5 +62,9 @@ public class SimpleBookingService implements BookingService{
         booking.setCancelingFeeInPercent(percentage);
         booking.setTotalPrice(cancellationFee);
         bookingDAO.cancelBooking(booking);
+    }
+
+    public void getLicenseDataFromPersistence(Booking booking) {
+
     }
 }

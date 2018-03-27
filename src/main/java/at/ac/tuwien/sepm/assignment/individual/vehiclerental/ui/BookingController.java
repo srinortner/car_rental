@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,7 @@ public class BookingController {
         this.currentService = currentService;
         this.bookingTableViewController = bookingTableViewController;
         this.primaryStage = primaryStage;
+        bookingTableViewController.setBookingController(this);
     }
 
     public List<Vehicle> getVehicleList() {
@@ -175,6 +177,13 @@ public class BookingController {
 
     private LocalDateTime currentStartTime = null;
     private LocalDateTime currentEndTime = null;
+
+    @FXML
+    private Label hourlyPricesLabel;
+
+    @FXML
+    private Label vehiclesLabel;
+
 
     @FXML
     private void initialize() {
@@ -417,13 +426,13 @@ public class BookingController {
     private void saveLicenseInformation() {
         for (Vehicle vehicle: vehicleList) {
             if(ALicenseCheckBox.isSelected()) {
-                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), licenseNumberA.getText(), ALicenseDateBooking.getValue());
+                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), "A", licenseNumberA.getText(), ALicenseDateBooking.getValue());
             }
             if(BLicenseCheckBox.isSelected()){
-                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), licenseNumberB.getText(), BLicenseDateBooking.getValue());
+                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(),"B", licenseNumberB.getText(), BLicenseDateBooking.getValue());
             }
             if(CLicenseCheckBox.isSelected()){
-                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), licenseNumberC.getText(), CLicenseDateBooking.getValue());
+                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), "C", licenseNumberC.getText(), CLicenseDateBooking.getValue());
             }
         }
 
@@ -470,6 +479,77 @@ public class BookingController {
         } catch (IOException e) {
             LOG.error("Stage for Tableview couldn't be changed");
         }
+    }
+
+    void fillBookingDetailView(Booking booking) {
+        nameOfPersonBooking.setText(booking.getName());
+        List<LicenseType> personLicenseList = booking.getPersonLicenseList();
+        if(personLicenseList.contains(LicenseType.A)) {
+            ALicenseCheckBox.setSelected(true);
+            licenseNumberA.setText(booking.getLicensenumberA());
+            ALicenseDateBooking.setValue(booking.getLicensedateA());
+        }
+        if(personLicenseList.contains(LicenseType.B)) {
+            BLicenseCheckBox.setSelected(true);
+            licenseNumberB.setText(booking.getLicensenumberB());
+            BLicenseDateBooking.setValue(booking.getLicensedateB());
+        }
+        if(personLicenseList.contains(LicenseType.C)) {
+            CLicenseCheckBox.setSelected(true);
+            licenseNumberC.setText(booking.getLicensenumberC());
+            CLicenseDateBooking.setValue(booking.getLicensedateC());
+        }
+
+        //TODO: PaymentType
+        paymentNumberBooking.setText(booking.getPaymentNumber());
+        LocalDate startDate = LocalDate.of(booking.getStartDate().getYear(),booking.getStartDate().getMonth(),booking.getStartDate().getDayOfMonth());
+        int startHour = booking.getStartDate().getHour();
+        int startMin = booking.getStartDate().getMinute();
+        fromDatePickerBooking.setValue(startDate);
+        fromHourPicker.getValueFactory().setValue(startHour);
+        fromMinutePicker.getValueFactory().setValue(startMin);
+
+        LocalDate endDate = LocalDate.of(booking.getEndDate().getYear(),booking.getEndDate().getMonth(),booking.getEndDate().getDayOfMonth());
+        int endHour = booking.getEndDate().getHour();
+        int endMin = booking.getEndDate().getMinute();
+        toDatePickerBooking.setValue(endDate);
+        toHourPicker.getValueFactory().setValue(endHour);
+        toMinutePicker.getValueFactory().setValue(endMin);
+
+        //TODO: createTimeLabelBooking.setText(booking.getCreatetime().toString());
+
+        if(booking.getStartDate().isAfter(LocalDateTime.now())) {
+            editButtonBookings.setVisible(true);
+        }
+        //TODO: tableview vehicles
+        disableEverything();
+
+    }
+
+    public void disableEverything() {
+        nameOfPersonBooking.setDisable(true);
+        ALicenseCheckBox.setDisable(true);
+        BLicenseCheckBox.setDisable(true);
+        CLicenseCheckBox.setDisable(true);
+        licenseNumberA.setDisable(true);
+        licenseNumberB.setDisable(true);
+        licenseNumberC.setDisable(true);
+        ALicenseDateBooking.setDisable(true);
+        BLicenseDateBooking.setDisable(true);
+        CLicenseDateBooking.setDisable(true);
+        paymentNumberBooking.setDisable(true);
+        fromDatePickerBooking.setDisable(true);
+        fromHourPicker.setDisable(true);
+        fromMinutePicker.setDisable(true);
+        toDatePickerBooking.setDisable(true);
+        toHourPicker.setDisable(true);
+        toMinutePicker.setDisable(true);
+        bookedRadioButton.setSelected(true);
+
+        vehiclesOfBooking.setVisible(false);
+        vehiclesLabel.setVisible(false);
+        hourlyPricesLabel.setVisible(false);
+        pricesOfBooking.setVisible(false);
     }
 
     @FXML
