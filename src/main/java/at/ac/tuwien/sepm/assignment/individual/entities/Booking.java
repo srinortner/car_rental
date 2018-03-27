@@ -30,15 +30,17 @@ public class Booking {
 
 
 
-    public Booking(Long id, String name, String paymentNumber, LocalDateTime startDate, LocalDateTime endDate, String bookedVehicles, Integer totalPrice, BookingStatus status, Timestamp createtime, Timestamp paidtime) {
+    public Booking(Long id, String name, PaymentType paymentType, String paymentNumber, LocalDateTime startDate, LocalDateTime endDate, String bookedVehicles, Integer totalPrice, BookingStatus status, Timestamp createtime, Timestamp paidtime) {
         this.id = id;
         this.name = name;
+        this.paymentType = paymentType;
         this.paymentNumber = paymentNumber;
         this.startDate = startDate;
         this.endDate = endDate;
         this.totalPrice = totalPrice;
         this.vehicleString = bookedVehicles;
         this.status = status;
+        this.createtime = createtime.toLocalDateTime();
         this.paidtime = paidtime;
     }
 

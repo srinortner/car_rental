@@ -64,7 +64,7 @@ public class SimpleBookingService implements BookingService{
         bookingDAO.cancelBooking(booking);
     }
 
-    public void getLicenseDataFromPersistence(Booking booking) {
-
+    public List<Long> getVehicleIDsFromPersistence(Booking booking) {
+       return bookingDAO.getVehicleIDsFromDatabase(booking);
     }
 }

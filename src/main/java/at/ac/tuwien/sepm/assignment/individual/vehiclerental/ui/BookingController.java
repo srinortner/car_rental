@@ -4,6 +4,10 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 import at.ac.tuwien.sepm.assignment.individual.entities.*;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +23,8 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,6 +37,7 @@ public class BookingController {
 
     private List<Vehicle> vehicleList = null;
     private BookingService currentService;
+    private VehicleService currentVehicleService;
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private TableViewController tableViewController;
@@ -46,8 +53,9 @@ public class BookingController {
 
     }
 
-    public BookingController(BookingService currentService, BookingTableViewController bookingTableViewController, Stage primaryStage) {
+    public BookingController(BookingService currentService, VehicleService currentVehicleService, BookingTableViewController bookingTableViewController, Stage primaryStage) {
         this.currentService = currentService;
+        this.currentVehicleService = currentVehicleService;
         this.bookingTableViewController = bookingTableViewController;
         this.primaryStage = primaryStage;
         bookingTableViewController.setBookingController(this);
@@ -155,19 +163,19 @@ public class BookingController {
     private RadioButton canceledRadioButton;
 
     @FXML
-    private TableView<?> tableViewBookedVehicles;
+    private TableView<Vehicle> tableViewBookedVehicles;
 
     @FXML
-    private TableColumn<?, ?> vehicleNameColumn;
+    private TableColumn<Vehicle, String> vehicleNameColumn;
 
     @FXML
-    private TableColumn<?, ?> vehicleBuildyearColumn;
+    private TableColumn<Vehicle, String> vehicleBuildyearColumn;
 
     @FXML
-    private TableColumn<?, ?> VehicleLicenseplateColumn;
+    private TableColumn<Vehicle, String> vehicleLicenseplateColumn;
 
     @FXML
-    private TableColumn<?, ?> VehiclePriceColumn;
+    private TableColumn<Vehicle, String> vehiclePriceColumn;
 
     @FXML
     private Button editButtonBookings;
@@ -184,6 +192,9 @@ public class BookingController {
     @FXML
     private Label vehiclesLabel;
 
+    private List<Vehicle> vehiclesOfBookingList = new ArrayList<>();
+    private ObservableList<Vehicle> vehicleData = FXCollections.observableArrayList();
+    private HashMap<Long,Integer> currentPricesOfVehicles = new HashMap<>();
 
     @FXML
     private void initialize() {
@@ -303,8 +314,6 @@ public class BookingController {
 
     }
 
-
-
     @FXML
     private void saveBooking(ActionEvent event) {
         String currentName = nameOfPersonBooking.getText();
@@ -315,18 +324,6 @@ public class BookingController {
             currentPaymentType = PaymentType.IBAN;
         }
         String currentPaymentNumber = paymentNumberBooking.getText();
-
-
-            LocalDate fromDate = fromDatePickerBooking.getValue();
-            LocalTime fromTime = LocalTime.of(fromHourPicker.getValue(), fromMinutePicker.getValue());
-            currentStartTime = LocalDateTime.of(fromDate, fromTime);
-
-
-
-
-            LocalDate toDate = toDatePickerBooking.getValue();
-            LocalTime toTime = LocalTime.of(toHourPicker.getValue(), toMinutePicker.getValue());
-            currentEndTime = LocalDateTime.of(toDate, toTime);
 
             boolean vehiclesAvailable = true;
         int dailyPrice = 0;
@@ -500,7 +497,11 @@ public class BookingController {
             CLicenseDateBooking.setValue(booking.getLicensedateC());
         }
 
-        //TODO: PaymentType
+        if(booking.getPaymentType().equals(PaymentType.CREDITCARD)) {
+            creditCardButtonBooking.setSelected(true);
+        } else {
+            IBANButtonBooking.setSelected(true);
+        }
         paymentNumberBooking.setText(booking.getPaymentNumber());
         LocalDate startDate = LocalDate.of(booking.getStartDate().getYear(),booking.getStartDate().getMonth(),booking.getStartDate().getDayOfMonth());
         int startHour = booking.getStartDate().getHour();
@@ -516,17 +517,48 @@ public class BookingController {
         toHourPicker.getValueFactory().setValue(endHour);
         toMinutePicker.getValueFactory().setValue(endMin);
 
-        //TODO: createTimeLabelBooking.setText(booking.getCreatetime().toString());
+        createTimeLabelBooking.setText(booking.getCreatetime().toString());
 
         if(booking.getStartDate().isAfter(LocalDateTime.now())) {
             editButtonBookings.setVisible(true);
         }
+
+
+        currentStartTime = booking.getStartDate();
+        currentEndTime = booking.getEndDate();
         //TODO: tableview vehicles
+        List<Long> vehicleIDsOfBooking = currentService.getVehicleIDsFromPersistence(booking);
+
+        for (Long id: vehicleIDsOfBooking) {
+            Vehicle vehicle = currentVehicleService.getVehiclesByIDFromPersistence(id);
+            vehiclesOfBookingList.add(vehicle);
+            Integer priceOfVehicle = 0;
+            LocalDateTime i = currentStartTime;
+            Integer pricePerMinute = vehicle.getHourlyRateCents()/60;
+            while (!i.equals(currentEndTime)) {
+                priceOfVehicle += pricePerMinute;
+                i = i.plusMinutes(1);
+            }
+            currentPricesOfVehicles.put(vehicle.getId(),priceOfVehicle);
+        }
+        initializeTableView();
         disableEverything();
 
     }
 
-    public void disableEverything() {
+    private void initializeTableView() {
+        tableViewBookedVehicles.setVisible(true);
+
+        vehicleNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
+        vehicleBuildyearColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBuildyear().toString()));
+        vehicleLicenseplateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLicenseplate()));
+        vehiclePriceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(currentPricesOfVehicles.get(cellData.getValue().getId()).toString()));
+        List<Vehicle> temp = vehiclesOfBookingList;
+        vehicleData = FXCollections.observableArrayList(temp);
+        tableViewBookedVehicles.setItems(vehicleData);
+    }
+
+    private void disableEverything() {
         nameOfPersonBooking.setDisable(true);
         ALicenseCheckBox.setDisable(true);
         BLicenseCheckBox.setDisable(true);
@@ -537,6 +569,8 @@ public class BookingController {
         ALicenseDateBooking.setDisable(true);
         BLicenseDateBooking.setDisable(true);
         CLicenseDateBooking.setDisable(true);
+        creditCardButtonBooking.setDisable(true);
+        IBANButtonBooking.setDisable(true);
         paymentNumberBooking.setDisable(true);
         fromDatePickerBooking.setDisable(true);
         fromHourPicker.setDisable(true);
@@ -571,7 +605,7 @@ public class BookingController {
     }
 
     @FXML
-    void editBooking(ActionEvent event) {
+    private void editBooking(ActionEvent event) {
 
     }
 

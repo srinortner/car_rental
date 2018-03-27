@@ -167,5 +167,9 @@ public class SimpleVehicleService implements VehicleService {
         return  newVehicleList;
     }
 
+    public Vehicle getVehiclesByIDFromPersistence(Long id) {
+        return vehicleDAO.getVehicleByID(id);
+    }
+
 
 }

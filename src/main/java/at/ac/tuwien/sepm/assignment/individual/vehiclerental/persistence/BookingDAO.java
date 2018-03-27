@@ -14,5 +14,6 @@ public interface BookingDAO {
     List<Booking> getAllBookingsFromDatabase();
     void finishBooking(Booking booking);
     void cancelBooking(Booking booking);
+    List<Long> getVehicleIDsFromDatabase(Booking booking);
 
 }

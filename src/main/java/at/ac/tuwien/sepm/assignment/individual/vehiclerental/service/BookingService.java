@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
+import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
 
 import java.time.LocalDate;
@@ -20,5 +21,6 @@ public interface BookingService {
 
     void cancelBookingInPersistence(Booking booking);
 
-    void getLicenseDataFromPersistence(Booking booking);
+    List<Long> getVehicleIDsFromPersistence(Booking booking);
+
 }

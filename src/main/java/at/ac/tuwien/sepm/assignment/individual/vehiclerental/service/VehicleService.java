@@ -19,4 +19,6 @@ public interface VehicleService {
 
     void deleteVehicleFromPersistence(Vehicle vehicle);
 
+    Vehicle getVehiclesByIDFromPersistence(Long id);
+
 }

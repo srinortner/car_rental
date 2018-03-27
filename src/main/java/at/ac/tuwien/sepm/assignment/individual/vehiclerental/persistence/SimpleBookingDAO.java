@@ -29,19 +29,20 @@ public class SimpleBookingDAO implements BookingDAO{
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connection.prepareStatement("INSERT INTO BOOKING VALUES(DEFAULT,?,?,?,?,?,?,?,?, DEFAULT)");
+            preparedStatement = connection.prepareStatement("INSERT INTO BOOKING VALUES(DEFAULT,?,?,?,?,?,?,?,?,?, DEFAULT)");
             preparedStatement.setString(1,booking.getName());
-            preparedStatement.setString(2,booking.getPaymentNumber());
-            preparedStatement.setTimestamp(3, Timestamp.valueOf(booking.getStartDate()));
-            preparedStatement.setTimestamp(4,Timestamp.valueOf(booking.getEndDate()));
+            preparedStatement.setString(2,booking.getPaymentType().toString());
+            preparedStatement.setString(3,booking.getPaymentNumber());
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(booking.getStartDate()));
+            preparedStatement.setTimestamp(5,Timestamp.valueOf(booking.getEndDate()));
             if(booking.getBookedVehicles().equals(null)) {
-                preparedStatement.setString(5,"NONE");
+                preparedStatement.setString(6,"NONE");
             } else {
-                preparedStatement.setString(5, booking.getBookedVehicles().toString());
+                preparedStatement.setString(6, booking.getBookedVehicles().toString());
             }
-            preparedStatement.setDouble(6,booking.getTotalPrice());
-            preparedStatement.setString(7,booking.getStatus().toString());
-            preparedStatement.setTimestamp(8,Timestamp.valueOf(booking.getCreatetime()));
+            preparedStatement.setDouble(7,booking.getTotalPrice());
+            preparedStatement.setString(8,booking.getStatus().toString());
+            preparedStatement.setTimestamp(9,Timestamp.valueOf(booking.getCreatetime()));
             preparedStatement.executeUpdate();
 
             resultSet = preparedStatement.getGeneratedKeys();
@@ -119,7 +120,7 @@ public class SimpleBookingDAO implements BookingDAO{
         Booking currentBooking = null;
 
         try {
-            preparedStatement = connection.prepareStatement("SELECT ID, NAME,PAYMENTNUMBER, STARTDATE, ENDDATE, VEHICLES, TOTAL_PRICE, TYPE, createtime, paidtime  FROM BOOKING WHERE ID = ?");
+            preparedStatement = connection.prepareStatement("SELECT ID, NAME,paymenttype,PAYMENTNUMBER, STARTDATE, ENDDATE, VEHICLES, TOTAL_PRICE, TYPE, createtime, paidtime  FROM BOOKING WHERE ID = ?");
             preparedStatement.setLong(1,id);
             resultSet = preparedStatement.executeQuery();
             currentBooking = getDataFromResultSet(resultSet);
@@ -155,14 +156,15 @@ public class SimpleBookingDAO implements BookingDAO{
             while (resultSet.next()) {
                 Long currentID = resultSet.getLong(1);
                 String currentName = resultSet.getString(2);
-                String currentPaymentNumber = resultSet.getString(3);
-                Timestamp currentStartdate = resultSet.getTimestamp(4);
-                Timestamp currentEnddate = resultSet.getTimestamp(5);
-                String currentVehicles = resultSet.getString(6);
-                Integer currentTotalPrice = resultSet.getInt(7);
-                String currentType = resultSet.getString(8);
-                Timestamp currentCreateTime = resultSet.getTimestamp(9);
-                Timestamp currentpaidtime = resultSet.getTimestamp(10);
+                String currentPaymentType = resultSet.getString(3);
+                String currentPaymentNumber = resultSet.getString(4);
+                Timestamp currentStartdate = resultSet.getTimestamp(5);
+                Timestamp currentEnddate = resultSet.getTimestamp(6);
+                String currentVehicles = resultSet.getString(7);
+                Integer currentTotalPrice = resultSet.getInt(8);
+                String currentType = resultSet.getString(9);
+                Timestamp currentCreateTime = resultSet.getTimestamp(10);
+                Timestamp currentpaidtime = resultSet.getTimestamp(11);
 
                 BookingStatus bookingStatus = BookingStatus.BOOKED;
                 if(currentType.equals("BOOKED")){
@@ -175,10 +177,14 @@ public class SimpleBookingDAO implements BookingDAO{
                     bookingStatus = BookingStatus.CANCELED;
                 }
 
+                PaymentType paymentType = PaymentType.IBAN;
+                if(currentPaymentType.equals("CREDITCARD")) {
+                    paymentType = PaymentType.CREDITCARD;
+                }
                 LocalDateTime start = currentStartdate.toLocalDateTime();
                 LocalDateTime end = currentEnddate.toLocalDateTime();
                // Long id,String name, String paymentNumber, LocalDateTime startDate, LocalDateTime endDate, String bookedVehicles, Integer totalPrice, BookingStatus status, Timestamp createtime)
-                currentBooking = new Booking(currentID, currentName,currentPaymentNumber,start,end,currentVehicles,currentTotalPrice, bookingStatus, currentCreateTime, currentpaidtime);
+                currentBooking = new Booking(currentID,currentName,paymentType,currentPaymentNumber,start,end,currentVehicles,currentTotalPrice, bookingStatus, currentCreateTime, currentpaidtime);
                 currentlist.add(currentBooking);
             }
         } catch (SQLException e) {
@@ -194,7 +200,7 @@ public class SimpleBookingDAO implements BookingDAO{
         List<Booking> currentList = new ArrayList<>();
 
         try {
-            preparedStatement = connection.prepareStatement("SELECT ID, NAME, PAYMENTNUMBER, STARTDATE, ENDDATE, TOTAL_PRICE, TYPE, createtime, paidtime  FROM BOOKING");
+            preparedStatement = connection.prepareStatement("SELECT ID, NAME, paymenttype, PAYMENTNUMBER, STARTDATE, ENDDATE, TOTAL_PRICE, TYPE, createtime, paidtime  FROM BOOKING");
             resultSet = preparedStatement.executeQuery();
             currentList = getAllDataFromResultSet(resultSet);
 
@@ -213,13 +219,14 @@ public class SimpleBookingDAO implements BookingDAO{
             while (resultSet.next()) {
                 Long currentID = resultSet.getLong(1);
                 String currentName = resultSet.getString(2);
-                String currentPaymentnumber = resultSet.getString(3);
-                Timestamp currentStartDate = resultSet.getTimestamp(4);
-                Timestamp currentEndDate = resultSet.getTimestamp(5);
-                Integer currentTotalPrice = resultSet.getInt(6);
-                String currentType = resultSet.getString(7);
-                Timestamp currentCreateTime = resultSet.getTimestamp(8);
-                Timestamp currentpaidtime = resultSet.getTimestamp(9);
+                String currentPaymenttype = resultSet.getString(3);
+                String currentPaymentnumber = resultSet.getString(4);
+                Timestamp currentStartDate = resultSet.getTimestamp(5);
+                Timestamp currentEndDate = resultSet.getTimestamp(6);
+                Integer currentTotalPrice = resultSet.getInt(7);
+                String currentType = resultSet.getString(8);
+                Timestamp currentCreateTime = resultSet.getTimestamp(9);
+                Timestamp currentpaidtime = resultSet.getTimestamp(10);
 
                 LocalDateTime startDate = currentStartDate.toLocalDateTime();
                 LocalDateTime endDate = currentEndDate.toLocalDateTime();
@@ -236,7 +243,12 @@ public class SimpleBookingDAO implements BookingDAO{
                     bookingStatus = BookingStatus.CANCELED;
                 }
 
-                Booking currentBooking = new Booking(currentID,currentName,currentPaymentnumber,startDate,endDate," ",currentTotalPrice, bookingStatus,currentCreateTime, currentpaidtime);
+                PaymentType paymentType = PaymentType.IBAN;
+                if(currentPaymenttype.equals("CREDITCARD")) {
+                    paymentType = PaymentType.CREDITCARD;
+                }
+
+                Booking currentBooking = new Booking(currentID,currentName,paymentType,currentPaymentnumber,startDate,endDate," ",currentTotalPrice, bookingStatus,currentCreateTime, currentpaidtime);
                 currentList.add(currentBooking);
 
                 List<License> licensesOfBooking = getLicenseDataFromDatabase(currentBooking);
@@ -368,5 +380,39 @@ public class SimpleBookingDAO implements BookingDAO{
         }
 
         return currentData;
+    }
+
+    public List<Long> getVehicleIDsFromDatabase(Booking booking) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        List<Long> vehicleIDs = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("SELECT VEHICLE_ID FROM VEHICLE_BOOKING WHERE BOOKING_ID = ?");
+            preparedStatement.setLong(1,booking.getId());
+            resultSet = preparedStatement.executeQuery();
+            vehicleIDs = getVehicleIDsFromResultSet(resultSet);
+
+        } catch (SQLException e) {
+            LOG.error("License requirements couldn't be loaded from database!");
+        }
+        return vehicleIDs;
+    }
+
+    public List<Long> getVehicleIDsFromResultSet(ResultSet resultSet) {
+        List<Long> vehicleIDs = new ArrayList<>();
+
+        try{
+            while (resultSet.next()) {
+               Long currentId = resultSet.getLong(1);
+               vehicleIDs.add(currentId);
+            }
+
+        } catch (SQLException e) {
+            LOG.error("Vehicle IDs couldn't be loaded from database.");
+        }
+
+        return vehicleIDs;
     }
 }

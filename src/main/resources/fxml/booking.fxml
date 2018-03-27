@@ -91,11 +91,11 @@
             <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <children>
                   <Label text="A:" />
-                  <DatePicker fx:id="ALicenseDateBooking" prefHeight="26.0" prefWidth="63.0" />
+                  <DatePicker fx:id="ALicenseDateBooking" prefHeight="26.0" prefWidth="173.0" />
                   <Label text="B:" />
-                  <DatePicker fx:id="BLicenseDateBooking" prefHeight="26.0" prefWidth="63.0" />
+                  <DatePicker fx:id="BLicenseDateBooking" prefHeight="26.0" prefWidth="173.0" />
                   <Label text="C:" />
-                  <DatePicker fx:id="CLicenseDateBooking" prefHeight="26.0" prefWidth="63.0" />
+                  <DatePicker fx:id="CLicenseDateBooking" prefHeight="26.0" prefWidth="170.0" />
                </children>
             </HBox>
             <HBox layoutX="287.0" layoutY="150.0" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
@@ -152,8 +152,8 @@
          <columns>
             <TableColumn fx:id="vehicleNameColumn" prefWidth="295.0" text="Vehicle" />
             <TableColumn fx:id="vehicleBuildyearColumn" prefWidth="116.0" text="Buildyear" />
-            <TableColumn fx:id="VehicleLicenseplateColumn" prefWidth="164.0" text="Licenseplate" />
-            <TableColumn fx:id="VehiclePriceColumn" prefWidth="93.0" text="Price" />
+            <TableColumn fx:id="vehicleLicenseplateColumn" prefWidth="164.0" text="Licenseplate" />
+            <TableColumn fx:id="vehiclePriceColumn" prefWidth="93.0" text="Price" />
          </columns>
       </TableView>
       <Button fx:id="editButtonBookings" layoutX="657.0" layoutY="510.0" mnemonicParsing="false" onAction="#editBooking" text="Edit" visible="false" />

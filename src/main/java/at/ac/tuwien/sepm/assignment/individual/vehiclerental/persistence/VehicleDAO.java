@@ -13,4 +13,6 @@ public interface VehicleDAO {
     void editVehicle(Vehicle newVehicle, Vehicle oldVehicle);
 
     void deleteVehicleFromDatabase(Vehicle vehicle);
+
+    Vehicle getVehicleByID(Long id);
 }

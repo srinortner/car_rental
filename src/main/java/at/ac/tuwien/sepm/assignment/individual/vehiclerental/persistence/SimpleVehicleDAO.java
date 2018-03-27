@@ -231,5 +231,64 @@ public class SimpleVehicleDAO implements VehicleDAO {
         return currentVehicleList;
     }
 
+    public Vehicle getVehicleByID(Long id) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        Vehicle vehicle = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("SELECT id,name,BUILDYEAR,DESCRIPTION,SEATS,LICENSEPLATE,TYPE,POWER,hourlyrate,PICTURE,CREATETIME,uuid_for_editing, edittime FROM VEHICLE WHERE ID = ?;");
+            preparedStatement.setLong(1, id);
+            resultSet = preparedStatement.executeQuery();
+            vehicle = getVehicleByIDFromResultSet(resultSet);
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            LOG.error("Error while loading data from database!");
+        }
+        return vehicle;
+    }
+
+    private Vehicle getVehicleByIDFromResultSet(ResultSet resultSet) {
+        Vehicle currentVehicle = null;
+
+        try {
+            while (resultSet.next()) {
+                Long currentID = resultSet.getLong(1);
+                String currentName = resultSet.getString(2);
+                Integer currentYear = resultSet.getInt(3);
+                String currentDescription = resultSet.getString(4);
+                Integer currentSeats = resultSet.getInt(5);
+                String currentLicenseplate = resultSet.getString(6);
+                String currentType = resultSet.getString(7);
+                Double currentPower = resultSet.getDouble(8);
+                Integer currentHourlyRate = resultSet.getInt(9);
+                String currentPicture = resultSet.getString(10);
+                Timestamp currentCreateTime = resultSet.getTimestamp(11);
+                String currentUuidForEditing = resultSet.getString(12);
+                Timestamp currentEdittime = resultSet.getTimestamp(13);
+
+                PowerSource type = PowerSource.MUSCLE;
+                if (currentType.equals("ENGINE")) {
+                    type = PowerSource.ENGINE;
+                } else {
+                    type = PowerSource.MUSCLE;
+                }
+                LocalDateTime time = currentCreateTime.toLocalDateTime();
+                LocalDateTime edittime = currentEdittime.toLocalDateTime();
+                List<LicenseType> licenseList = getLicenseRequirements(currentID);
+                currentVehicle = new Vehicle(currentID, currentName, currentYear, currentDescription, currentSeats, currentLicenseplate, type, currentPower, currentHourlyRate, currentPicture, time, edittime);
+                currentVehicle.setUUIDForEditing(currentUuidForEditing);
+                currentVehicle.setLicenseType(licenseList);
+
+            }
+        } catch (SQLException e) {
+            LOG.error("Error while getting data from resultSet");
+        }
+
+        return currentVehicle;
+
+    }
 
 }
