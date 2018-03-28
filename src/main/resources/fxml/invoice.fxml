@@ -43,8 +43,8 @@
          <columns>
             <TableColumn fx:id="vehicleNameColumn" prefWidth="229.0" text="Vehicle" />
             <TableColumn fx:id="vehicleBuildyearColumn" prefWidth="113.0" text="Buildyear" />
-            <TableColumn fx:id="VehicleLicenseplateColumn" prefWidth="203.0" text="Licenseplate" />
-            <TableColumn fx:id="VehiclePriceColumn" minWidth="0.0" prefWidth="70.0" text="Price" />
+            <TableColumn fx:id="vehicleLicenseplateColumn" prefWidth="203.0" text="Licenseplate" />
+            <TableColumn fx:id="vehiclePriceColumn" minWidth="0.0" prefWidth="70.0" text="Price" />
          </columns>
       </TableView>
       <Label layoutX="483.0" layoutY="80.0" text="Invoice">

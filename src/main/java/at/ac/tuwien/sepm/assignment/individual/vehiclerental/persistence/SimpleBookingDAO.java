@@ -200,7 +200,7 @@ public class SimpleBookingDAO implements BookingDAO{
         List<Booking> currentList = new ArrayList<>();
 
         try {
-            preparedStatement = connection.prepareStatement("SELECT ID, NAME, paymenttype, PAYMENTNUMBER, STARTDATE, ENDDATE, TOTAL_PRICE, TYPE, createtime, paidtime  FROM BOOKING");
+            preparedStatement = connection.prepareStatement("SELECT ID, NAME, paymenttype, PAYMENTNUMBER, STARTDATE, ENDDATE, TOTAL_PRICE, TYPE, createtime, paidtime, ivoice_number_booking  FROM BOOKING");
             resultSet = preparedStatement.executeQuery();
             currentList = getAllDataFromResultSet(resultSet);
 
@@ -227,6 +227,7 @@ public class SimpleBookingDAO implements BookingDAO{
                 String currentType = resultSet.getString(8);
                 Timestamp currentCreateTime = resultSet.getTimestamp(9);
                 Timestamp currentpaidtime = resultSet.getTimestamp(10);
+                Integer currentInvoiceNumber = resultSet.getInt(11);
 
                 LocalDateTime startDate = currentStartDate.toLocalDateTime();
                 LocalDateTime endDate = currentEndDate.toLocalDateTime();
@@ -250,6 +251,7 @@ public class SimpleBookingDAO implements BookingDAO{
 
                 Booking currentBooking = new Booking(currentID,currentName,paymentType,currentPaymentnumber,startDate,endDate," ",currentTotalPrice, bookingStatus,currentCreateTime, currentpaidtime);
                 currentList.add(currentBooking);
+                currentBooking.setInvoiceNumber(currentInvoiceNumber);
 
                 List<License> licensesOfBooking = getLicenseDataFromDatabase(currentBooking);
                 List<LicenseType> licenseTypesOfPersonBooking = new ArrayList<>();
@@ -288,7 +290,7 @@ public class SimpleBookingDAO implements BookingDAO{
         PreparedStatement preparedStatement = null;
 
         try {
-            preparedStatement = connection.prepareStatement("UPDATE BOOKING SET TYPE = ?, PAIDTIME = ? WHERE ID = ?");
+            preparedStatement = connection.prepareStatement("UPDATE BOOKING SET TYPE = ?, PAIDTIME = ?, ivoice_number_booking = invoice_number.nextval WHERE ID = ?");
             preparedStatement.setString(1,"PAID");
             preparedStatement.setTimestamp(2,Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.setLong(3,booking.getId());
@@ -309,7 +311,7 @@ public class SimpleBookingDAO implements BookingDAO{
         PreparedStatement preparedStatement = null;
 
         try {
-            preparedStatement = connection.prepareStatement("UPDATE BOOKING SET TYPE = ?, TOTAL_PRICE = ?, PAIDTIME = ? WHERE ID = ?");
+            preparedStatement = connection.prepareStatement("UPDATE BOOKING SET TYPE = ?, TOTAL_PRICE = ?, PAIDTIME = ? ,ivoice_number_booking = invoice_number.nextval WHERE ID = ?");
             preparedStatement.setString(1, "CANCELED");
             preparedStatement.setInt(2,booking.getTotalPrice());
             booking.setPaidtime(Timestamp.valueOf(LocalDateTime.now()));
@@ -327,6 +329,19 @@ public class SimpleBookingDAO implements BookingDAO{
 
 
     }
+
+   /* private void setIvoiceNumber(Booking booking) {
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("UPDATE BOOKING SET  WHERE ID = ?");
+            preparedStatement.setLong(1,booking.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    } */
 
     //gets all Licensensedata as well as vehicleIDs
     public List<License> getLicenseDataFromDatabase(Booking booking) {

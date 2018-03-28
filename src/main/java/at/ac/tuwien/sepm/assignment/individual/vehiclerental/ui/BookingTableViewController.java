@@ -81,6 +81,7 @@ public class BookingTableViewController {
         this.currentService = currentService;
         this.primaryStage = primaryStage;
         this.invoiceController = invoiceController;
+        invoiceController.setBookingTableViewController(this);
     }
 
     @FXML

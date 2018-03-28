@@ -27,6 +27,7 @@ public class Booking {
     private String vehicleString;
     private Timestamp paidtime;
     private int cancelingFeeInPercent = 0;
+    private Integer invoiceNumber = 0;
 
 
 
@@ -208,5 +209,13 @@ public class Booking {
 
     public void setCancelingFeeInPercent(int cancelingFeeInPercent) {
         this.cancelingFeeInPercent = cancelingFeeInPercent;
+    }
+
+    public Integer getInvoiceNumber() {
+        return invoiceNumber;
+    }
+
+    public void setInvoiceNumber(Integer invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
     }
 }

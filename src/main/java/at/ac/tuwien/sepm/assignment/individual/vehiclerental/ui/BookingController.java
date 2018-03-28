@@ -526,7 +526,7 @@ public class BookingController {
 
         currentStartTime = booking.getStartDate();
         currentEndTime = booking.getEndDate();
-        //TODO: tableview vehicles
+
         List<Long> vehicleIDsOfBooking = currentService.getVehicleIDsFromPersistence(booking);
 
         for (Long id: vehicleIDsOfBooking) {
