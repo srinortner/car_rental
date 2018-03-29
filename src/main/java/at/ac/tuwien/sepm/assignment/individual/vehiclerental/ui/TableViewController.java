@@ -214,6 +214,7 @@ public class TableViewController {
             stage.initOwner(searchButtonTableview.getScene().getWindow());
 
             stage.showAndWait();
+
         } catch (IOException e) {
            LOG.error("Search window couldn't be opened!");
         }

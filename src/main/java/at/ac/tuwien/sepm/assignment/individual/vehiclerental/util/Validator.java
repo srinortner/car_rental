@@ -2,9 +2,11 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.util;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.*;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidSearchInputException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
 import org.apache.commons.validator.routines.CreditCardValidator;
 import org.apache.commons.validator.routines.IBANValidator;
+import org.apache.commons.validator.routines.IntegerValidator;
 import org.apache.commons.validator.routines.checkdigit.CheckDigit;
 import org.apache.commons.validator.routines.checkdigit.LuhnCheckDigit;
 import org.slf4j.Logger;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
 import static java.util.Objects.isNull;
 
 public class Validator {
@@ -24,6 +27,7 @@ public class Validator {
 
     private static final CreditCardValidator CREDIT_CARD_VALIDATOR = new CreditCardValidator();
     private static final IBANValidator IBAN_VALIDATOR = new IBANValidator();
+    private static final IntegerValidator INTEGER_VALIDATOR = new IntegerValidator();
 
     private Validator() {
         // intentionally empty cause Validator is a Utility class
@@ -167,7 +171,43 @@ public class Validator {
         }
     }
 
-    public static void validateSearchInputs (List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String name, PowerSource powerSource, Integer seats) {
+    public static void validateSearchInputs (String hourlyPriceMin, String hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String seats) throws InvalidSearchInputException{
+        List<String> constraintViolations = new ArrayList<>();
+
+        if(!hourlyPriceMax.equals("")) {
+            if (!INTEGER_VALIDATOR.isValid(hourlyPriceMax)) {
+                constraintViolations.add("hourly price maximum has to be a number without any decimals!");
+            } else if (!INTEGER_VALIDATOR.isInRange(parseInt(hourlyPriceMax), 0, Integer.MAX_VALUE)) {
+                constraintViolations.add("hourly price has maximum to be a number without any decimals!");
+            }
+        }
+        if(!hourlyPriceMin.equals("")) {
+            if (!INTEGER_VALIDATOR.isValid(hourlyPriceMin)) {
+                constraintViolations.add("hourly price minimum has to be a number without any decimals!");
+            } else if (!INTEGER_VALIDATOR.isInRange(parseInt(hourlyPriceMin), 0, Integer.MAX_VALUE)) {
+                constraintViolations.add("hourly price minimum has to be a number without any decimals!");
+            }
+        }
+
+        if(!seats.equals("")) {
+            if (!INTEGER_VALIDATOR.isValid(seats)) {
+                constraintViolations.add("Number of seats has to be a number without any decimals!");
+            } else if (!INTEGER_VALIDATOR.isInRange(parseInt(hourlyPriceMin), 0, Integer.MAX_VALUE)) {
+                constraintViolations.add("Number of seats has to be a number without any decimals!");
+            }
+        }
+
+
+        if(startTime != null && endTime == null) {
+             constraintViolations.add("Please fill in end time of availability");
+        }
+        if(startTime == null && endTime != null) {
+            constraintViolations.add("Please fill in start time of availability");
+        }
+
+        if (!constraintViolations.isEmpty()) {
+            throw new InvalidSearchInputException(constraintViolations);
+        }
 
     }
 
