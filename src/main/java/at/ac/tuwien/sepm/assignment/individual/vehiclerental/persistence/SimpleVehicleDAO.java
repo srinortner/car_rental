@@ -105,7 +105,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
     public List<LicenseType> getLicenseRequirements(Long id) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        List<LicenseType> licenseList = null;
+        List<LicenseType> licenseList = new ArrayList<>();
 
         try {
             preparedStatement = connection.prepareStatement("SELECT LICENSE FROM VEHICLE_LICENSE_REQUIREMENT WHERE VEHICLE_ID = ?");
@@ -329,6 +329,23 @@ public class SimpleVehicleDAO implements VehicleDAO {
         } catch (SQLException e) {
             LOG.error("Search in Database didn't work!");
         }
+        if(!licenseTypes.isEmpty()) {
+            List<Vehicle> temp = new ArrayList<>();
+            for (Vehicle vehicle : searchResults) {
+                List<LicenseType> licenseRequirements = getLicenseRequirements(vehicle.getId());
+                if (licenseRequirements.size() == 0) {
+                    temp.add(vehicle);
+                }
+                for (LicenseType licenseType : licenseTypes) {
+                    if (licenseRequirements.contains(licenseType) && !temp.contains(vehicle)) {
+                        temp.add(vehicle);
+                    }
+                }
+            }
+            searchResults = temp;
+        }
+
+
         return searchResults;
     }
 

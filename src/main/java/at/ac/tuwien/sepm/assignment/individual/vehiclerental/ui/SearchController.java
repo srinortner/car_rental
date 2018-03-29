@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -60,9 +61,6 @@ public class SearchController {
     private RadioButton radioButtonEngineSearch;
 
     @FXML
-    private ToggleGroup powerSource;
-
-    @FXML
     private RadioButton radioButtonMuscleSearch;
 
     @FXML
@@ -70,9 +68,12 @@ public class SearchController {
 
     private VehicleService currentService;
 
+    private BookingService bookingService;
 
-    public SearchController(VehicleService currentService) {
+
+    public SearchController(VehicleService currentService, BookingService bookingService) {
         this.currentService = currentService;
+        this.bookingService = bookingService;
     }
 
     @FXML
