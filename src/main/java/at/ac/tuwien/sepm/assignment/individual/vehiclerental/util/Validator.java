@@ -149,12 +149,12 @@ public class Validator {
 
                 if(hasA && !hasB && !hasC) {
                     LocalDate today = LocalDate.now();
-                    if (today.plusYears(3).isBefore(booking.getLicensedateA())) {
+                    if (today.minusYears(3).isBefore(booking.getLicensedateA())) {
                         constraintViolations.add("You are not allowed to book this vehicle!");
                     }
                 } else if(hasC && !hasB && !hasA) {
                     LocalDate today = LocalDate.now();
-                    if (today.plusYears(3).isBefore(booking.getLicensedateC())) {
+                    if (today.minusYears(3).isBefore(booking.getLicensedateC())) {
                         constraintViolations.add("You are not allowed to book this vehicle!");
                     }
                 }

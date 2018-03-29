@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
+import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,16 +30,20 @@ public class TableViewController {
     private List<Vehicle> vehicleList;
     private DetailViewController detailViewController;
     private BookingController bookingController;
+    private SearchController searchController;
     private Stage primaryStage;
+
+    private boolean editing = false;
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public TableViewController(VehicleService currentService, DetailViewController detailViewController, BookingController bookingController, Stage primaryStage) {
+    public TableViewController(VehicleService currentService, DetailViewController detailViewController, BookingController bookingController, SearchController searchController, Stage primaryStage) {
         this.currentService = currentService;
         this.detailViewController = detailViewController;
         this.bookingController = bookingController;
         detailViewController.setTableViewController(this);
         bookingController.setTableViewController(this);
+        this.searchController = searchController;
         this.primaryStage = primaryStage;
     }
 
@@ -94,6 +100,9 @@ public class TableViewController {
 
     @FXML
     private Button newBookingButtonTableView;
+
+    @FXML
+    private Button searchButtonTableview;
 
     @FXML
     private void initialize() {
@@ -181,6 +190,36 @@ public class TableViewController {
             }
         }
     }
+
+    public void selectRowsForEditing (Booking booking) {
+        editing = true;
+        List<Vehicle> toSelect = booking.getBookedVehicles();
+        //TODO: Selection doesn't work properly
+        for (Vehicle vehicle: toSelect) {
+            tableViewVehicles.getSelectionModel().select(vehicle);
+        }
+
+    }
+
+    @FXML
+    void searchButtonClicked(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/search.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(searchController) ? searchController : null);
+        Stage stage = new Stage();
+        try {
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.setTitle("Filter Dialog");
+
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(searchButtonTableview.getScene().getWindow());
+
+            stage.showAndWait();
+        } catch (IOException e) {
+           LOG.error("Search window couldn't be opened!");
+        }
+
+    }
+
 
 
 

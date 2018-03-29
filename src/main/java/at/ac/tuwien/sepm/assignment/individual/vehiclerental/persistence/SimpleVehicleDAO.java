@@ -291,4 +291,45 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
     }
 
+    public List<Vehicle> searchVehicles(List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String name, PowerSource powerSource, Integer seats) {
+        String query = "SELECT id,name,BUILDYEAR,DESCRIPTION,SEATS,LICENSEPLATE,TYPE,POWER,hourlyrate,PICTURE,CREATETIME,uuid_for_editing, edittime FROM VEHICLE WHERE DELETED = FALSE";
+
+        if(!(hourlyPriceMin == null)){
+            query += " AND hourlyrate >= " + hourlyPriceMin.toString();
+        }
+        if(!(hourlyPriceMax == null)) {
+            query += " AND hourlyrate <= " + hourlyPriceMax.toString();
+        }
+        if(!(name == null)) {
+            query += " AND name LIKE '%" + name + "%'";
+        }
+        if(!(powerSource == null)) {
+            if(powerSource.equals(PowerSource.MUSCLE)){
+                query += " AND type = 'MUSCLE'";
+            } else if (powerSource.equals(PowerSource.ENGINE)) {
+                query += " AND type = 'ENGINE'";
+            }
+        }
+        if(!(seats == null)){
+            query += " AND seats = " + seats;
+        }
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<Vehicle> searchResults = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            resultSet = preparedStatement.executeQuery();
+            searchResults = getDataFromResultSet(resultSet);
+
+            resultSet.close();
+            preparedStatement.close();
+
+        } catch (SQLException e) {
+            LOG.error("Search in Database didn't work!");
+        }
+        return searchResults;
+    }
+
 }

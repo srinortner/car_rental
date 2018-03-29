@@ -29,7 +29,7 @@ public class SimpleBookingDAO implements BookingDAO{
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connection.prepareStatement("INSERT INTO BOOKING VALUES(DEFAULT,?,?,?,?,?,?,?,?,?, DEFAULT)");
+            preparedStatement = connection.prepareStatement("INSERT INTO BOOKING VALUES(DEFAULT,?,?,?,?,?,?,?,?,?, DEFAULT, DEFAULT )");
             preparedStatement.setString(1,booking.getName());
             preparedStatement.setString(2,booking.getPaymentType().toString());
             preparedStatement.setString(3,booking.getPaymentNumber());

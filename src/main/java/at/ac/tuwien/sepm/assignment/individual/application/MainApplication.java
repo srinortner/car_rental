@@ -48,7 +48,8 @@ public final class MainApplication extends Application {
         InvoiceController invoiceController = new InvoiceController(bookingService,vehicleService);
         BookingTableViewController bookingTableViewController = new BookingTableViewController(bookingService, invoiceController, primaryStage);
         BookingController bookingController = new BookingController(bookingService,vehicleService,bookingTableViewController,primaryStage);
-        TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, bookingController, primaryStage);
+        SearchController searchController = new SearchController(vehicleService);
+        TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, bookingController,searchController, primaryStage);
         VehicleController vehicleController = new VehicleController(vehicleService, tableViewController, primaryStage);
 
 

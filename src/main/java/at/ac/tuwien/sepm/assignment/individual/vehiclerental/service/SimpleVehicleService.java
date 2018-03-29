@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
 
+import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
+import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.IllegalPictureException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
@@ -19,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -171,5 +174,8 @@ public class SimpleVehicleService implements VehicleService {
         return vehicleDAO.getVehicleByID(id);
     }
 
+    public List<Vehicle> searchForVehiclesInPersistence (List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String name, PowerSource powerSource, Integer seats){
+        return vehicleDAO.searchVehicles(licenseTypes, hourlyPriceMin, hourlyPriceMax, startTime, endTime, name, powerSource, seats);
+    }
 
 }

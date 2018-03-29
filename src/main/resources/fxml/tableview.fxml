@@ -9,7 +9,7 @@
 
 <AnchorPane prefHeight="879.0" prefWidth="1322.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.TableViewController">
    <children>
-      <TableView fx:id="tableViewVehicles" layoutX="32.0" layoutY="103.0" prefHeight="530.0" prefWidth="1259.0">
+      <TableView fx:id="tableViewVehicles" layoutX="32.0" layoutY="175.0" prefHeight="530.0" prefWidth="1259.0">
         <columns>
           <TableColumn fx:id="nameColumn" prefWidth="108.0" text="NAME" />
             <TableColumn fx:id="buildyearColumn" prefWidth="94.0" text="BUILDYEAR" />
@@ -25,14 +25,15 @@
             <TableColumn fx:id="edittimeColumn" prefWidth="171.0" text="EDITED" />
         </columns>
       </TableView>
-      <Button fx:id="NewEntryTableView" layoutX="1056.0" layoutY="649.0" mnemonicParsing="false" text="New Entry" />
-      <Button fx:id="DetailsTableView" layoutX="1155.0" layoutY="649.0" mnemonicParsing="false" onAction="#openDetailView" text="Details" />
-      <Button fx:id="DeleteEntryTableView" layoutX="1230.0" layoutY="649.0" mnemonicParsing="false" onAction="#deleteEntry" text="Delete" />
+      <Button fx:id="NewEntryTableView" layoutX="1056.0" layoutY="723.0" mnemonicParsing="false" text="New Entry" />
+      <Button fx:id="DetailsTableView" layoutX="1155.0" layoutY="723.0" mnemonicParsing="false" onAction="#openDetailView" text="Details" />
+      <Button fx:id="DeleteEntryTableView" layoutX="1230.0" layoutY="723.0" mnemonicParsing="false" onAction="#deleteEntry" text="Delete" />
       <Label layoutX="617.0" layoutY="57.0" text="Vehicles">
          <font>
             <Font name="System Bold" size="19.0" />
          </font>
       </Label>
-      <Button fx:id="newBookingButtonTableView" layoutX="938.0" layoutY="649.0" mnemonicParsing="false" onAction="#changeToNewBookingView" text="New Booking" />
+      <Button fx:id="newBookingButtonTableView" layoutX="938.0" layoutY="723.0" mnemonicParsing="false" onAction="#changeToNewBookingView" text="New Booking" />
+      <Button fx:id="searchButtonTableview" layoutX="1230.0" layoutY="134.0" mnemonicParsing="false" onAction="#searchButtonClicked" text="Search" />
    </children>
 </AnchorPane>

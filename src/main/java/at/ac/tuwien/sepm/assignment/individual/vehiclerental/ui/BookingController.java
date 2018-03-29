@@ -163,6 +163,9 @@ public class BookingController {
     private RadioButton canceledRadioButton;
 
     @FXML
+    private Button editVehicleListButton;
+
+    @FXML
     private TableView<Vehicle> tableViewBookedVehicles;
 
     @FXML
@@ -179,12 +182,10 @@ public class BookingController {
 
     @FXML
     private Button editButtonBookings;
-
-
     private Booking currentBooking = null;
-
     private LocalDateTime currentStartTime = null;
     private LocalDateTime currentEndTime = null;
+    private boolean vehiclesAvailable = true;
 
     @FXML
     private Label hourlyPricesLabel;
@@ -316,64 +317,12 @@ public class BookingController {
 
     @FXML
     private void saveBooking(ActionEvent event) {
-        String currentName = nameOfPersonBooking.getText();
-        PaymentType currentPaymentType = null;
-        if (creditCardButtonBooking.isSelected()) {
-            currentPaymentType = PaymentType.CREDITCARD;
-        } else {
-            currentPaymentType = PaymentType.IBAN;
-        }
-        String currentPaymentNumber = paymentNumberBooking.getText();
+        createNewBooking();
+        saveCurrentBooking();
+    }
 
-            boolean vehiclesAvailable = true;
-        int dailyPrice = 0;
-        for (Vehicle vehicle : vehicleList) {
-            dailyPrice += vehicle.getHourlyRateCents() * 24;
-            if(!checkAvailiabilityOfVehicle(vehicle.getId())){
-                vehiclesAvailable = false;
-            }
-        }
-
-        int pricePerMinute = (dailyPrice / 24) / 60;
-        Integer currentTotalPrice = 0;
-        LocalDateTime i = currentStartTime;
-
-            while (!i.equals(currentEndTime)) {
-                currentTotalPrice += pricePerMinute;
-                i = i.plusMinutes(1);
-
-        }
-
-
-        BookingStatus currentStatus = null;
-        if (bookedRadioButton.isSelected()) {
-            currentStatus = BookingStatus.BOOKED;
-        } else if (paidRadioButton.isSelected()) {
-            currentStatus = BookingStatus.PAID;
-        } else {
-            currentStatus = BookingStatus.CANCELED;
-        }
-
-        List<LicenseType> currentPersonLicenseList = new LinkedList<>();
-        currentBooking = new Booking(currentName, currentPaymentType, currentPaymentNumber, currentStartTime, currentEndTime, vehicleList, currentTotalPrice, currentStatus, LocalDateTime.now());
-        if(ALicenseCheckBox.isSelected()){
-            currentPersonLicenseList.add(LicenseType.A);
-            currentBooking.setLicensedateA(ALicenseDateBooking.getValue());
-            currentBooking.setLicensenumberA(licenseNumberA.getText());
-        }
-        if(BLicenseCheckBox.isSelected()){
-            currentPersonLicenseList.add(LicenseType.B);
-            currentBooking.setLicensedateB(BLicenseDateBooking.getValue());
-            currentBooking.setLicensenumberB(licenseNumberB.getText());
-        }
-        if(CLicenseCheckBox.isSelected()){
-            currentPersonLicenseList.add(LicenseType.C);
-            currentBooking.setLicensedateC(CLicenseDateBooking.getValue());
-            currentBooking.setLicensenumberC(licenseNumberC.getText());
-        }
-        currentBooking.setPersonLicenseList(currentPersonLicenseList);
-
-        if(vehiclesAvailable) {
+    private void saveCurrentBooking() {
+        if (vehiclesAvailable) {
             if (!cancelingPossible()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Confirmation Dialog");
@@ -407,6 +356,73 @@ public class BookingController {
         } else {
             new Alert(ERROR, "One of the vehicles is already booked during that time, please select another time!", OK).showAndWait();
         }
+    }
+
+
+
+    private void createNewBooking() {
+        String currentName = nameOfPersonBooking.getText();
+        PaymentType currentPaymentType = null;
+        if (creditCardButtonBooking.isSelected()) {
+            currentPaymentType = PaymentType.CREDITCARD;
+        } else {
+            currentPaymentType = PaymentType.IBAN;
+        }
+        String currentPaymentNumber = paymentNumberBooking.getText();
+
+
+        int dailyPrice = 0;
+        for (Vehicle vehicle : vehicleList) {
+            dailyPrice += vehicle.getHourlyRateCents() * 24;
+            if(!checkAvailiabilityOfVehicle(vehicle.getId())){
+                vehiclesAvailable = false;
+            }
+        }
+
+        currentStartTime = LocalDateTime.of(fromDatePickerBooking.getValue(),LocalTime.of(fromHourPicker.getValue(),fromMinutePicker.getValue()));
+        currentEndTime = LocalDateTime.of(toDatePickerBooking.getValue(),LocalTime.of(toHourPicker.getValue(),toMinutePicker.getValue()));
+
+
+        int pricePerMinute = (dailyPrice / 24) / 60;
+        Integer currentTotalPrice = 0;
+        LocalDateTime i = currentStartTime;
+
+        while (!i.equals(currentEndTime)) {
+            currentTotalPrice += pricePerMinute;
+            i = i.plusMinutes(1);
+
+        }
+
+
+        BookingStatus currentStatus = null;
+        if (bookedRadioButton.isSelected()) {
+            currentStatus = BookingStatus.BOOKED;
+        } else if (paidRadioButton.isSelected()) {
+            currentStatus = BookingStatus.PAID;
+        } else {
+            currentStatus = BookingStatus.CANCELED;
+        }
+
+        List<LicenseType> currentPersonLicenseList = new LinkedList<>();
+        currentBooking = new Booking(currentName, currentPaymentType, currentPaymentNumber, currentStartTime, currentEndTime, vehicleList, currentTotalPrice, currentStatus, LocalDateTime.now());
+        if(ALicenseCheckBox.isSelected()){
+            currentPersonLicenseList.add(LicenseType.A);
+            currentBooking.setLicensedateA(ALicenseDateBooking.getValue());
+            currentBooking.setLicensenumberA(licenseNumberA.getText());
+        }
+        if(BLicenseCheckBox.isSelected()){
+            currentPersonLicenseList.add(LicenseType.B);
+            currentBooking.setLicensedateB(BLicenseDateBooking.getValue());
+            currentBooking.setLicensenumberB(licenseNumberB.getText());
+        }
+        if(CLicenseCheckBox.isSelected()){
+            currentPersonLicenseList.add(LicenseType.C);
+            currentBooking.setLicensedateC(CLicenseDateBooking.getValue());
+            currentBooking.setLicensenumberC(licenseNumberC.getText());
+        }
+        currentBooking.setPersonLicenseList(currentPersonLicenseList);
+
+
 
     }
 
@@ -529,6 +545,7 @@ public class BookingController {
 
         List<Long> vehicleIDsOfBooking = currentService.getVehicleIDsFromPersistence(booking);
 
+        vehiclesOfBookingList = new ArrayList<>();
         for (Long id: vehicleIDsOfBooking) {
             Vehicle vehicle = currentVehicleService.getVehiclesByIDFromPersistence(id);
             vehiclesOfBookingList.add(vehicle);
@@ -543,6 +560,8 @@ public class BookingController {
         }
         initializeTableView();
         disableEverything();
+        currentBooking = booking;
+        currentBooking.setBookedVehicles(vehiclesOfBookingList);
 
     }
 
@@ -604,9 +623,56 @@ public class BookingController {
         }
     }
 
+
+
     @FXML
     private void editBooking(ActionEvent event) {
+        enableEverything();
 
+    }
+
+    private void enableEverything() {
+        nameOfPersonBooking.setDisable(false);
+        ALicenseCheckBox.setDisable(false);
+        BLicenseCheckBox.setDisable(false);
+        CLicenseCheckBox.setDisable(false);
+        licenseNumberA.setDisable(false);
+        licenseNumberB.setDisable(false);
+        licenseNumberC.setDisable(false);
+        ALicenseDateBooking.setDisable(false);
+        BLicenseDateBooking.setDisable(false);
+        CLicenseDateBooking.setDisable(false);
+        creditCardButtonBooking.setDisable(false);
+        IBANButtonBooking.setDisable(false);
+        paymentNumberBooking.setDisable(false);
+        fromDatePickerBooking.setDisable(false);
+        fromHourPicker.setDisable(false);
+        fromMinutePicker.setDisable(false);
+        toDatePickerBooking.setDisable(false);
+        toHourPicker.setDisable(false);
+        toMinutePicker.setDisable(false);
+        bookedRadioButton.setSelected(false);
+
+        vehiclesOfBooking.setVisible(false);
+        vehiclesLabel.setVisible(false);
+        hourlyPricesLabel.setVisible(false);
+        pricesOfBooking.setVisible(false);
+    }
+
+    @FXML
+    void changeToBookingTableView(ActionEvent event) {
+            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
+            fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
+
+            try {
+                primaryStage.setScene(new Scene(fxmlLoader.load()));
+                primaryStage.setTitle("Vehicles");
+                tableViewController.selectRowsForEditing(currentBooking);
+                primaryStage.show();
+
+            } catch (IOException e) {
+                LOG.error("Stage for Tableview couldn't be changed");
+            }
     }
 
 

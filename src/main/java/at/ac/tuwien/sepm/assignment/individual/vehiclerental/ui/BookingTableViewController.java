@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
 import at.ac.tuwien.sepm.assignment.individual.entities.BookingStatus;
+import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -28,6 +29,7 @@ import static javafx.scene.control.ButtonType.OK;
 public class BookingTableViewController {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
 
 
     @FXML
@@ -129,7 +131,7 @@ public class BookingTableViewController {
 
 
     @FXML
-    void showDetailViewOfBooking(ActionEvent event) {
+    private void showDetailViewOfBooking(ActionEvent event) {
         Booking selectedBooking = bookingTableView.getSelectionModel().getSelectedItem();
         if(selectedBooking.getStatus().equals(BookingStatus.BOOKED)) {
             final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking.fxml"));
@@ -157,6 +159,7 @@ public class BookingTableViewController {
             }
         }
     }
+
 
     @FXML
     void showVehicleTableView(ActionEvent event) {
