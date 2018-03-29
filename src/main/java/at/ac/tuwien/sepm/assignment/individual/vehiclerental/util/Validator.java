@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -165,5 +166,10 @@ public class Validator {
             throw new InvalidBookingException(constraintViolations);
         }
     }
+
+    public static void validateSearchInputs (List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String name, PowerSource powerSource, Integer seats) {
+
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
+import at.ac.tuwien.sepm.assignment.individual.entities.BookingStatus;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.BookingDAO;
 import org.slf4j.Logger;
@@ -29,11 +30,6 @@ public class SimpleBookingService implements BookingService{
 
     public void addLicenseInformationToPersistence (Long vehicleId, Long bookingId, String licensetype, String licensenumber, LocalDate licensedate) {
         bookingDAO.addLicenseToDatabase(vehicleId,bookingId,licensetype,licensenumber,licensedate);
-    }
-
-    public List<Booking> getBookingsForVehicleFromPersistence(Long vehicleID){
-        List<Booking> bookingList = bookingDAO.getAllBookingsOfVehicle(vehicleID);
-        return bookingList;
     }
 
     public List<Booking> getAllBookingsFromPersistence(){
@@ -66,5 +62,33 @@ public class SimpleBookingService implements BookingService{
 
     public List<Long> getVehicleIDsFromPersistence(Booking booking) {
        return bookingDAO.getVehicleIDsFromDatabase(booking);
+    }
+
+    public boolean checkAvailiabilityOfVehicle (Long id, LocalDateTime currentStartTime, LocalDateTime currentEndTime) {
+        boolean isAvailable = true;
+        List<Booking> allBookingsOfVehicle;
+        allBookingsOfVehicle = bookingDAO.getAllBookingsOfVehicle(id);
+        for (Booking booking: allBookingsOfVehicle) {
+            if(isAvailable && !(booking.getStatus() == BookingStatus.CANCELED)) {
+                if(booking.getPaidtime() == null) {
+                    if (booking.getStartDate().isBefore(currentStartTime) && booking.getEndDate().isBefore(currentEndTime)) {
+                        isAvailable = true;
+                    } else if (booking.getStartDate().isAfter(currentStartTime) && booking.getEndDate().isAfter(currentEndTime)) {
+                        isAvailable = true;
+                    } else {
+                        isAvailable = false;
+                    }
+                } else {
+                    if (booking.getStartDate().isBefore(currentStartTime) && booking.getPaidtime().toLocalDateTime().isBefore(currentEndTime)) {
+                        isAvailable = true;
+                    } else if (booking.getStartDate().isAfter(currentStartTime) && booking.getPaidtime().toLocalDateTime().isAfter(currentEndTime)) {
+                        isAvailable = true;
+                    } else {
+                        isAvailable = false;
+                    }
+                }
+            }
+        }
+        return isAvailable;
     }
 }

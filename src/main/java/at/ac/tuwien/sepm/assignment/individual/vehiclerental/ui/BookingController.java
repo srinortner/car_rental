@@ -370,17 +370,16 @@ public class BookingController {
         }
         String currentPaymentNumber = paymentNumberBooking.getText();
 
+        currentStartTime = LocalDateTime.of(fromDatePickerBooking.getValue(),LocalTime.of(fromHourPicker.getValue(),fromMinutePicker.getValue()));
+        currentEndTime = LocalDateTime.of(toDatePickerBooking.getValue(),LocalTime.of(toHourPicker.getValue(),toMinutePicker.getValue()));
 
         int dailyPrice = 0;
         for (Vehicle vehicle : vehicleList) {
             dailyPrice += vehicle.getHourlyRateCents() * 24;
-            if(!checkAvailiabilityOfVehicle(vehicle.getId())){
+            if(!currentService.checkAvailiabilityOfVehicle(vehicle.getId(), currentStartTime, currentEndTime)){
                 vehiclesAvailable = false;
             }
         }
-
-        currentStartTime = LocalDateTime.of(fromDatePickerBooking.getValue(),LocalTime.of(fromHourPicker.getValue(),fromMinutePicker.getValue()));
-        currentEndTime = LocalDateTime.of(toDatePickerBooking.getValue(),LocalTime.of(toHourPicker.getValue(),toMinutePicker.getValue()));
 
 
         int pricePerMinute = (dailyPrice / 24) / 60;
@@ -451,33 +450,7 @@ public class BookingController {
 
     }
 
-    private boolean checkAvailiabilityOfVehicle (Long id) {
-        boolean isAvailable = true;
-        List<Booking> allBookingsOfVehicle;
-        allBookingsOfVehicle = currentService.getBookingsForVehicleFromPersistence(id);
-        for (Booking booking: allBookingsOfVehicle) {
-         if(isAvailable && !(booking.getStatus() == BookingStatus.CANCELED)) {
-             if(booking.getPaidtime() == null) {
-                 if (booking.getStartDate().isBefore(currentStartTime) && booking.getEndDate().isBefore(currentEndTime)) {
-                     isAvailable = true;
-                 } else if (booking.getStartDate().isAfter(currentStartTime) && booking.getEndDate().isAfter(currentEndTime)) {
-                     isAvailable = true;
-                 } else {
-                     isAvailable = false;
-                 }
-             } else {
-                 if (booking.getStartDate().isBefore(currentStartTime) && booking.getPaidtime().toLocalDateTime().isBefore(currentEndTime)) {
-                     isAvailable = true;
-                 } else if (booking.getStartDate().isAfter(currentStartTime) && booking.getPaidtime().toLocalDateTime().isAfter(currentEndTime)) {
-                     isAvailable = true;
-                 } else {
-                     isAvailable = false;
-                 }
-             }
-         }
-        }
-        return isAvailable;
-    }
+
 
     @FXML
     private void openBookingTableView(ActionEvent event) {

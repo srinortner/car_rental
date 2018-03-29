@@ -77,6 +77,114 @@ public class SearchController {
     }
 
     @FXML
+    public void initialize() {
+        SpinnerValueFactory<Integer> valueFactoryHour =
+            new SpinnerValueFactory<Integer>() {
+
+                @Override
+                public void decrement(int steps) {
+                    Integer current = this.getValue();
+                    if (current == 1) {
+                        this.setValue(24);
+                    } else {
+                        this.setValue(current - 1);
+                    }
+                }
+
+                @Override
+                public void increment(int steps) {
+                    Integer current = this.getValue();
+                    if (current == 24) {
+                        this.setValue(1);
+                    } else {
+                        this.setValue(current + 1);
+                    }
+                }
+            };
+
+        SpinnerValueFactory<Integer> valueFactoryHourTo =
+            new SpinnerValueFactory<Integer>() {
+
+                @Override
+                public void decrement(int steps) {
+                    Integer current = this.getValue();
+                    if (current == 1) {
+                        this.setValue(24);
+                    } else {
+                        this.setValue(current - 1);
+                    }
+                }
+
+                @Override
+                public void increment(int steps) {
+                    Integer current = this.getValue();
+                    if (current == 24) {
+                        this.setValue(1);
+                    } else {
+                        this.setValue(current + 1);
+                    }
+                }
+            };
+
+        valueFactoryHour.setValue(1);
+        valueFactoryHourTo.setValue(1);
+        fromHourPickerSearch.setValueFactory(valueFactoryHour);
+        toHourPickerSearch.setValueFactory(valueFactoryHourTo);
+
+        SpinnerValueFactory<Integer> valueFactoryMin =
+            new SpinnerValueFactory<Integer>() {
+
+                @Override
+                public void decrement(int steps) {
+                    Integer current = this.getValue();
+                    if (current == 0) {
+                        this.setValue(59);
+                    } else {
+                        this.setValue(current - 1);
+                    }
+                }
+
+                @Override
+                public void increment(int steps) {
+                    Integer current = this.getValue();
+                    if (current == 59) {
+                        this.setValue(0);
+                    } else {
+                        this.setValue(current + 1);
+                    }
+                }
+            };
+
+        SpinnerValueFactory<Integer> valueFactoryMinTo = new SpinnerValueFactory<Integer>() {
+            @Override
+            public void decrement(int steps) {
+                Integer current = this.getValue();
+                if (current == 0) {
+                    this.setValue(59);
+                } else {
+                    this.setValue(current - 1);
+                }
+            }
+
+            @Override
+            public void increment(int steps) {
+                Integer current = this.getValue();
+                if (current == 59) {
+                    this.setValue(0);
+                } else {
+                    this.setValue(current + 1);
+                }
+            }
+        };
+
+        valueFactoryMin.setValue(0);
+        valueFactoryMinTo.setValue(0);
+        fromMinutePickerSearch.setValueFactory(valueFactoryMin);
+        toMinutePickerSearch.setValueFactory(valueFactoryMinTo);
+
+    }
+
+    @FXML
     private void searchForVehicles(ActionEvent event) {
         String currentName = nameOfVehicleSearch.getText();
         Integer currentHourlyPriceMin = parseInt(hourlypriceMin.getText());
@@ -114,6 +222,16 @@ public class SearchController {
         }
 
         List<Vehicle> foundVehicles = currentService.searchForVehiclesInPersistence(licenses,currentHourlyPriceMin, currentHourlyPriceMax, currentStartTime, currentEndTime, currentName, currentPowerSource, currentSeats);
+        if(!(currentStartTime == null && currentEndTime == null)) {
+            List<Vehicle> temp = new ArrayList<>();
+            for (Vehicle vehicle : foundVehicles) {
+               if(bookingService.checkAvailiabilityOfVehicle(vehicle.getId(), currentStartTime, currentEndTime)) {
+                   temp.add(vehicle);
+               }
+
+            }
+            foundVehicles = temp;
+        }
         int x = 0;
 
     }
