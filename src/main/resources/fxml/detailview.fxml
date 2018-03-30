@@ -88,5 +88,6 @@
       <Button fx:id="saveButtonDetailView" disable="true" layoutX="538.0" layoutY="501.0" mnemonicParsing="false" onAction="#saveChanges" text="Save" />
       <Button fx:id="editButtonDetailView" layoutX="476.0" layoutY="501.0" mnemonicParsing="false" onAction="#editVehicle" text="Edit" />
       <Label fx:id="noPictureLabelDetailView" layoutX="784.0" layoutY="223.0" text="No Picture" />
+      <Button fx:id="deleteButtonDetailView" layoutX="404.0" layoutY="501.0" mnemonicParsing="false" onAction="#deleteButtonDetailViewClicked" text="Delete" />
    </children>
 </AnchorPane>

@@ -77,7 +77,23 @@ public class SearchController {
     private BookingService bookingService;
 
     private boolean searchButtonClicked = false;
+    private List<Vehicle> foundVehicles = null;
 
+    public List<Vehicle> getFoundVehicles() {
+        return foundVehicles;
+    }
+
+    public void setFoundVehicles(List<Vehicle> foundVehicles) {
+        this.foundVehicles = foundVehicles;
+    }
+
+    public boolean isSearchButtonClicked() {
+        return searchButtonClicked;
+    }
+
+    public void setSearchButtonClicked(boolean searchButtonClicked) {
+        this.searchButtonClicked = searchButtonClicked;
+    }
 
     public SearchController(VehicleService currentService, BookingService bookingService) {
         this.currentService = currentService;
@@ -194,6 +210,7 @@ public class SearchController {
 
     @FXML
     private void searchForVehicles(ActionEvent event) {
+        searchButtonClicked = true;
         String currentName = nameOfVehicleSearch.getText();
         String currentHPMinString = hourlypriceMin.getText();
         String currentHPMaxString = hourlypriceMax.getText();
@@ -238,7 +255,7 @@ public class SearchController {
                 currentPowerSource = PowerSource.ANY;
             }
 
-            List<Vehicle> foundVehicles = currentService.searchForVehiclesInPersistence(licenses, currentHourlyPriceMin, currentHourlyPriceMax, currentStartTime, currentEndTime, currentName, currentPowerSource, currentSeats);
+            foundVehicles = currentService.searchForVehiclesInPersistence(licenses, currentHourlyPriceMin, currentHourlyPriceMax, currentStartTime, currentEndTime, currentName, currentPowerSource, currentSeats);
             if (!(currentStartTime == null && currentEndTime == null)) {
                 List<Vehicle> temp = new ArrayList<>();
                 for (Vehicle vehicle : foundVehicles) {

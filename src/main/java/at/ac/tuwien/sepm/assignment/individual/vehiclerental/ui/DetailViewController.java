@@ -113,6 +113,10 @@ public class DetailViewController {
     @FXML
     private Button editButtonDetailView;
 
+    @FXML
+    private Button deleteButtonDetailView;
+
+
 
     private static final Path imagePath = Paths.get(System.getProperty("user.home"),"/.sepm/images");
 
@@ -163,6 +167,10 @@ public class DetailViewController {
     @FXML
     private void backToTableView(ActionEvent event) {
         fill(vehicle);
+      changeToTableView();
+    }
+
+    private void changeToTableView(){
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
         try {
@@ -270,6 +278,13 @@ public class DetailViewController {
             new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
         }
     }
+
+    @FXML
+    private void deleteButtonDetailViewClicked(ActionEvent event) {
+        vehicleService.deleteVehicleFromPersistence(vehicle);
+        changeToTableView();
+    }
+
 
     public Vehicle getVehicle() {
         return vehicle;

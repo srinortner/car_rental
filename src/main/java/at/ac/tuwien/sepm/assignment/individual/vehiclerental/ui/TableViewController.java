@@ -106,7 +106,12 @@ public class TableViewController {
 
     @FXML
     private void initialize() {
-        this.vehicleList = currentService.getListOfVehiclesFromPersistence();
+        initializeTableView(currentService.getListOfVehiclesFromPersistence());
+
+    }
+
+    private void initializeTableView(List<Vehicle> currentList) {
+        this.vehicleList = currentList;
 
         nameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         buildyearColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBuildyear().toString()));
@@ -122,11 +127,10 @@ public class TableViewController {
         edittimeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEdittime().toString()));
 
 
-        List<Vehicle> temp = currentService.getListOfVehiclesFromPersistence();
+        List<Vehicle> temp = currentList;
         vehicleData = FXCollections.observableArrayList(temp);
         tableViewVehicles.setItems(vehicleData);
         tableViewVehicles.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
     }
 
     @FXML
@@ -214,7 +218,11 @@ public class TableViewController {
             stage.initOwner(searchButtonTableview.getScene().getWindow());
 
             stage.showAndWait();
-
+            if(searchController.isSearchButtonClicked()) {
+                this.vehicleList = searchController.getFoundVehicles();
+                initializeTableView(vehicleList);
+                searchController.setSearchButtonClicked(false);
+            }
         } catch (IOException e) {
            LOG.error("Search window couldn't be opened!");
         }
