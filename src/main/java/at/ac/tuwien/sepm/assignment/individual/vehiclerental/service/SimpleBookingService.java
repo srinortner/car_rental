@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
 import at.ac.tuwien.sepm.assignment.individual.entities.BookingStatus;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.BookingDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,13 @@ public class SimpleBookingService implements BookingService{
 
     public Booking addBookingToPersistence(Booking booking) throws InvalidBookingException {
        validateBooking(booking);
-       return bookingDAO.addBookingToDatabase(booking);
+       Booking returnedBooking = null;
+        try {
+            returnedBooking = bookingDAO.addBookingToDatabase(booking);
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
+        return  returnedBooking;
     }
 
     public void addLicenseInformationToPersistence (Long vehicleId, Long bookingId, String licensetype, String licensenumber, LocalDate licensedate) {

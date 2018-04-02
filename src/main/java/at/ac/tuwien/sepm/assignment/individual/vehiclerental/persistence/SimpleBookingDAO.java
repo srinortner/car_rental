@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.*;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,22 +16,24 @@ import java.util.List;
 public class SimpleBookingDAO implements BookingDAO{
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static final String INSERT_BOOKING = "INSERT INTO BOOKING VALUES(DEFAULT,?,?,?,?,?,?,?,?,?, DEFAULT, DEFAULT )";
     private Connection connection = DBConnection.getConnection();
 
     public SimpleBookingDAO() {
 
     }
 
-    public Booking addBookingToDatabase (Booking booking) {
+    public Booking addBookingToDatabase (Booking booking) throws PersistenceException {
         if(booking == null) {
             LOG.warn("Booking is null!");
+            throw new PersistenceException("Booking is null!");
         }
 
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connection.prepareStatement("INSERT INTO BOOKING VALUES(DEFAULT,?,?,?,?,?,?,?,?,?, DEFAULT, DEFAULT )");
+            preparedStatement = connection.prepareStatement(INSERT_BOOKING);
             preparedStatement.setString(1,booking.getName());
             preparedStatement.setString(2,booking.getPaymentType().toString());
             preparedStatement.setString(3,booking.getPaymentNumber());
@@ -56,6 +60,7 @@ public class SimpleBookingDAO implements BookingDAO{
 
         } catch (SQLException e) {
             LOG.error("Booking couldn't be added to database!");
+            throw new PersistenceException("Booking couldn't be added to database!");
         }
         return booking;
     }
@@ -103,7 +108,12 @@ public class SimpleBookingDAO implements BookingDAO{
             bookingIDs = getBookingIDsFromResultSet(resultSet);
 
             for (Long bookingId:bookingIDs) {
-                Booking currentBooking = getBookingByID(bookingId);
+                Booking currentBooking = null;
+                try {
+                    currentBooking = getBookingByID(bookingId);
+                } catch (PersistenceException e) {
+                    e.printStackTrace();
+                }
                 bookingsOfVehicle.add(currentBooking);
             }
         } catch (SQLException e) {
@@ -114,7 +124,7 @@ public class SimpleBookingDAO implements BookingDAO{
     }
 
     //Gets a booking by its ID
-    private Booking getBookingByID (Long id){
+    public Booking getBookingByID (Long id) throws PersistenceException{
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Booking currentBooking = null;
@@ -127,6 +137,7 @@ public class SimpleBookingDAO implements BookingDAO{
 
         } catch (SQLException e) {
             LOG.error("License requirements couldn't be loaded from database!");
+            throw new PersistenceException("License requirements couldn't be loaded from database!");
         }
 
         return currentBooking;
@@ -407,6 +418,7 @@ public class SimpleBookingDAO implements BookingDAO{
             preparedStatement = connection.prepareStatement("SELECT VEHICLE_ID FROM VEHICLE_BOOKING WHERE BOOKING_ID = ?");
             preparedStatement.setLong(1,booking.getId());
             resultSet = preparedStatement.executeQuery();
+
             vehicleIDs = getVehicleIDsFromResultSet(resultSet);
 
         } catch (SQLException e) {
@@ -421,7 +433,9 @@ public class SimpleBookingDAO implements BookingDAO{
         try{
             while (resultSet.next()) {
                Long currentId = resultSet.getLong(1);
-               vehicleIDs.add(currentId);
+                if(!vehicleIDs.contains(currentId)) {
+                    vehicleIDs.add(currentId);
+                }
             }
 
         } catch (SQLException e) {

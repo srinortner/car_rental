@@ -148,7 +148,7 @@
       <Button fx:id="saveButtonBooking" layoutX="712.0" layoutY="510.0" mnemonicParsing="false" onAction="#saveBooking" text="Save" />
       <Button fx:id="backButtonBooking" layoutX="857.0" layoutY="510.0" mnemonicParsing="false" onAction="#openVehicleTableView" text="Back" />
       <Button fx:id="bookingsButtonBooking" layoutX="773.0" layoutY="510.0" mnemonicParsing="false" onAction="#openBookingTableView" text="Bookings" />
-      <TableView fx:id="tableViewBookedVehicles" layoutX="107.0" layoutY="545.0" prefHeight="134.0" prefWidth="807.0">
+      <TableView fx:id="tableViewBookedVehicles" layoutX="107.0" layoutY="545.0" prefHeight="134.0" prefWidth="807.0" visible="false">
          <columns>
             <TableColumn fx:id="vehicleNameColumn" prefWidth="295.0" text="Vehicle" />
             <TableColumn fx:id="vehicleBuildyearColumn" prefWidth="116.0" text="Buildyear" />

@@ -216,7 +216,7 @@ public class VehicleController {
             primaryStage.show();
 
         } catch (IOException e) {
-           LOG.error("Stage couldn't be changed");
+           LOG.error("Stage couldn't be changed", e);
         }
 
     }

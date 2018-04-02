@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.IllegalPictureException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.VehicleDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +42,13 @@ public class SimpleVehicleService implements VehicleService {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
 
 
-    public SimpleVehicleService(VehicleDAO vehicleDAO) throws IOException {
+    public SimpleVehicleService(VehicleDAO vehicleDAO){
         if(!imageDestinationPath.toFile().exists() || !imageDestinationPath.toFile().isDirectory()) {
-            Files.createDirectories(imageDestinationPath);
+            try {
+                Files.createDirectories(imageDestinationPath);
+            } catch (IOException e) {
+                LOG.error("Directory couldn't be created!");
+            }
         }
         this.vehicleDAO = vehicleDAO;
     }
@@ -55,7 +60,13 @@ public class SimpleVehicleService implements VehicleService {
             vehicle.setPicture(currentPictureTitle);
         }
         validateVehicle(vehicle);
-        return vehicleDAO.addVehicleToDatabase(vehicle);
+        Vehicle returnedVehicle = null;
+        try {
+            returnedVehicle =  vehicleDAO.addVehicleToDatabase(vehicle);
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
+        return returnedVehicle;
     }
 
     public void passEditedVehicleToPersistence(Vehicle newVehicle, File picture, Vehicle oldVehicle) throws InvalidVehicleException {
@@ -68,7 +79,11 @@ public class SimpleVehicleService implements VehicleService {
         }
             newVehicle.setPicture(currentPictureTitle);
             validateVehicle(newVehicle);
+        try {
             vehicleDAO.editVehicle(newVehicle,oldVehicle);
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -171,7 +186,14 @@ public class SimpleVehicleService implements VehicleService {
     }
 
     public Vehicle getVehiclesByIDFromPersistence(Long id) {
-        return vehicleDAO.getVehicleByID(id);
+        Vehicle vehicle = null;
+        try {
+            vehicle = vehicleDAO.getVehicleByID(id);
+        } catch (PersistenceException e) {
+            //TODO: Logger??
+            e.printStackTrace();
+        }
+        return vehicle;
     }
 
     public List<Vehicle> searchForVehiclesInPersistence (List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String name, PowerSource powerSource, Integer seats){

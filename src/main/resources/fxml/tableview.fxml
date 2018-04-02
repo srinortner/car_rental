@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="879.0" prefWidth="1322.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.TableViewController">
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.TableViewController">
    <children>
-      <TableView fx:id="tableViewVehicles" layoutX="32.0" layoutY="175.0" prefHeight="530.0" prefWidth="1259.0">
+      <Label text="Vehicles">
+         <font>
+            <Font name="System Bold" size="19.0" />
+         </font>
+      </Label>
+      <TableView fx:id="tableViewVehicles" prefHeight="530.0" prefWidth="1259.0">
         <columns>
           <TableColumn fx:id="nameColumn" prefWidth="108.0" text="NAME" />
             <TableColumn fx:id="buildyearColumn" prefWidth="94.0" text="BUILDYEAR" />
@@ -25,15 +32,26 @@
             <TableColumn fx:id="edittimeColumn" prefWidth="171.0" text="EDITED" />
         </columns>
       </TableView>
-      <Button fx:id="NewEntryTableView" layoutX="1056.0" layoutY="723.0" mnemonicParsing="false" text="New Entry" />
-      <Button fx:id="DetailsTableView" layoutX="1155.0" layoutY="723.0" mnemonicParsing="false" onAction="#openDetailView" text="Details" />
-      <Button fx:id="DeleteEntryTableView" layoutX="1230.0" layoutY="723.0" mnemonicParsing="false" onAction="#deleteEntry" text="Delete" />
-      <Label layoutX="617.0" layoutY="57.0" text="Vehicles">
-         <font>
-            <Font name="System Bold" size="19.0" />
-         </font>
-      </Label>
-      <Button fx:id="newBookingButtonTableView" layoutX="938.0" layoutY="723.0" mnemonicParsing="false" onAction="#changeToNewBookingView" text="New Booking" />
-      <Button fx:id="searchButtonTableview" layoutX="1230.0" layoutY="134.0" mnemonicParsing="false" onAction="#searchButtonClicked" text="Search" />
+      <HBox alignment="CENTER_RIGHT" spacing="20.0">
+         <children>
+            <HBox fx:id="hBoxEdit" visible="false">
+               <children>
+                  <Button fx:id="btnBack" mnemonicParsing="false" onAction="#backButtonClicked" text="Back" />
+               </children>
+            </HBox>
+            <HBox fx:id="hBoxOther" spacing="20.0">
+               <children>
+                  <Button fx:id="newBookingButtonTableView" mnemonicParsing="false" onAction="#changeToNewBookingView" text="New Booking" />
+                  <Button fx:id="NewEntryTableView" mnemonicParsing="false" text="New Entry" />
+                  <Button fx:id="DetailsTableView" mnemonicParsing="false" onAction="#openDetailView" text="Details" />
+                  <Button fx:id="DeleteEntryTableView" mnemonicParsing="false" onAction="#deleteEntry" text="Delete" />
+                  <Button fx:id="searchButtonTableview" mnemonicParsing="false" onAction="#searchButtonClicked" text="Search" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
    </children>
-</AnchorPane>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

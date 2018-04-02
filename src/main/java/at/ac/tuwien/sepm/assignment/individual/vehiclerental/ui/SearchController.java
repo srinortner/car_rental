@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidSearchInputException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.SpinnerFactory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.SpinnerFactory.buildSpinner;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Validator.validateSearchInputs;
 import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
@@ -102,104 +104,16 @@ public class SearchController {
 
     @FXML
     public void initialize() {
-        SpinnerValueFactory<Integer> valueFactoryHour =
-            new SpinnerValueFactory<Integer>() {
-
-                @Override
-                public void decrement(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 1) {
-                        this.setValue(24);
-                    } else {
-                        this.setValue(current - 1);
-                    }
-                }
-
-                @Override
-                public void increment(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 24) {
-                        this.setValue(1);
-                    } else {
-                        this.setValue(current + 1);
-                    }
-                }
-            };
-
-        SpinnerValueFactory<Integer> valueFactoryHourTo =
-            new SpinnerValueFactory<Integer>() {
-
-                @Override
-                public void decrement(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 1) {
-                        this.setValue(24);
-                    } else {
-                        this.setValue(current - 1);
-                    }
-                }
-
-                @Override
-                public void increment(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 24) {
-                        this.setValue(1);
-                    } else {
-                        this.setValue(current + 1);
-                    }
-                }
-            };
+        SpinnerValueFactory<Integer> valueFactoryHour = buildSpinner(23);
+        SpinnerValueFactory<Integer> valueFactoryHourTo = buildSpinner(23);
 
         valueFactoryHour.setValue(1);
         valueFactoryHourTo.setValue(1);
         fromHourPickerSearch.setValueFactory(valueFactoryHour);
         toHourPickerSearch.setValueFactory(valueFactoryHourTo);
 
-        SpinnerValueFactory<Integer> valueFactoryMin =
-            new SpinnerValueFactory<Integer>() {
-
-                @Override
-                public void decrement(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 0) {
-                        this.setValue(59);
-                    } else {
-                        this.setValue(current - 1);
-                    }
-                }
-
-                @Override
-                public void increment(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 59) {
-                        this.setValue(0);
-                    } else {
-                        this.setValue(current + 1);
-                    }
-                }
-            };
-
-        SpinnerValueFactory<Integer> valueFactoryMinTo = new SpinnerValueFactory<Integer>() {
-            @Override
-            public void decrement(int steps) {
-                Integer current = this.getValue();
-                if (current == 0) {
-                    this.setValue(59);
-                } else {
-                    this.setValue(current - 1);
-                }
-            }
-
-            @Override
-            public void increment(int steps) {
-                Integer current = this.getValue();
-                if (current == 59) {
-                    this.setValue(0);
-                } else {
-                    this.setValue(current + 1);
-                }
-            }
-        };
+        SpinnerValueFactory<Integer> valueFactoryMin = buildSpinner(59);
+        SpinnerValueFactory<Integer> valueFactoryMinTo = buildSpinner(59);
 
         valueFactoryMin.setValue(0);
         valueFactoryMinTo.setValue(0);
@@ -255,6 +169,7 @@ public class SearchController {
                 currentPowerSource = PowerSource.ANY;
             }
 
+            //TODO: in service machen
             foundVehicles = currentService.searchForVehiclesInPersistence(licenses, currentHourlyPriceMin, currentHourlyPriceMax, currentStartTime, currentEndTime, currentName, currentPowerSource, currentSeats);
             if (!(currentStartTime == null && currentEndTime == null)) {
                 List<Vehicle> temp = new ArrayList<>();

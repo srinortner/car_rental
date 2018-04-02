@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence;
 import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +23,11 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
 
     @Override
-    public Vehicle addVehicleToDatabase(Vehicle vehicle) {
+    public Vehicle addVehicleToDatabase(Vehicle vehicle) throws PersistenceException{
         if (vehicle == null) {
             LOG.warn("Vehicle in addVehicleToDatabase is null!");
+            throw new PersistenceException("Vehicle in addVehicleToDatabase is null!!!!");
+
         }
 
         PreparedStatement preparedStatement = null;
@@ -65,6 +68,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
         } catch (SQLException e) {
             LOG.error("Vehicle couldn't be added to database!");
+            throw new PersistenceException("Vehicle couldn't be added to database!");
         }
 
         int numberOfLicenseRequirements = 0;
@@ -141,7 +145,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
         return currentlist;
     }
 
-    public void editVehicle(Vehicle newVehicle, Vehicle oldVehicle) {
+    public void editVehicle(Vehicle newVehicle, Vehicle oldVehicle) throws PersistenceException {
 
         deleteVehicleFromDatabase(oldVehicle);
         addVehicleToDatabase(newVehicle);
@@ -231,7 +235,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
         return currentVehicleList;
     }
 
-    public Vehicle getVehicleByID(Long id) {
+    public Vehicle getVehicleByID(Long id) throws PersistenceException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Vehicle vehicle = null;
@@ -246,6 +250,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
             preparedStatement.close();
         } catch (SQLException e) {
             LOG.error("Error while loading data from database!");
+            throw new PersistenceException("Error while loading data from database!");
         }
         return vehicle;
     }

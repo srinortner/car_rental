@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.assignment.individual.entities;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Vehicle {
@@ -172,6 +173,32 @@ public class Vehicle {
         this.edittime = edittime;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vehicle vehicle = (Vehicle) o;
+        return Objects.equals(id, vehicle.id) &&
+            Objects.equals(name, vehicle.name) &&
+            Objects.equals(buildyear, vehicle.buildyear) &&
+            Objects.equals(description, vehicle.description) &&
+            Objects.equals(seats, vehicle.seats) &&
+            Objects.equals(licenseType, vehicle.licenseType) &&
+            Objects.equals(licenseplate, vehicle.licenseplate) &&
+            powerSource == vehicle.powerSource &&
+            Objects.equals(power, vehicle.power) &&
+            Objects.equals(hourlyRateCents, vehicle.hourlyRateCents) &&
+            Objects.equals(createtime, vehicle.createtime) &&
+            Objects.equals(picture, vehicle.picture) &&
+            Objects.equals(UUIDForEditing, vehicle.UUIDForEditing) &&
+            Objects.equals(edittime, vehicle.edittime);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, name, buildyear, description, seats, licenseType, licenseplate, powerSource, power, hourlyRateCents, createtime, picture, UUIDForEditing, edittime);
+    }
 
     @Override
     public String toString() {

@@ -9,6 +9,7 @@ public class DBConnection {
 
     private static Connection connection = null;
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static boolean testmode = false;
 
     private DBConnection(){};
 
@@ -27,21 +28,39 @@ public class DBConnection {
             e.printStackTrace();
             LOG.error("Class.forName failed");
         }
-        try {
-            con = DriverManager.getConnection("jdbc:h2:file:~/.sepm/database/sepm;" +
-                    "IGNORECASE=TRUE;" +
-                    "INIT=runscript from 'classpath:/database/createAndInsert.sql'",
-                "", "");
-            LOG.info("Connection to database found");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            LOG.error("Connection to database not found");
+        if (testmode) {
+            try {
+                con = DriverManager.getConnection("jdbc:h2:mem:db1;" +
+                        "IGNORECASE=TRUE;" +
+                        "INIT=runscript from 'classpath:/database/createAndInsert.sql'",
+                    "", "");
+                LOG.info("Connection to database found");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                LOG.error("Connection to database not found");
+
+
+            }
+        }else{
+                try {
+                    con = DriverManager.getConnection("jdbc:h2:file:~/.sepm/database/sepm;" +
+                            "IGNORECASE=TRUE;" +
+                            "INIT=runscript from 'classpath:/database/createAndInsert.sql';" +
+                            "DB_CLOSE_ON_EXIT=FALSE;FILE_LOCK=NO",
+                        "", "");
+                    LOG.info("Connection to database found");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    LOG.error("Connection to database not found");
+
+                }
+            }
+
+            return con;
         }
 
-        return con;
-    }
 
-    public static void closeConnection(){
+    public static void closeConnection() {
         if(connection != null) {
             try {
                 connection.close();
@@ -54,4 +73,13 @@ public class DBConnection {
         }
     }
 
+
+
+    public static boolean isTestmode() {
+        return testmode;
+    }
+
+    public static void setTestmode(boolean testmode) {
+        DBConnection.testmode = testmode;
+    }
 }

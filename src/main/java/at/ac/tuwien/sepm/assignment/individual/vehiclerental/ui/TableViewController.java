@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
-import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.ButtonType.OK;
 
@@ -36,6 +36,8 @@ public class TableViewController {
     private boolean editing = false;
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private Scene returnToScene;
+    private boolean editMode;
 
     public TableViewController(VehicleService currentService, DetailViewController detailViewController, BookingController bookingController, SearchController searchController, Stage primaryStage) {
         this.currentService = currentService;
@@ -105,6 +107,12 @@ public class TableViewController {
     private Button searchButtonTableview;
 
     @FXML
+    private HBox hBoxEdit;
+
+    @FXML
+    private HBox hBoxOther;
+
+    @FXML
     private void initialize() {
         initializeTableView(currentService.getListOfVehiclesFromPersistence());
 
@@ -153,15 +161,15 @@ public class TableViewController {
 
     @FXML
     void deleteEntry(ActionEvent event) {
-        final ObservableList<Vehicle> selectedVehicles= tableViewVehicles.getSelectionModel().getSelectedItems();
+        final ObservableList<Vehicle> selectedVehicles = tableViewVehicles.getSelectionModel().getSelectedItems();
 
-        for (Vehicle vehicleToDelete: selectedVehicles) {
+        for (Vehicle vehicleToDelete : selectedVehicles) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation Dialog");
             alert.setHeaderText("The vehicle will be deleted");
             alert.setContentText("Are you sure you want to delete " + vehicleToDelete.getName() + "?");
 
-            if ( alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK){
+            if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                 currentService.deleteVehicleFromPersistence(vehicleToDelete);
                 tableViewVehicles.getItems().removeAll(selectedVehicles);
             } else {
@@ -172,15 +180,14 @@ public class TableViewController {
     }
 
 
-
     @FXML
     void changeToNewBookingView(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingController) ? bookingController : null);
         final List<Vehicle> selectedVehicles = tableViewVehicles.getSelectionModel().getSelectedItems();
 
-        if(selectedVehicles.isEmpty()) {
-            new Alert(ERROR,"Please select the vehicles for your booking!", OK).showAndWait();
+        if (selectedVehicles.isEmpty()) {
+            new Alert(ERROR, "Please select the vehicles for your booking!", OK).showAndWait();
         } else {
             bookingController.setVehicleList(selectedVehicles);
 
@@ -195,11 +202,10 @@ public class TableViewController {
         }
     }
 
-    public void selectRowsForEditing (Booking booking) {
-        editing = true;
+    public void selectRowsForEditing(Booking booking) {
         List<Vehicle> toSelect = booking.getBookedVehicles();
         //TODO: Selection doesn't work properly
-        for (Vehicle vehicle: toSelect) {
+        for (Vehicle vehicle : toSelect) {
             tableViewVehicles.getSelectionModel().select(vehicle);
         }
 
@@ -218,18 +224,36 @@ public class TableViewController {
             stage.initOwner(searchButtonTableview.getScene().getWindow());
 
             stage.showAndWait();
-            if(searchController.isSearchButtonClicked()) {
+            if (searchController.isSearchButtonClicked()) {
                 this.vehicleList = searchController.getFoundVehicles();
                 initializeTableView(vehicleList);
                 searchController.setSearchButtonClicked(false);
             }
         } catch (IOException e) {
-           LOG.error("Search window couldn't be opened!");
+            LOG.error("Search window couldn't be opened!");
         }
 
     }
 
+    @FXML
+    private void backButtonClicked() {
+        if (returnToScene != null) {
+            primaryStage.setScene(returnToScene);
+            primaryStage.show();
+            this.setEditMode(false);
+        } else {
+            LOG.warn("returnToScene was not set");
+        }
+    }
 
 
+    public void setReturnToScene(Scene returnToScene) {
+        this.returnToScene = returnToScene;
+    }
 
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
+        hBoxEdit.setVisible(this.editMode);
+        hBoxOther.setVisible(!this.editMode);
+    }
 }

@@ -13,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.util.Objects.isNull;
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.SpinnerFactory.buildSpinner;
 import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.ButtonType.OK;
@@ -195,13 +194,13 @@ public class BookingController {
 
     private List<Vehicle> vehiclesOfBookingList = new ArrayList<>();
     private ObservableList<Vehicle> vehicleData = FXCollections.observableArrayList();
-    private HashMap<Long,Integer> currentPricesOfVehicles = new HashMap<>();
+    private HashMap<Long, Integer> currentPricesOfVehicles = new HashMap<>();
 
     @FXML
     private void initialize() {
         vehiclesOfBooking.setText(vehicleList.toString());
         List<Integer> pricesPerVehicle = new LinkedList<>();
-        for (Vehicle vehicle: vehicleList) {
+        for (Vehicle vehicle : vehicleList) {
             pricesPerVehicle.add(vehicle.getHourlyRateCents());
         }
         pricesOfBooking.setText(pricesPerVehicle.toString());
@@ -209,104 +208,18 @@ public class BookingController {
         fromDatePickerBooking.setValue(LocalDate.now());
 
 
-        SpinnerValueFactory<Integer> valueFactoryHour =
-            new SpinnerValueFactory<Integer>() {
+        SpinnerValueFactory<Integer> valueFactoryHour = buildSpinner(23);
 
-                @Override
-                public void decrement(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 1) {
-                        this.setValue(24);
-                    } else {
-                        this.setValue(current - 1);
-                    }
-                }
-
-                @Override
-                public void increment(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 24) {
-                        this.setValue(1);
-                    } else {
-                        this.setValue(current + 1);
-                    }
-                }
-            };
-
-        SpinnerValueFactory<Integer> valueFactoryHourTo =
-            new SpinnerValueFactory<Integer>() {
-
-                @Override
-                public void decrement(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 1) {
-                        this.setValue(24);
-                    } else {
-                        this.setValue(current - 1);
-                    }
-                }
-
-                @Override
-                public void increment(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 24) {
-                        this.setValue(1);
-                    } else {
-                        this.setValue(current + 1);
-                    }
-                }
-            };
+        SpinnerValueFactory<Integer> valueFactoryHourTo = buildSpinner(23);
 
         valueFactoryHour.setValue(1);
         valueFactoryHourTo.setValue(1);
         fromHourPicker.setValueFactory(valueFactoryHour);
         toHourPicker.setValueFactory(valueFactoryHourTo);
 
-        SpinnerValueFactory<Integer> valueFactoryMin =
-            new SpinnerValueFactory<Integer>() {
+        SpinnerValueFactory<Integer> valueFactoryMin = buildSpinner(59);
 
-                @Override
-                public void decrement(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 0) {
-                        this.setValue(59);
-                    } else {
-                        this.setValue(current - 1);
-                    }
-                }
-
-                @Override
-                public void increment(int steps) {
-                    Integer current = this.getValue();
-                    if (current == 59) {
-                        this.setValue(0);
-                    } else {
-                        this.setValue(current + 1);
-                    }
-                }
-            };
-
-        SpinnerValueFactory<Integer> valueFactoryMinTo = new SpinnerValueFactory<Integer>() {
-            @Override
-            public void decrement(int steps) {
-                Integer current = this.getValue();
-                if (current == 0) {
-                    this.setValue(59);
-                } else {
-                    this.setValue(current - 1);
-                }
-            }
-
-            @Override
-            public void increment(int steps) {
-                Integer current = this.getValue();
-                if (current == 59) {
-                    this.setValue(0);
-                } else {
-                    this.setValue(current + 1);
-                }
-            }
-        };
+        SpinnerValueFactory<Integer> valueFactoryMinTo = buildSpinner(59);
 
         valueFactoryMin.setValue(0);
         valueFactoryMinTo.setValue(0);
@@ -359,7 +272,6 @@ public class BookingController {
     }
 
 
-
     private void createNewBooking() {
         String currentName = nameOfPersonBooking.getText();
         PaymentType currentPaymentType = null;
@@ -370,13 +282,13 @@ public class BookingController {
         }
         String currentPaymentNumber = paymentNumberBooking.getText();
 
-        currentStartTime = LocalDateTime.of(fromDatePickerBooking.getValue(),LocalTime.of(fromHourPicker.getValue(),fromMinutePicker.getValue()));
-        currentEndTime = LocalDateTime.of(toDatePickerBooking.getValue(),LocalTime.of(toHourPicker.getValue(),toMinutePicker.getValue()));
+        currentStartTime = LocalDateTime.of(fromDatePickerBooking.getValue(), LocalTime.of(fromHourPicker.getValue(), fromMinutePicker.getValue()));
+        currentEndTime = LocalDateTime.of(toDatePickerBooking.getValue(), LocalTime.of(toHourPicker.getValue(), toMinutePicker.getValue()));
 
         int dailyPrice = 0;
         for (Vehicle vehicle : vehicleList) {
             dailyPrice += vehicle.getHourlyRateCents() * 24;
-            if(!currentService.checkAvailiabilityOfVehicle(vehicle.getId(), currentStartTime, currentEndTime)){
+            if (!currentService.checkAvailiabilityOfVehicle(vehicle.getId(), currentStartTime, currentEndTime)) {
                 vehiclesAvailable = false;
             }
         }
@@ -404,17 +316,17 @@ public class BookingController {
 
         List<LicenseType> currentPersonLicenseList = new LinkedList<>();
         currentBooking = new Booking(currentName, currentPaymentType, currentPaymentNumber, currentStartTime, currentEndTime, vehicleList, currentTotalPrice, currentStatus, LocalDateTime.now());
-        if(ALicenseCheckBox.isSelected()){
+        if (ALicenseCheckBox.isSelected()) {
             currentPersonLicenseList.add(LicenseType.A);
             currentBooking.setLicensedateA(ALicenseDateBooking.getValue());
             currentBooking.setLicensenumberA(licenseNumberA.getText());
         }
-        if(BLicenseCheckBox.isSelected()){
+        if (BLicenseCheckBox.isSelected()) {
             currentPersonLicenseList.add(LicenseType.B);
             currentBooking.setLicensedateB(BLicenseDateBooking.getValue());
             currentBooking.setLicensenumberB(licenseNumberB.getText());
         }
-        if(CLicenseCheckBox.isSelected()){
+        if (CLicenseCheckBox.isSelected()) {
             currentPersonLicenseList.add(LicenseType.C);
             currentBooking.setLicensedateC(CLicenseDateBooking.getValue());
             currentBooking.setLicensenumberC(licenseNumberC.getText());
@@ -422,34 +334,32 @@ public class BookingController {
         currentBooking.setPersonLicenseList(currentPersonLicenseList);
 
 
-
     }
 
     private boolean cancelingPossible() {
-        if(paidRadioButton.isSelected()) {
+        if (paidRadioButton.isSelected()) {
             return false;
         }
-        if(LocalDateTime.now().plusWeeks(1).isAfter(currentStartTime)) {
+        if (LocalDateTime.now().plusWeeks(1).isAfter(currentStartTime)) {
             return false;
         }
         return true;
     }
 
     private void saveLicenseInformation() {
-        for (Vehicle vehicle: vehicleList) {
-            if(ALicenseCheckBox.isSelected()) {
+        for (Vehicle vehicle : vehicleList) {
+            if (ALicenseCheckBox.isSelected()) {
                 currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), "A", licenseNumberA.getText(), ALicenseDateBooking.getValue());
             }
-            if(BLicenseCheckBox.isSelected()){
-                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(),"B", licenseNumberB.getText(), BLicenseDateBooking.getValue());
+            if (BLicenseCheckBox.isSelected()) {
+                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), "B", licenseNumberB.getText(), BLicenseDateBooking.getValue());
             }
-            if(CLicenseCheckBox.isSelected()){
+            if (CLicenseCheckBox.isSelected()) {
                 currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), "C", licenseNumberC.getText(), CLicenseDateBooking.getValue());
             }
         }
 
     }
-
 
 
     @FXML
@@ -470,36 +380,36 @@ public class BookingController {
     void fillBookingDetailView(Booking booking) {
         nameOfPersonBooking.setText(booking.getName());
         List<LicenseType> personLicenseList = booking.getPersonLicenseList();
-        if(personLicenseList.contains(LicenseType.A)) {
+        if (personLicenseList.contains(LicenseType.A)) {
             ALicenseCheckBox.setSelected(true);
             licenseNumberA.setText(booking.getLicensenumberA());
             ALicenseDateBooking.setValue(booking.getLicensedateA());
         }
-        if(personLicenseList.contains(LicenseType.B)) {
+        if (personLicenseList.contains(LicenseType.B)) {
             BLicenseCheckBox.setSelected(true);
             licenseNumberB.setText(booking.getLicensenumberB());
             BLicenseDateBooking.setValue(booking.getLicensedateB());
         }
-        if(personLicenseList.contains(LicenseType.C)) {
+        if (personLicenseList.contains(LicenseType.C)) {
             CLicenseCheckBox.setSelected(true);
             licenseNumberC.setText(booking.getLicensenumberC());
             CLicenseDateBooking.setValue(booking.getLicensedateC());
         }
 
-        if(booking.getPaymentType().equals(PaymentType.CREDITCARD)) {
+        if (booking.getPaymentType().equals(PaymentType.CREDITCARD)) {
             creditCardButtonBooking.setSelected(true);
         } else {
             IBANButtonBooking.setSelected(true);
         }
         paymentNumberBooking.setText(booking.getPaymentNumber());
-        LocalDate startDate = LocalDate.of(booking.getStartDate().getYear(),booking.getStartDate().getMonth(),booking.getStartDate().getDayOfMonth());
+        LocalDate startDate = LocalDate.of(booking.getStartDate().getYear(), booking.getStartDate().getMonth(), booking.getStartDate().getDayOfMonth());
         int startHour = booking.getStartDate().getHour();
         int startMin = booking.getStartDate().getMinute();
         fromDatePickerBooking.setValue(startDate);
         fromHourPicker.getValueFactory().setValue(startHour);
         fromMinutePicker.getValueFactory().setValue(startMin);
 
-        LocalDate endDate = LocalDate.of(booking.getEndDate().getYear(),booking.getEndDate().getMonth(),booking.getEndDate().getDayOfMonth());
+        LocalDate endDate = LocalDate.of(booking.getEndDate().getYear(), booking.getEndDate().getMonth(), booking.getEndDate().getDayOfMonth());
         int endHour = booking.getEndDate().getHour();
         int endMin = booking.getEndDate().getMinute();
         toDatePickerBooking.setValue(endDate);
@@ -508,7 +418,7 @@ public class BookingController {
 
         createTimeLabelBooking.setText(booking.getCreatetime().toString());
 
-        if(booking.getStartDate().isAfter(LocalDateTime.now())) {
+        if (booking.getStartDate().isAfter(LocalDateTime.now())) {
             editButtonBookings.setVisible(true);
         }
 
@@ -519,17 +429,17 @@ public class BookingController {
         List<Long> vehicleIDsOfBooking = currentService.getVehicleIDsFromPersistence(booking);
 
         vehiclesOfBookingList = new ArrayList<>();
-        for (Long id: vehicleIDsOfBooking) {
+        for (Long id : vehicleIDsOfBooking) {
             Vehicle vehicle = currentVehicleService.getVehiclesByIDFromPersistence(id);
             vehiclesOfBookingList.add(vehicle);
             Integer priceOfVehicle = 0;
             LocalDateTime i = currentStartTime;
-            Integer pricePerMinute = vehicle.getHourlyRateCents()/60;
+            Integer pricePerMinute = vehicle.getHourlyRateCents() / 60;
             while (!i.equals(currentEndTime)) {
                 priceOfVehicle += pricePerMinute;
                 i = i.plusMinutes(1);
             }
-            currentPricesOfVehicles.put(vehicle.getId(),priceOfVehicle);
+            currentPricesOfVehicles.put(vehicle.getId(), priceOfVehicle);
         }
         initializeTableView();
         disableEverything();
@@ -586,16 +496,16 @@ public class BookingController {
     private void returnToVehicleTableView() {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
+
         try {
             primaryStage.setScene(new Scene(fxmlLoader.load()));
             primaryStage.setTitle("Vehicles");
             primaryStage.show();
 
         } catch (IOException e) {
-            LOG.error("Stage for Tableview couldn't be changed");
+            LOG.error("Stage for Tableview couldn't be changed", e);
         }
     }
-
 
 
     @FXML
@@ -634,20 +544,22 @@ public class BookingController {
 
     @FXML
     void changeToBookingTableView(ActionEvent event) {
-            final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
-            fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
 
-            try {
-                primaryStage.setScene(new Scene(fxmlLoader.load()));
-                primaryStage.setTitle("Vehicles");
-                tableViewController.selectRowsForEditing(currentBooking);
-                primaryStage.show();
+        try {
+            Scene returnToScene = primaryStage.getScene();
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Vehicles");
+            tableViewController.setEditMode(true);
+            tableViewController.setReturnToScene(returnToScene);
+            tableViewController.selectRowsForEditing(currentBooking);
+            primaryStage.show();
 
-            } catch (IOException e) {
-                LOG.error("Stage for Tableview couldn't be changed");
-            }
+        } catch (IOException e) {
+            LOG.error("Stage for Tableview couldn't be changed");
+        }
     }
-
 
 
 }
