@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidB
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -165,6 +167,9 @@ public class BookingController {
     private Button editVehicleListButton;
 
     @FXML
+    private Button saveChangesButton;
+
+    @FXML
     private TableView<Vehicle> tableViewBookedVehicles;
 
     @FXML
@@ -196,6 +201,12 @@ public class BookingController {
     private ObservableList<Vehicle> vehicleData = FXCollections.observableArrayList();
     private HashMap<Long, Integer> currentPricesOfVehicles = new HashMap<>();
 
+
+    public void updateSelectedVehiclesOfBooking(List<Vehicle> vehiclesOfBookingList) {
+        this.vehiclesOfBookingList = vehiclesOfBookingList;
+        initializeTableView();
+    }
+
     @FXML
     private void initialize() {
         vehiclesOfBooking.setText(vehicleList.toString());
@@ -226,6 +237,19 @@ public class BookingController {
         fromMinutePicker.setValueFactory(valueFactoryMin);
         toMinutePicker.setValueFactory(valueFactoryMinTo);
 
+        ChangeListener<Integer> updateTableViewOnSpinnerChange = (o,ov,nv) -> { this.updateCurrentDateTime(); this.tableViewBookedVehicles.refresh();};
+        ChangeListener<LocalDate> updateTableViewOnDateChange = (o,ov,nv) -> { this.updateCurrentDateTime(); this.tableViewBookedVehicles.refresh();};
+        fromHourPicker.valueProperty().addListener(updateTableViewOnSpinnerChange);
+        toHourPicker.valueProperty().addListener(updateTableViewOnSpinnerChange);
+        fromMinutePicker.valueProperty().addListener(updateTableViewOnSpinnerChange);
+        toMinutePicker.valueProperty().addListener(updateTableViewOnSpinnerChange);
+        fromDatePickerBooking.valueProperty().addListener(updateTableViewOnDateChange);
+        toDatePickerBooking.valueProperty().addListener(updateTableViewOnDateChange);
+    }
+
+    private void updateCurrentDateTime() {
+        currentStartTime = LocalDateTime.of(fromDatePickerBooking.getValue(), LocalTime.of(fromHourPicker.getValue(), fromMinutePicker.getValue()));
+        currentEndTime = LocalDateTime.of(toDatePickerBooking.getValue(), LocalTime.of(toHourPicker.getValue(), toMinutePicker.getValue()));
     }
 
     @FXML
@@ -273,6 +297,10 @@ public class BookingController {
 
 
     private void createNewBooking() {
+        Long currentID = null;
+        if(currentBooking != null){
+            currentID = currentBooking.getId();
+        }
         String currentName = nameOfPersonBooking.getText();
         PaymentType currentPaymentType = null;
         if (creditCardButtonBooking.isSelected()) {
@@ -282,13 +310,12 @@ public class BookingController {
         }
         String currentPaymentNumber = paymentNumberBooking.getText();
 
-        currentStartTime = LocalDateTime.of(fromDatePickerBooking.getValue(), LocalTime.of(fromHourPicker.getValue(), fromMinutePicker.getValue()));
-        currentEndTime = LocalDateTime.of(toDatePickerBooking.getValue(), LocalTime.of(toHourPicker.getValue(), toMinutePicker.getValue()));
+        this.updateCurrentDateTime();
 
         int dailyPrice = 0;
         for (Vehicle vehicle : vehicleList) {
             dailyPrice += vehicle.getHourlyRateCents() * 24;
-            if (!currentService.checkAvailiabilityOfVehicle(vehicle.getId(), currentStartTime, currentEndTime)) {
+            if (!currentService.checkAvailiabilityOfVehicle(vehicle, currentStartTime, currentEndTime)) {
                 vehiclesAvailable = false;
             }
         }
@@ -316,6 +343,7 @@ public class BookingController {
 
         List<LicenseType> currentPersonLicenseList = new LinkedList<>();
         currentBooking = new Booking(currentName, currentPaymentType, currentPaymentNumber, currentStartTime, currentEndTime, vehicleList, currentTotalPrice, currentStatus, LocalDateTime.now());
+        currentBooking.setId(currentID);
         if (ALicenseCheckBox.isSelected()) {
             currentPersonLicenseList.add(LicenseType.A);
             currentBooking.setLicensedateA(ALicenseDateBooking.getValue());
@@ -349,13 +377,16 @@ public class BookingController {
     private void saveLicenseInformation() {
         for (Vehicle vehicle : vehicleList) {
             if (ALicenseCheckBox.isSelected()) {
-                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), "A", licenseNumberA.getText(), ALicenseDateBooking.getValue());
+                License licenseA = new License(LicenseType.A,ALicenseDateBooking.getValue(), licenseNumberA.getText());
+                currentService.addLicenseInformationToPersistence(vehicle, currentBooking, licenseA);
             }
             if (BLicenseCheckBox.isSelected()) {
-                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), "B", licenseNumberB.getText(), BLicenseDateBooking.getValue());
+                License licenseB = new License(LicenseType.B,BLicenseDateBooking.getValue(), licenseNumberB.getText());
+                currentService.addLicenseInformationToPersistence(vehicle, currentBooking, licenseB);
             }
             if (CLicenseCheckBox.isSelected()) {
-                currentService.addLicenseInformationToPersistence(vehicle.getId(), currentBooking.getId(), "C", licenseNumberC.getText(), CLicenseDateBooking.getValue());
+                License licenseC = new License(LicenseType.C,CLicenseDateBooking.getValue(), licenseNumberC.getText());
+                currentService.addLicenseInformationToPersistence(vehicle, currentBooking, licenseC);
             }
         }
 
@@ -432,14 +463,6 @@ public class BookingController {
         for (Long id : vehicleIDsOfBooking) {
             Vehicle vehicle = currentVehicleService.getVehiclesByIDFromPersistence(id);
             vehiclesOfBookingList.add(vehicle);
-            Integer priceOfVehicle = 0;
-            LocalDateTime i = currentStartTime;
-            Integer pricePerMinute = vehicle.getHourlyRateCents() / 60;
-            while (!i.equals(currentEndTime)) {
-                priceOfVehicle += pricePerMinute;
-                i = i.plusMinutes(1);
-            }
-            currentPricesOfVehicles.put(vehicle.getId(), priceOfVehicle);
         }
         initializeTableView();
         disableEverything();
@@ -454,10 +477,16 @@ public class BookingController {
         vehicleNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         vehicleBuildyearColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBuildyear().toString()));
         vehicleLicenseplateColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLicenseplate()));
-        vehiclePriceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(currentPricesOfVehicles.get(cellData.getValue().getId()).toString()));
+        vehiclePriceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(renderPriceForVehicleInCurrentBookingInEuro(cellData.getValue())));
         List<Vehicle> temp = vehiclesOfBookingList;
         vehicleData = FXCollections.observableArrayList(temp);
         tableViewBookedVehicles.setItems(vehicleData);
+    }
+
+    private String renderPriceForVehicleInCurrentBookingInEuro(Vehicle vehicle) {
+        int pricePerMinute = vehicle.getHourlyRateCents() / 60;
+        float priceForVehicle = (float) (Duration.between(this.currentStartTime, this.currentEndTime).toMinutes() * pricePerMinute) / 100;
+        return String.format("%.2f €", priceForVehicle);
     }
 
     private void disableEverything() {
@@ -540,6 +569,10 @@ public class BookingController {
         vehiclesLabel.setVisible(false);
         hourlyPricesLabel.setVisible(false);
         pricesOfBooking.setVisible(false);
+        editButtonBookings.setVisible(false);
+        saveButtonBooking.setVisible(false);
+        saveChangesButton.setVisible(true);
+        editVehicleListButton.setVisible(true);
     }
 
     @FXML
@@ -560,6 +593,16 @@ public class BookingController {
             LOG.error("Stage for Tableview couldn't be changed");
         }
     }
+
+    @FXML
+    void updateBooking(ActionEvent event) {
+        //damit createNewBooking wiederverwendet werden kann
+        vehicleList = vehiclesOfBookingList;
+        createNewBooking();
+        currentService.updateBookingInPersistence(currentBooking);
+        saveLicenseInformation();
+    }
+
 
 
 }

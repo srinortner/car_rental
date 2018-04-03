@@ -52,7 +52,7 @@ public class VehicleDAOTest {
         long id = 4;
         vehicle.setId(id);
         try {
-            Vehicle vehicleByID = vehicleDAO.getVehicleByID(id);
+            Vehicle vehicleByID = vehicleDAO.getById(id);
             Vehicle vehicle1 = vehicleByID;
             LOG.debug("Vehicle by ID {}", vehicle1);
             Assert.assertEquals(vehicle, vehicleByID);
@@ -61,10 +61,10 @@ public class VehicleDAOTest {
         }
     }
 
-    @Test(expected = PersistenceException.class)
-    public void createInvalidVehicle() throws PersistenceException{
+    @Test(expected = IllegalArgumentException.class)
+    public void createInvalidVehicle() throws PersistenceException {
         vehicleDAO.addVehicleToDatabase(null);
     }
 
-    }
+}
 

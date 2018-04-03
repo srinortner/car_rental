@@ -26,8 +26,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
     public Vehicle addVehicleToDatabase(Vehicle vehicle) throws PersistenceException{
         if (vehicle == null) {
             LOG.warn("Vehicle in addVehicleToDatabase is null!");
-            throw new PersistenceException("Vehicle in addVehicleToDatabase is null!!!!");
-
+            throw new IllegalArgumentException("Vehicle in addVehicleToDatabase is null!!!!");
         }
 
         PreparedStatement preparedStatement = null;
@@ -68,7 +67,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
         } catch (SQLException e) {
             LOG.error("Vehicle couldn't be added to database!");
-            throw new PersistenceException("Vehicle couldn't be added to database!");
+            throw new PersistenceException("Vehicle couldn't be added to database!", e);
         }
 
         int numberOfLicenseRequirements = 0;
@@ -106,7 +105,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
         }
     }
 
-    public List<LicenseType> getLicenseRequirements(Long id) {
+    public List<LicenseType> getLicenseRequirements(Long id) throws PersistenceException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<LicenseType> licenseList = new ArrayList<>();
@@ -118,6 +117,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
             licenseList = getLicenseRequirementsFromResultSet(resultSet);
         } catch (SQLException e) {
            LOG.error("License requirements couldn't be loaded from database!");
+            throw new PersistenceException("Vehicle couldn't be added to database!", e);
         }
 
         return licenseList;
@@ -176,7 +176,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
     }
 
 
-    public List<Vehicle> getAllVehiclesFromDatabase() {
+    public List<Vehicle> getAll() throws PersistenceException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<Vehicle> vehicleList = null;
@@ -195,7 +195,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
         return vehicleList;
     }
 
-    private List<Vehicle> getDataFromResultSet(ResultSet resultSet) {
+    private List<Vehicle> getDataFromResultSet(ResultSet resultSet) throws PersistenceException {
         List<Vehicle> currentVehicleList = new ArrayList<>();
 
         try {
@@ -230,12 +230,13 @@ public class SimpleVehicleDAO implements VehicleDAO {
             }
         } catch (SQLException e) {
             LOG.error("Error while getting data from resultSet");
+            throw new PersistenceException("Error while getting data from resultSet", e);
         }
 
         return currentVehicleList;
     }
 
-    public Vehicle getVehicleByID(Long id) throws PersistenceException {
+    public Vehicle getById(Long id) throws PersistenceException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Vehicle vehicle = null;
@@ -250,12 +251,12 @@ public class SimpleVehicleDAO implements VehicleDAO {
             preparedStatement.close();
         } catch (SQLException e) {
             LOG.error("Error while loading data from database!");
-            throw new PersistenceException("Error while loading data from database!");
+            throw new PersistenceException("Error while loading data from database!", e);
         }
         return vehicle;
     }
 
-    private Vehicle getVehicleByIDFromResultSet(ResultSet resultSet) {
+    private Vehicle getVehicleByIDFromResultSet(ResultSet resultSet) throws PersistenceException {
         Vehicle currentVehicle = null;
 
         try {
@@ -296,7 +297,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
     }
 
-    public List<Vehicle> searchVehicles(List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String name, PowerSource powerSource, Integer seats) {
+    public List<Vehicle> search(List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String name, PowerSource powerSource, Integer seats) throws PersistenceException {
         String query = "SELECT id,name,BUILDYEAR,DESCRIPTION,SEATS,LICENSEPLATE,TYPE,POWER,hourlyrate,PICTURE,CREATETIME,uuid_for_editing, edittime FROM VEHICLE WHERE DELETED = FALSE";
 
         if(!(hourlyPriceMin == null)){
@@ -352,6 +353,27 @@ public class SimpleVehicleDAO implements VehicleDAO {
 
 
         return searchResults;
+    }
+
+    @Override
+    public List<Vehicle> getAllVehiclesByUUID(String uuidForEditing) throws PersistenceException{
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<Vehicle> vehicleList = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("SELECT id,name,BUILDYEAR,DESCRIPTION,SEATS,LICENSEPLATE,TYPE,POWER,hourlyrate,PICTURE,CREATETIME,uuid_for_editing, edittime FROM VEHICLE WHERE uuid_for_editing = ?;");
+            preparedStatement.setString(1, uuidForEditing);
+            resultSet = preparedStatement.executeQuery();
+            vehicleList = getDataFromResultSet(resultSet);
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            LOG.error("Error while loading data from database!");
+            throw new PersistenceException("Error while loading data from database!", e);
+        }
+        return vehicleList;
     }
 
 }

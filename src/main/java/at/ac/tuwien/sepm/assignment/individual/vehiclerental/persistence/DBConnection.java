@@ -1,9 +1,12 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence;
 
-import java.lang.invoke.MethodHandles;
-import java.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DBConnection {
 
@@ -11,10 +14,13 @@ public class DBConnection {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
     private static boolean testmode = false;
 
-    private DBConnection(){};
+    private DBConnection() {
+    }
+
+    ;
 
     public static Connection getConnection() {
-        if(connection == null) {
+        if (connection == null) {
             connection = newConnection();
         }
         return connection;
@@ -41,27 +47,27 @@ public class DBConnection {
 
 
             }
-        }else{
-                try {
-                    con = DriverManager.getConnection("jdbc:h2:file:~/.sepm/database/sepm;" +
-                            "IGNORECASE=TRUE;" +
-                            "INIT=runscript from 'classpath:/database/createAndInsert.sql';" +
-                            "DB_CLOSE_ON_EXIT=FALSE;FILE_LOCK=NO",
-                        "", "");
-                    LOG.info("Connection to database found");
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    LOG.error("Connection to database not found");
+        } else {
+            try {
+                con = DriverManager.getConnection("jdbc:h2:file:~/.sepm/database/sepm;" +
+                        "IGNORECASE=TRUE;" +
+                        "INIT=runscript from 'classpath:/database/createAndInsert.sql'" +
+                        ";DB_CLOSE_ON_EXIT=FALSE;FILE_LOCK=NO",
+                    "", "");
+                LOG.info("Connection to database found");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                LOG.error("Connection to database not found");
 
-                }
             }
-
-            return con;
         }
+
+        return con;
+    }
 
 
     public static void closeConnection() {
-        if(connection != null) {
+        if (connection != null) {
             try {
                 connection.close();
                 connection = null;
@@ -72,7 +78,6 @@ public class DBConnection {
             }
         }
     }
-
 
 
     public static boolean isTestmode() {

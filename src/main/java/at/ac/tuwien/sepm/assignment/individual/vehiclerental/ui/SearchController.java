@@ -17,6 +17,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.SpinnerFactory.buildSpinner;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Validator.validateSearchInputs;
@@ -174,7 +175,7 @@ public class SearchController {
             if (!(currentStartTime == null && currentEndTime == null)) {
                 List<Vehicle> temp = new ArrayList<>();
                 for (Vehicle vehicle : foundVehicles) {
-                    if (bookingService.checkAvailiabilityOfVehicle(vehicle.getId(), currentStartTime, currentEndTime)) {
+                    if (bookingService.checkAvailiabilityOfVehicle(vehicle, currentStartTime, currentEndTime)) {
                         temp.add(vehicle);
                     }
 
@@ -182,11 +183,13 @@ public class SearchController {
                 foundVehicles = temp;
             }
         } catch (InvalidSearchInputException e) {
-            new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
+            //TODO: bei allen Alerts machen
+            buildAlert(ERROR, e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
         }
         ((Stage) searchButton.getScene().getWindow()).close();
 
     }
+
 
 
 }

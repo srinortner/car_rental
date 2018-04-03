@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Validator.validateVehicle;
+import static java.util.Collections.emptyList;
 import static java.util.List.of;
 
 public class SimpleVehicleService implements VehicleService {
@@ -181,23 +182,41 @@ public class SimpleVehicleService implements VehicleService {
     }
 
     public List<Vehicle> getListOfVehiclesFromPersistence() {
-        List<Vehicle> newVehicleList = vehicleDAO.getAllVehiclesFromDatabase();
-        return  newVehicleList;
+        try {
+            return vehicleDAO.getAll();
+        } catch (PersistenceException e) {
+            LOG.error(e.getMessage(), e);
+            return emptyList();
+        }
     }
 
     public Vehicle getVehiclesByIDFromPersistence(Long id) {
         Vehicle vehicle = null;
         try {
-            vehicle = vehicleDAO.getVehicleByID(id);
+            vehicle = vehicleDAO.getById(id);
         } catch (PersistenceException e) {
-            //TODO: Logger??
-            e.printStackTrace();
+            LOG.error("Vehicles couldn't be loaded from persistence!", e);
         }
         return vehicle;
     }
 
     public List<Vehicle> searchForVehiclesInPersistence (List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String name, PowerSource powerSource, Integer seats){
-        return vehicleDAO.searchVehicles(licenseTypes, hourlyPriceMin, hourlyPriceMax, startTime, endTime, name, powerSource, seats);
+        try {
+            return vehicleDAO.search(licenseTypes, hourlyPriceMin, hourlyPriceMax, startTime, endTime, name, powerSource, seats);
+        } catch (PersistenceException e) {
+            LOG.error(e.getMessage(), e);
+            return emptyList();
+        }
+    }
+
+    @Override
+    public List<Vehicle> getAllLegacyVehicles(Vehicle vehicle) {
+        try {
+            return vehicleDAO.getAllVehiclesByUUID(vehicle.getUUIDForEditing());
+        } catch (PersistenceException e) {
+            LOG.error("Error while loading all vehicles by uuid", e);
+        }
+        return emptyList();
     }
 
 }

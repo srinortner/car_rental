@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
+import at.ac.tuwien.sepm.assignment.individual.entities.License;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
 
@@ -12,7 +13,7 @@ public interface BookingService {
 
     Booking addBookingToPersistence(Booking booking) throws InvalidBookingException;
 
-    void addLicenseInformationToPersistence (Long vehicleId, Long bookingId,String licensetype, String licensenumber, LocalDate licensedate);
+    void addLicenseInformationToPersistence (Vehicle vehicle, Booking booking, License license);
 
     List<Booking> getAllBookingsFromPersistence();
 
@@ -22,5 +23,7 @@ public interface BookingService {
 
     List<Long> getVehicleIDsFromPersistence(Booking booking);
 
-    boolean checkAvailiabilityOfVehicle (Long id, LocalDateTime currentStartTime, LocalDateTime currentEndTime);
+    boolean checkAvailiabilityOfVehicle (Vehicle vehicle, LocalDateTime currentStartTime, LocalDateTime currentEndTime);
+
+    void updateBookingInPersistence(Booking booking);
 }

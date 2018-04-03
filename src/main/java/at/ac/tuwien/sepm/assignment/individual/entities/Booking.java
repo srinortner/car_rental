@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class Booking {
 
@@ -217,5 +218,39 @@ public class Booking {
 
     public void setInvoiceNumber(Integer invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return cancelingFeeInPercent == booking.cancelingFeeInPercent &&
+            Objects.equals(id, booking.id) &&
+            Objects.equals(name, booking.name) &&
+            paymentType == booking.paymentType &&
+            Objects.equals(paymentNumber, booking.paymentNumber) &&
+            Objects.equals(startDate, booking.startDate) &&
+            Objects.equals(endDate, booking.endDate) &&
+            Objects.equals(bookedVehicles, booking.bookedVehicles) &&
+            Objects.equals(totalPrice, booking.totalPrice) &&
+            status == booking.status &&
+            Objects.equals(createtime, booking.createtime) &&
+            Objects.equals(licensedateA, booking.licensedateA) &&
+            Objects.equals(licensedateB, booking.licensedateB) &&
+            Objects.equals(licensedateC, booking.licensedateC) &&
+            Objects.equals(licensenumberA, booking.licensenumberA) &&
+            Objects.equals(licensenumberB, booking.licensenumberB) &&
+            Objects.equals(licensenumberC, booking.licensenumberC) &&
+            Objects.equals(personLicenseList, booking.personLicenseList) &&
+            Objects.equals(vehicleString, booking.vehicleString) &&
+            Objects.equals(paidtime, booking.paidtime) &&
+            Objects.equals(invoiceNumber, booking.invoiceNumber);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, name, paymentType, paymentNumber, startDate, endDate, bookedVehicles, totalPrice, status, createtime, licensedateA, licensedateB, licensedateC, licensenumberA, licensenumberB, licensenumberC, personLicenseList, vehicleString, paidtime, cancelingFeeInPercent, invoiceNumber);
     }
 }

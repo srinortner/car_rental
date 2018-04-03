@@ -32,9 +32,9 @@
             <TableColumn fx:id="edittimeColumn" prefWidth="171.0" text="EDITED" />
         </columns>
       </TableView>
-      <HBox alignment="CENTER_RIGHT" spacing="20.0">
+      <HBox fx:id="hBoxAllButtons" alignment="CENTER_RIGHT" spacing="20.0">
          <children>
-            <HBox fx:id="hBoxEdit" visible="false">
+            <HBox fx:id="hBoxEdit">
                <children>
                   <Button fx:id="btnBack" mnemonicParsing="false" onAction="#backButtonClicked" text="Back" />
                </children>

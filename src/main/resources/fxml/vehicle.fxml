@@ -7,19 +7,25 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="518.0" prefWidth="715.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.VehicleController">
+
+<VBox spacing="20.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.VehicleController">
    <children>
-      <GridPane alignment="CENTER" layoutX="111.0" layoutY="74.0" prefHeight="268.0" prefWidth="378.0">
+      <Label alignment="TOP_CENTER" text="Add New Vehicle">
+         <font>
+            <Font name="System Bold" size="19.0" />
+         </font>
+      </Label>
+      <GridPane alignment="CENTER_LEFT" hgap="10.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="126.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="280.0" minWidth="10.0" prefWidth="252.0" />
+          <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="252.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -62,7 +68,7 @@
             <Label text="License:" GridPane.rowIndex="4" />
             <CheckBox fx:id="addVehicleLicenseA" mnemonicParsing="false" onAction="#addVehicleActivateLicenseplateTextView" text="A" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label text="Picture:" GridPane.rowIndex="9" />
-            <Button fx:id="addVehicleAddPictureButton" mnemonicParsing="false" onAction="#addPictureOfVehicle" prefHeight="26.0" prefWidth="271.0" text="Add Picture" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Button fx:id="addVehicleAddPictureButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addPictureOfVehicle" prefHeight="26.0" text="Add Picture" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="9" />
             <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <children>
                   <RadioButton fx:id="rbEngine" mnemonicParsing="false" selected="true" text="Engine">
@@ -75,12 +81,14 @@
             </HBox>
          </children>
       </GridPane>
-      <Label alignment="TOP_CENTER" layoutX="211.0" layoutY="34.0" text="Add New Vehicle">
-         <font>
-            <Font name="System Bold" size="19.0" />
-         </font>
-      </Label>
-      <Button fx:id="addVehicleBackButton" layoutX="384.0" layoutY="352.0" mnemonicParsing="false" onAction="#openTableView" text="Back" />
-      <Button fx:id="addVehicleAddButton" layoutX="445.0" layoutY="352.0" mnemonicParsing="false" onAction="#saveVehicle" text="Add" />
+      <HBox alignment="CENTER_RIGHT" spacing="20.0">
+         <children>
+            <Button fx:id="addVehicleBackButton" mnemonicParsing="false" onAction="#openTableView" text="Back" />
+            <Button fx:id="addVehicleAddButton" mnemonicParsing="false" onAction="#saveVehicle" text="Add" />
+         </children>
+      </HBox>
    </children>
-</AnchorPane>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

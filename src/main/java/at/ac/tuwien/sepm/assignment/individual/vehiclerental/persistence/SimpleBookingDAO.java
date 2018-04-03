@@ -26,7 +26,7 @@ public class SimpleBookingDAO implements BookingDAO{
     public Booking addBookingToDatabase (Booking booking) throws PersistenceException {
         if(booking == null) {
             LOG.warn("Booking is null!");
-            throw new PersistenceException("Booking is null!");
+            throw new IllegalArgumentException("Booking is null!");
         }
 
         PreparedStatement preparedStatement = null;
@@ -60,13 +60,14 @@ public class SimpleBookingDAO implements BookingDAO{
 
         } catch (SQLException e) {
             LOG.error("Booking couldn't be added to database!");
-            throw new PersistenceException("Booking couldn't be added to database!");
+            throw new PersistenceException("Booking couldn't be added to database!", e);
         }
         return booking;
     }
 
-    public void addLicenseToDatabase (Long vehicleId, Long bookingId, String licensetype, String licensenumber, LocalDate licensedate) {
-        if(licensenumber == null || licensedate == null) {
+    public void addLicenseToDatabase (Long vehicleId, Long bookingId,  License license) {
+        //TODO: Change Parameter
+        if(license.getLicenseNumber() == null || license.getLicenseDate() == null) {
             LOG.error("licensetype or licensedate are null!");
         }
 
@@ -77,9 +78,9 @@ public class SimpleBookingDAO implements BookingDAO{
             preparedStatement = connection.prepareStatement("INSERT  INTO VEHICLE_BOOKING VALUES (?,?,?,?,?)");
             preparedStatement.setLong(1,vehicleId);
             preparedStatement.setLong(2,bookingId);
-            preparedStatement.setString(3, licensetype);
-            preparedStatement.setString(4,licensenumber);
-            preparedStatement.setDate(5,Date.valueOf(licensedate));
+            preparedStatement.setString(3, license.getLicenseType().toString());
+            preparedStatement.setString(4,license.getLicenseNumber());
+            preparedStatement.setDate(5,Date.valueOf(license.getLicenseDate()));
             preparedStatement.executeUpdate();
 
             resultSet = preparedStatement.getGeneratedKeys();
@@ -96,6 +97,8 @@ public class SimpleBookingDAO implements BookingDAO{
 
     //method called, gets all Bookings of a certain vehicle from the database
     public List<Booking> getAllBookingsOfVehicle (Long id) {
+        //TODO: Change Parameter
+
         List<Booking> bookingsOfVehicle = new ArrayList<>();
         List<Long> bookingIDs = new ArrayList<>();
         PreparedStatement preparedStatement = null;
@@ -125,6 +128,7 @@ public class SimpleBookingDAO implements BookingDAO{
 
     //Gets a booking by its ID
     public Booking getBookingByID (Long id) throws PersistenceException{
+        //TODO: Change Parameter
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Booking currentBooking = null;
@@ -137,7 +141,7 @@ public class SimpleBookingDAO implements BookingDAO{
 
         } catch (SQLException e) {
             LOG.error("License requirements couldn't be loaded from database!");
-            throw new PersistenceException("License requirements couldn't be loaded from database!");
+            throw new PersistenceException("License requirements couldn't be loaded from database!", e);
         }
 
         return currentBooking;
@@ -295,9 +299,9 @@ public class SimpleBookingDAO implements BookingDAO{
     //update Booking to finished
     public void finishBooking(Booking booking){
         if(booking == null) {
-            LOG.warn("Booking is null!");
+            LOG.error("Booking is null!");
+            throw new IllegalArgumentException("Booking is null");
         }
-
         PreparedStatement preparedStatement = null;
 
         try {
@@ -317,7 +321,8 @@ public class SimpleBookingDAO implements BookingDAO{
     //update Booking to canceled
     public void cancelBooking(Booking booking){
         if(booking == null) {
-            LOG.warn("Booking is null!");
+            LOG.error("Booking is null!");
+            throw new IllegalArgumentException("Booking is null");
         }
         PreparedStatement preparedStatement = null;
 
@@ -341,21 +346,14 @@ public class SimpleBookingDAO implements BookingDAO{
 
     }
 
-   /* private void setIvoiceNumber(Booking booking) {
-        PreparedStatement preparedStatement = null;
-
-        try {
-            preparedStatement = connection.prepareStatement("UPDATE BOOKING SET  WHERE ID = ?");
-            preparedStatement.setLong(1,booking.getId());
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    } */
 
     //gets all Licensensedata as well as vehicleIDs
     public List<License> getLicenseDataFromDatabase(Booking booking) {
+        if(booking == null) {
+            LOG.error("Booking is null!");
+            throw new IllegalArgumentException("Booking is null");
+        }
+
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
@@ -409,6 +407,11 @@ public class SimpleBookingDAO implements BookingDAO{
     }
 
     public List<Long> getVehicleIDsFromDatabase(Booking booking) {
+        if(booking == null) {
+            LOG.error("Booking is null!");
+            throw new IllegalArgumentException("Booking is null");
+        }
+
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
@@ -443,5 +446,61 @@ public class SimpleBookingDAO implements BookingDAO{
         }
 
         return vehicleIDs;
+    }
+
+    @Override
+    public void updateBookingInDatabase(Booking booking) {
+        if(booking == null) {
+            LOG.error("Booking is null!");
+            throw new IllegalArgumentException("Booking is null");
+        }
+
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("UPDATE BOOKING SET NAME = ? AND PAYMENTTYPE = ? AND PAYMENTNUMBER = ? AND STARTDATE = ? AND ENDDATE = ? AND VEHICLES = ? AND TOTAL_PRICE = ? WHERE ID = ?");
+            preparedStatement.setString(1,booking.getName());
+            preparedStatement.setString(2,booking.getPaymentType().toString());
+            preparedStatement.setString(3,booking.getPaymentNumber());
+            preparedStatement.setTimestamp(4,Timestamp.valueOf(booking.getStartDate()));
+            preparedStatement.setTimestamp(5,Timestamp.valueOf(booking.getEndDate()));
+            preparedStatement.setString(6,booking.getBookedVehicles().toString());
+            preparedStatement.setInt(7,booking.getTotalPrice());
+
+            preparedStatement.setLong(8,booking.getId());
+            preparedStatement.executeUpdate();
+
+            preparedStatement.close();
+
+            clearVehicleAndLicenseInformationForBooking(booking);
+
+            LOG.info("Booking was updated succesfully!");
+        } catch (SQLException e) {
+            LOG.error("Booking couldn't be updated!", e);
+        }
+
+
+    }
+
+    private void clearVehicleAndLicenseInformationForBooking(Booking booking){
+        if(booking == null) {
+            LOG.error("Booking is null!");
+            throw new IllegalArgumentException("Booking is null");
+        }
+
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("DELETE FROM VEHICLE_BOOKING WHERE BOOKING_ID = ?");
+            preparedStatement.setLong(1, booking.getId());
+            preparedStatement.executeUpdate();
+
+            preparedStatement.close();
+
+            LOG.info("Vehicles were deleted from booking!");
+        } catch (SQLException e) {
+            LOG.error("Vehicles couldn't be deleted from booking!", e);
+        }
+
     }
 }

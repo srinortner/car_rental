@@ -53,7 +53,7 @@ public class VehicleServiceTest {
         long id = 4;
         vehicle.setId(id);
         try {
-            Assert.assertEquals(vehicle, vehicleDAO.getVehicleByID(id));
+            Assert.assertEquals(vehicle, vehicleDAO.getById(id));
         } catch (PersistenceException e) {
             e.printStackTrace();
         }

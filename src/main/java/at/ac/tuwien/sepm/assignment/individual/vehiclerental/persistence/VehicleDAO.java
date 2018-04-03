@@ -12,13 +12,15 @@ public interface VehicleDAO {
 
     Vehicle addVehicleToDatabase(Vehicle vehicle) throws PersistenceException;
 
-    List<Vehicle> getAllVehiclesFromDatabase();
+    List<Vehicle> getAll() throws PersistenceException;
 
     void editVehicle(Vehicle newVehicle, Vehicle oldVehicle) throws PersistenceException;
 
     void deleteVehicleFromDatabase(Vehicle vehicle);
 
-    Vehicle getVehicleByID(Long id) throws PersistenceException;
+    Vehicle getById(Long id) throws PersistenceException;
 
-    List<Vehicle> searchVehicles(List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String Name, PowerSource powerSource, Integer seats);
+    List<Vehicle> search(List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String Name, PowerSource powerSource, Integer seats) throws PersistenceException;
+
+    List<Vehicle> getAllVehiclesByUUID(String uuidForEditing) throws PersistenceException;
 }

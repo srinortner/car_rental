@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -113,9 +114,12 @@ public class TableViewController {
     private HBox hBoxOther;
 
     @FXML
-    private void initialize() {
-        initializeTableView(currentService.getListOfVehiclesFromPersistence());
+    private HBox hBoxAllButtons;
 
+    @FXML
+    private void initialize() {
+        setEditMode(false);
+        initializeTableView(currentService.getListOfVehiclesFromPersistence());
     }
 
     private void initializeTableView(List<Vehicle> currentList) {
@@ -204,7 +208,6 @@ public class TableViewController {
 
     public void selectRowsForEditing(Booking booking) {
         List<Vehicle> toSelect = booking.getBookedVehicles();
-        //TODO: Selection doesn't work properly
         for (Vehicle vehicle : toSelect) {
             tableViewVehicles.getSelectionModel().select(vehicle);
         }
@@ -239,6 +242,8 @@ public class TableViewController {
     private void backButtonClicked() {
         if (returnToScene != null) {
             primaryStage.setScene(returnToScene);
+            final List<Vehicle> selectedVehicles = tableViewVehicles.getSelectionModel().getSelectedItems();
+            bookingController.updateSelectedVehiclesOfBooking(selectedVehicles);
             primaryStage.show();
             this.setEditMode(false);
         } else {
@@ -253,7 +258,17 @@ public class TableViewController {
 
     public void setEditMode(boolean editMode) {
         this.editMode = editMode;
-        hBoxEdit.setVisible(this.editMode);
-        hBoxOther.setVisible(!this.editMode);
+        ObservableList<Node> hBoxAllButtonsChildren = hBoxAllButtons.getChildren();
+        if (editMode) {
+            if (!hBoxAllButtonsChildren.contains(hBoxEdit))
+                hBoxAllButtonsChildren.add(hBoxEdit);
+            if (hBoxAllButtonsChildren.contains(hBoxOther))
+                hBoxAllButtonsChildren.remove(hBoxOther);
+        } else {
+            if (hBoxAllButtonsChildren.contains(hBoxEdit))
+                hBoxAllButtonsChildren.remove(hBoxEdit);
+            if (!hBoxAllButtonsChildren.contains(hBoxOther))
+                hBoxAllButtonsChildren.add(hBoxOther);
+        }
     }
 }

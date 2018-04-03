@@ -157,6 +157,11 @@
          </columns>
       </TableView>
       <Button fx:id="editButtonBookings" layoutX="657.0" layoutY="510.0" mnemonicParsing="false" onAction="#editBooking" text="Edit" visible="false" />
-      <Button fx:id="editVehicleListButton" layoutX="843.0" layoutY="686.0" mnemonicParsing="false" onAction="#changeToBookingTableView" text="Edit List" />
+      <HBox layoutX="718.0" layoutY="686.0" spacing="10.0">
+         <children>
+            <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#updateBooking" text="Save Changes" visible="false" />
+            <Button fx:id="editVehicleListButton" mnemonicParsing="false" onAction="#changeToBookingTableView" text="Edit List" visible="false" />
+         </children>
+      </HBox>
    </children>
 </AnchorPane>
