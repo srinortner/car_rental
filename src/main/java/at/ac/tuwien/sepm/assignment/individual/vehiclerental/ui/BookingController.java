@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.SpinnerFactory.buildSpinner;
 import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
@@ -273,7 +274,8 @@ public class BookingController {
                         currentService.addBookingToPersistence(currentBooking);
                     } catch (InvalidBookingException e) {
                         LOG.error("Booking couldn't be added to Persistence! {}", e.getMessage());
-                        new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
+                        buildAlert(ERROR,e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
+                     //   new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
                     }
                 } else {
                     alert.close();
@@ -286,7 +288,8 @@ public class BookingController {
                     saveLicenseInformation();
                 } catch (InvalidBookingException e) {
                     LOG.error("Booking couldn't be added to Persistence! {}", e.getMessage());
-                    new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
+                    buildAlert(ERROR,e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
+                   // new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
                 }
                 returnToVehicleTableView();
             }

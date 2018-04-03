@@ -23,6 +23,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
+import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.ButtonType.OK;
 
@@ -107,7 +109,8 @@ public class BookingTableViewController {
     void cancelBooking(ActionEvent event) {
         Booking selectedBooking = bookingTableView.getSelectionModel().getSelectedItem();
         if (!selectedBooking.getStatus().equals(BookingStatus.BOOKED) && selectedBooking.getStartDate().isAfter(LocalDateTime.now())) {
-            new Alert(ERROR, "This booking can't be canceled!", OK).showAndWait();
+            buildAlert(ERROR,"This booking can't be canceled!").showAndWait();
+        //    new Alert(ERROR, "This booking can't be canceled!", OK).showAndWait();
         } else {
             currentService.cancelBookingInPersistence(selectedBooking);
             selectedBooking.setStatus(BookingStatus.CANCELED);
@@ -120,7 +123,8 @@ public class BookingTableViewController {
     void finishBooking(ActionEvent event) {
         Booking selectedBooking = bookingTableView.getSelectionModel().getSelectedItem();
         if(!selectedBooking.getStatus().equals(BookingStatus.BOOKED) && selectedBooking.getStartDate().isAfter(LocalDateTime.now())){
-            new Alert(ERROR,"This booking is already finished!", OK).showAndWait();
+            buildAlert(ERROR,"This booking is already finished!").showAndWait();
+           // new Alert(ERROR,"This booking is already finished!", OK).showAndWait();
         } else {
             currentService.finishBookingInPersistence(selectedBooking);
             selectedBooking.setStatus(BookingStatus.PAID);

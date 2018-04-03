@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseDouble;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
 import static java.util.stream.Collectors.joining;
@@ -275,7 +276,8 @@ public class DetailViewController {
             vehicleService.passEditedVehicleToPersistence(currentVehicle,picture,vehicle);
         } catch (InvalidVehicleException e) {
             LOG.error("Vehicle couldn't be passed to Service");
-            new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
+            buildAlert(ERROR,e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
+           // new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
         }
     }
 

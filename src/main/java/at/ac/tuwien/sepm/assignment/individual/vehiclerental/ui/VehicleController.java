@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseDouble;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
 import static java.util.stream.Collectors.joining;
@@ -189,25 +190,15 @@ public class VehicleController {
             currentService.addVehicleToPersistence(currentVehicle, picture);
         } catch (InvalidVehicleException e) {
             LOG.error("Vehicle couldn't be added to Persistence! {}", e.getMessage());
-            new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
+            buildAlert(ERROR,e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
+           // new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
         }
 
     }
 
     @FXML
     private void openTableView(ActionEvent event) {
-       // Stage stage = new Stage();
 
-      /*  try {
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Parent parent = FXMLLoader.load(getClass().getResource("/fxml/tableview.fxml"));
-            Scene scene = new Scene(parent);
-        //   stage.initOwner(addVehicleBackButton.getScene().getWindow());
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } */
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
         try {
