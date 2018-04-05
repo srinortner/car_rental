@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleBooki
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleVehicleService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.*;
+import fxml.StatisticsController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -42,21 +43,23 @@ public final class MainApplication extends Application {
         BookingDAO bookingDAO = new SimpleBookingDAO();
         VehicleService vehicleService = new SimpleVehicleService(vehicleDAO);
         BookingService bookingService = new SimpleBookingService(bookingDAO, vehicleService);
-        DetailViewController detailViewController = new DetailViewController(vehicleService, primaryStage);
         InvoiceController invoiceController = new InvoiceController(bookingService, vehicleService);
-        BookingTableViewController bookingTableViewController = new BookingTableViewController(bookingService, invoiceController, primaryStage);
+        BookingTableViewController bookingTableViewController = new BookingTableViewController(bookingService, invoiceController,primaryStage);
         BookingController bookingController = new BookingController(bookingService, vehicleService, bookingTableViewController, primaryStage);
         SearchController searchController = new SearchController(vehicleService, bookingService);
-        TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, bookingController, searchController, primaryStage);
+        DetailViewController detailViewController = new DetailViewController(vehicleService,bookingController, bookingTableViewController,primaryStage);
+        TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, bookingController, bookingTableViewController,searchController, primaryStage);
         VehicleController vehicleController = new VehicleController(vehicleService, tableViewController, primaryStage);
+        StatisticsController statisticsController = new StatisticsController();
 
 
         // prepare fxml loader to inject controller
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/vehicle.fxml"));
         fxmlLoader.setControllerFactory(param -> param.isInstance(vehicleController) ? vehicleController : null);
-      /*  FXMLLoader fxmlLoader2 = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
-        fxmlLoader.setControllerFactory(param -> param.isInstance(tableViewController) ? tableViewController : null); */
         primaryStage.setScene(new Scene(fxmlLoader.load()));
+    //    FXMLLoader fxmlLoader2 = new FXMLLoader(getClass().getResource("/fxml/statistics.fxml"));
+      //  fxmlLoader2.setControllerFactory(param -> param.isInstance(statisticsController) ? statisticsController : null);
+        //primaryStage.setScene(new Scene(fxmlLoader2.load()));
 
         // show application
         primaryStage.show();

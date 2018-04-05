@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
-import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
-import at.ac.tuwien.sepm.assignment.individual.entities.BookingStatus;
-import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.entities.*;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -64,11 +64,17 @@ public class BookingTableViewController {
     @FXML
     private Button vehiclesButtonBooking;
 
+    @FXML
+    private Button addToBookingButton;
+
+
     private List<Booking> bookingList = null;
     private BookingService currentService = null;
     private BookingController bookingController = null;
     private InvoiceController invoiceController = null;
+    private TableViewController tableViewController = null;
     private Stage primaryStage;
+    private Vehicle vehicleForAddingToBooking = null;
 
     public BookingController getBookingController() {
         return bookingController;
@@ -77,6 +83,10 @@ public class BookingTableViewController {
     public void setBookingController(BookingController bookingController) {
         this.bookingController = bookingController;
 
+    }
+
+    public void setTableViewController(TableViewController tableViewController) {
+        this.tableViewController = tableViewController;
     }
 
     private ObservableList<Booking> bookingData = FXCollections.observableArrayList();
@@ -112,7 +122,13 @@ public class BookingTableViewController {
             buildAlert(ERROR,"This booking can't be canceled!").showAndWait();
         //    new Alert(ERROR, "This booking can't be canceled!", OK).showAndWait();
         } else {
-            currentService.cancelBookingInPersistence(selectedBooking);
+            try {
+                currentService.cancelBookingInPersistence(selectedBooking);
+            } catch (ServiceException e) {
+                LOG.error("Booking couldn't be canceled in Service!", e);
+            } catch (InvalidBookingException e) {
+                LOG.error("Booking couldn't be canceled in Service!", e);
+            }
             selectedBooking.setStatus(BookingStatus.CANCELED);
             bookingTableView.refresh();
         }
@@ -166,9 +182,56 @@ public class BookingTableViewController {
 
 
     @FXML
-    void showVehicleTableView(ActionEvent event) {
-        //TODO: Change to VehicleTableView
+   private void showVehicleTableView(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Vehicles");
+            primaryStage.show();
 
+        } catch (IOException e) {
+            LOG.error("Stage for Tableview couldn't be changed");
+        }
+
+    }
+
+    @FXML
+    private void addToBooking(ActionEvent event) {
+        //TODO: Eingaben validieren
+        Booking selectedBooking = bookingTableView.getSelectionModel().getSelectedItem();
+       // Booking bookingFromDatabase = currentService.getBookingByIDFromPersistence(selectedBooking.getId());
+        if(selectedBooking.getLicensedateA() != null){
+            License licenseA = new License(LicenseType.A,selectedBooking.getLicensedateA(),selectedBooking.getLicensenumberA());
+            currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseA);
+        }
+        if(selectedBooking.getLicensedateB() != null){
+            License licenseB = new License(LicenseType.B,selectedBooking.getLicensedateB(),selectedBooking.getLicensenumberB());
+            currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseB);
+        }
+        if(selectedBooking.getLicensedateC() != null){
+            License licenseC = new License(LicenseType.C,selectedBooking.getLicensedateC(),selectedBooking.getLicensenumberC());
+            currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseC);
+        }
+        if(selectedBooking.getPersonLicenseList().isEmpty()){
+            currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,null);
+        }
+
+    }
+
+    public void changeToAddToBookingMode(Vehicle vehicle){
+        vehicleForAddingToBooking = vehicle;
+        addToBookingButton.setVisible(true);
+        addToBookingButton.setDisable(false);
+
+        cancelButtonBooking.setVisible(false);
+        cancelButtonBooking.setDisable(true);
+        detailViewButtonBookings.setVisible(false);
+        detailViewButtonBookings.setDisable(true);
+        vehiclesButtonBooking.setVisible(false);
+        vehiclesButtonBooking.setDisable(true);
+        finishButtonBooking.setVisible(false);
+        finishButtonBooking.setDisable(true);
     }
 
 }

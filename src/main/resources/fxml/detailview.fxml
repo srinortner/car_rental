@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
@@ -84,10 +85,16 @@
             <Font name="System Bold" size="19.0" />
          </font>
       </Label>
-      <Button fx:id="backButtonDetailView" layoutX="601.0" layoutY="501.0" mnemonicParsing="false" onAction="#backToTableView" text="Back" />
-      <Button fx:id="saveButtonDetailView" disable="true" layoutX="538.0" layoutY="501.0" mnemonicParsing="false" onAction="#saveChanges" text="Save" />
-      <Button fx:id="editButtonDetailView" layoutX="476.0" layoutY="501.0" mnemonicParsing="false" onAction="#editVehicle" text="Edit" />
+      <HBox layoutX="159.0" layoutY="538.0" spacing="10.0">
+         <children>
+            <Button fx:id="createBookingWithVehicleButton" mnemonicParsing="false" onAction="#createBookingWithCurrentVehicle" text="Create Booking" />
+            <Button fx:id="addToBookingButton" mnemonicParsing="false" onAction="#addVehicleToExistingBooking" text="Add to Booking" />
+            <Button fx:id="deleteButtonDetailView" mnemonicParsing="false" onAction="#deleteButtonDetailViewClicked" text="Delete" />
+            <Button fx:id="editButtonDetailView" mnemonicParsing="false" onAction="#editVehicle" text="Edit" />
+            <Button fx:id="saveButtonDetailView" disable="true" mnemonicParsing="false" onAction="#saveChanges" text="Save" />
+            <Button fx:id="backButtonDetailView" mnemonicParsing="false" onAction="#backToTableView" text="Back" />
+         </children>
+      </HBox>
       <Label fx:id="noPictureLabelDetailView" layoutX="784.0" layoutY="223.0" text="No Picture" />
-      <Button fx:id="deleteButtonDetailView" layoutX="404.0" layoutY="501.0" mnemonicParsing="false" onAction="#deleteButtonDetailViewClicked" text="Delete" />
    </children>
 </AnchorPane>

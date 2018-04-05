@@ -44,11 +44,23 @@ public class DetailViewController {
     private Vehicle vehicle = null;
     private Stage primaryStage = null;
     private  TableViewController tableViewController = null;
+    private BookingController bookingController = null;
+    private BookingTableViewController bookingTableViewController = null;
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
 
-    public DetailViewController(VehicleService vehicleService, Stage primaryStage) {
+    public DetailViewController(VehicleService vehicleService, BookingController bookingController, BookingTableViewController bookingTableViewController, Stage primaryStage) {
         this.vehicleService = vehicleService;
         this.primaryStage = primaryStage;
+        this.bookingController = bookingController;
+        this.bookingTableViewController = bookingTableViewController;
+    }
+
+    public BookingTableViewController getBookingTableViewController() {
+        return bookingTableViewController;
+    }
+
+    public void setBookingTableViewController(BookingTableViewController bookingTableViewController) {
+        this.bookingTableViewController = bookingTableViewController;
     }
 
     @FXML
@@ -116,6 +128,13 @@ public class DetailViewController {
 
     @FXML
     private Button deleteButtonDetailView;
+
+    @FXML
+    private Button createBookingWithVehicleButton;
+
+    @FXML
+    private Button addToBookingButton;
+
 
 
 
@@ -286,6 +305,43 @@ public class DetailViewController {
         vehicleService.deleteVehicleFromPersistence(vehicle);
         changeToTableView();
     }
+
+    @FXML
+    void createBookingWithCurrentVehicle(ActionEvent event) {
+        List<Vehicle> currentVehicleList = new ArrayList<>();
+        currentVehicleList.add(vehicle);
+        bookingController.setVehicleList(currentVehicleList);
+
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingController) ? bookingController : null);
+
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("New Booking");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage for Booking couldn't be changed");
+        }
+    }
+
+    @FXML
+    void addVehicleToExistingBooking(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking_tableview.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingTableViewController) ? bookingTableViewController : null);
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            bookingTableViewController.changeToAddToBookingMode(vehicle);
+            primaryStage.setTitle("Bookings");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage for Booking Tableview couldn't be changed",e);
+        }
+
+    }
+
+
 
 
     public Vehicle getVehicle() {

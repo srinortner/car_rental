@@ -64,6 +64,12 @@ public class Validator {
 
     public static void validateBooking(Booking booking) throws InvalidBookingException {
         List<String> constraintViolations = new ArrayList<>();
+
+        if(booking == null){
+            constraintViolations.add("Booking is null!");
+            throw new InvalidBookingException(constraintViolations);
+        }
+
         if (booking == null) {
             constraintViolations.add("Booking must not be null");
         } else {

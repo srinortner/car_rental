@@ -170,20 +170,9 @@ public class SearchController {
                 currentPowerSource = PowerSource.ANY;
             }
 
-            //TODO: in service machen
             foundVehicles = currentService.searchForVehiclesInPersistence(licenses, currentHourlyPriceMin, currentHourlyPriceMax, currentStartTime, currentEndTime, currentName, currentPowerSource, currentSeats);
-            if (!(currentStartTime == null && currentEndTime == null)) {
-                List<Vehicle> temp = new ArrayList<>();
-                for (Vehicle vehicle : foundVehicles) {
-                    if (bookingService.checkAvailiabilityOfVehicle(vehicle, currentStartTime, currentEndTime)) {
-                        temp.add(vehicle);
-                    }
 
-                }
-                foundVehicles = temp;
-            }
         } catch (InvalidSearchInputException e) {
-            //TODO: bei allen Alerts machen
             buildAlert(ERROR, e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
         }
         ((Stage) searchButton.getScene().getWindow()).close();

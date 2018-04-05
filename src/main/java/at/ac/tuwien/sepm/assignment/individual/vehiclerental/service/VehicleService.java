@@ -27,4 +27,6 @@ public interface VehicleService {
     List<Vehicle> searchForVehiclesInPersistence (List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String Name, PowerSource powerSource, Integer seats);
 
     List<Vehicle> getAllLegacyVehicles(Vehicle vehicle);
+
+    void setBookingService(BookingService bookingService);
 }

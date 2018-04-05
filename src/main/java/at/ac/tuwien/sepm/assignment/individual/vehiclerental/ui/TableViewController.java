@@ -32,6 +32,7 @@ public class TableViewController {
     private DetailViewController detailViewController;
     private BookingController bookingController;
     private SearchController searchController;
+    private BookingTableViewController bookingTableViewController;
     private Stage primaryStage;
 
     private boolean editing = false;
@@ -40,13 +41,16 @@ public class TableViewController {
     private Scene returnToScene;
     private boolean editMode;
 
-    public TableViewController(VehicleService currentService, DetailViewController detailViewController, BookingController bookingController, SearchController searchController, Stage primaryStage) {
+    public TableViewController(VehicleService currentService, DetailViewController detailViewController, BookingController bookingController, BookingTableViewController bookingTableViewController, SearchController searchController, Stage primaryStage) {
         this.currentService = currentService;
         this.detailViewController = detailViewController;
+        detailViewController.setTableViewController(this);
         this.bookingController = bookingController;
         detailViewController.setTableViewController(this);
         bookingController.setTableViewController(this);
         this.searchController = searchController;
+        this.bookingTableViewController = bookingTableViewController;
+        bookingTableViewController.setTableViewController(this);
         this.primaryStage = primaryStage;
     }
 

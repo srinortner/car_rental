@@ -50,18 +50,7 @@ public class BookingController {
         return tableViewController;
     }
 
-    public void setTableViewController(TableViewController tableViewController) {
-        this.tableViewController = tableViewController;
 
-    }
-
-    public BookingController(BookingService currentService, VehicleService currentVehicleService, BookingTableViewController bookingTableViewController, Stage primaryStage) {
-        this.currentService = currentService;
-        this.currentVehicleService = currentVehicleService;
-        this.bookingTableViewController = bookingTableViewController;
-        this.primaryStage = primaryStage;
-        bookingTableViewController.setBookingController(this);
-    }
 
     public List<Vehicle> getVehicleList() {
         return vehicleList;
@@ -200,8 +189,19 @@ public class BookingController {
 
     private List<Vehicle> vehiclesOfBookingList = new ArrayList<>();
     private ObservableList<Vehicle> vehicleData = FXCollections.observableArrayList();
-    private HashMap<Long, Integer> currentPricesOfVehicles = new HashMap<>();
 
+    public void setTableViewController(TableViewController tableViewController) {
+        this.tableViewController = tableViewController;
+
+    }
+
+    public BookingController(BookingService currentService, VehicleService currentVehicleService, BookingTableViewController bookingTableViewController, Stage primaryStage) {
+        this.currentService = currentService;
+        this.currentVehicleService = currentVehicleService;
+        this.bookingTableViewController = bookingTableViewController;
+        this.primaryStage = primaryStage;
+        bookingTableViewController.setBookingController(this);
+    }
 
     public void updateSelectedVehiclesOfBooking(List<Vehicle> vehiclesOfBookingList) {
         this.vehiclesOfBookingList = vehiclesOfBookingList;
@@ -272,6 +272,7 @@ public class BookingController {
 
                     try {
                         currentService.addBookingToPersistence(currentBooking);
+                        saveLicenseInformation();
                     } catch (InvalidBookingException e) {
                         LOG.error("Booking couldn't be added to Persistence! {}", e.getMessage());
                         buildAlert(ERROR,e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
@@ -391,6 +392,10 @@ public class BookingController {
                 License licenseC = new License(LicenseType.C,CLicenseDateBooking.getValue(), licenseNumberC.getText());
                 currentService.addLicenseInformationToPersistence(vehicle, currentBooking, licenseC);
             }
+            if(!ALicenseCheckBox.isSelected() && !BLicenseCheckBox.isSelected() && !CLicenseCheckBox.isSelected()){
+                currentService.addLicenseInformationToPersistence(vehicle,currentBooking,null);
+            }
+
         }
 
     }

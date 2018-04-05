@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
 import at.ac.tuwien.sepm.assignment.individual.entities.License;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,11 +20,15 @@ public interface BookingService {
 
     void finishBookingInPersistence(Booking booking);
 
-    void cancelBookingInPersistence(Booking booking);
+    void cancelBookingInPersistence(Booking booking) throws ServiceException, InvalidBookingException;
 
     List<Long> getVehicleIDsFromPersistence(Booking booking);
 
     boolean checkAvailiabilityOfVehicle (Vehicle vehicle, LocalDateTime currentStartTime, LocalDateTime currentEndTime);
 
     void updateBookingInPersistence(Booking booking);
+
+    Booking getBookingByIDFromPersistence (Long id);
+
+
 }

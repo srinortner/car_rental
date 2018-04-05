@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.assignment.individual.entities.License;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.BookingDAO;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.VehicleDAO;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Validator.validateBooking;
@@ -27,6 +29,7 @@ public class SimpleBookingService implements BookingService {
     public SimpleBookingService(BookingDAO bookingDAO, VehicleService vehicleService) {
         this.bookingDAO = bookingDAO;
         this.vehicleService = vehicleService;
+        vehicleService.setBookingService(this);
     }
 
     public Booking addBookingToPersistence(Booking booking) throws InvalidBookingException {
@@ -41,7 +44,7 @@ public class SimpleBookingService implements BookingService {
     }
 
     public void addLicenseInformationToPersistence(Vehicle vehicle, Booking booking,  License license) {
-        bookingDAO.addLicenseToDatabase(vehicle.getId(), booking.getId(), license);
+        bookingDAO.addLicenseToDatabase(vehicle, booking, license);
     }
 
     public List<Booking> getAllBookingsFromPersistence() {
@@ -52,7 +55,12 @@ public class SimpleBookingService implements BookingService {
         bookingDAO.finishBooking(booking);
     }
 
-    public void cancelBookingInPersistence(Booking booking) {
+    public void cancelBookingInPersistence(Booking booking) throws ServiceException, InvalidBookingException{
+        if(booking.getStatus() != BookingStatus.BOOKED){
+            List<String> constraintViolations = new ArrayList<>();
+            constraintViolations.add("Booking status is invalid!");
+            throw new InvalidBookingException(constraintViolations);
+        }
         int cancellationFee = 0;
         int percentage = 0;
         if (LocalDateTime.now().plusDays(1).isAfter(booking.getStartDate())) {
@@ -69,7 +77,12 @@ public class SimpleBookingService implements BookingService {
         }
         booking.setCancelingFeeInPercent(percentage);
         booking.setTotalPrice(cancellationFee);
-        bookingDAO.cancelBooking(booking);
+        try {
+            bookingDAO.cancelBooking(booking);
+        } catch (PersistenceException e) {
+            LOG.error("Booking couldn't be canceled", e);
+           throw new ServiceException(e.getMessage(), e);
+        }
     }
 
     public List<Long> getVehicleIDsFromPersistence(Booking booking) {
@@ -80,7 +93,7 @@ public class SimpleBookingService implements BookingService {
         boolean isAvailable = true;
         List<Booking> allBookingsOfVehicle;
         for (Vehicle legacyVehicle : vehicleService.getAllLegacyVehicles(vehicle)) {
-            allBookingsOfVehicle = bookingDAO.getAllBookingsOfVehicle(legacyVehicle.getId());
+            allBookingsOfVehicle = bookingDAO.getAllBookingsOfVehicle(legacyVehicle);
             for (Booking booking : allBookingsOfVehicle) {
                 if (isAvailable && !(booking.getStatus() == BookingStatus.CANCELED)) {
                     if (booking.getPaidtime() == null) {
@@ -109,5 +122,14 @@ public class SimpleBookingService implements BookingService {
 
     public void updateBookingInPersistence(Booking booking) {
         bookingDAO.updateBookingInDatabase(booking);
+    }
+
+    public Booking getBookingByIDFromPersistence (Long id) {
+        try {
+           return bookingDAO.getBookingByID(id);
+        } catch (PersistenceException e) {
+            LOG.error(e.getMessage(),e);
+        }
+        return null;
     }
 }

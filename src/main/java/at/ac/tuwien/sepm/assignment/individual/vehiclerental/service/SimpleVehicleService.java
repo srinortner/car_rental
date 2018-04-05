@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +40,15 @@ public class SimpleVehicleService implements VehicleService {
     private static final Path imageDestinationPath = Paths.get(System.getProperty("user.home"),"/.sepm/images");
     private String currentPictureTitle = null;
     private static final List<String> SUPPORTED_FILE_TYPES = of(".jpg", ".png");
+    private BookingService bookingService = null;
+
+    public BookingService getBookingService() {
+        return bookingService;
+    }
+
+    public void setBookingService(BookingService bookingService) {
+        this.bookingService = bookingService;
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
 
@@ -201,12 +211,24 @@ public class SimpleVehicleService implements VehicleService {
     }
 
     public List<Vehicle> searchForVehiclesInPersistence (List<LicenseType> licenseTypes, Integer hourlyPriceMin, Integer hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String name, PowerSource powerSource, Integer seats){
+        List<Vehicle> foundVehicles = null;
         try {
-            return vehicleDAO.search(licenseTypes, hourlyPriceMin, hourlyPriceMax, startTime, endTime, name, powerSource, seats);
+            foundVehicles = vehicleDAO.search(licenseTypes, hourlyPriceMin, hourlyPriceMax, startTime, endTime, name, powerSource, seats);
         } catch (PersistenceException e) {
             LOG.error(e.getMessage(), e);
             return emptyList();
         }
+        if (!(startTime == null && endTime == null)) {
+            List<Vehicle> temp = new ArrayList<>();
+            for (Vehicle vehicle : foundVehicles) {
+                if (bookingService.checkAvailiabilityOfVehicle(vehicle, startTime, endTime)) {
+                    temp.add(vehicle);
+                }
+
+            }
+            foundVehicles = temp;
+        }
+        return foundVehicles;
     }
 
     @Override

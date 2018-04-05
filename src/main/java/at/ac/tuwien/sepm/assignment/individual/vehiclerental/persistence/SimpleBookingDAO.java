@@ -65,23 +65,27 @@ public class SimpleBookingDAO implements BookingDAO{
         return booking;
     }
 
-    public void addLicenseToDatabase (Long vehicleId, Long bookingId,  License license) {
-        //TODO: Change Parameter
-        if(license.getLicenseNumber() == null || license.getLicenseDate() == null) {
-            LOG.error("licensetype or licensedate are null!");
-        }
+    public void addLicenseToDatabase (Vehicle vehicle, Booking booking,  License license) {
+
 
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connection.prepareStatement("INSERT  INTO VEHICLE_BOOKING VALUES (?,?,?,?,?)");
-            preparedStatement.setLong(1,vehicleId);
-            preparedStatement.setLong(2,bookingId);
-            preparedStatement.setString(3, license.getLicenseType().toString());
-            preparedStatement.setString(4,license.getLicenseNumber());
-            preparedStatement.setDate(5,Date.valueOf(license.getLicenseDate()));
-            preparedStatement.executeUpdate();
+            if(license != null) {
+                preparedStatement = connection.prepareStatement("INSERT  INTO VEHICLE_BOOKING VALUES (?,?,?,?,?)");
+                preparedStatement.setLong(1, vehicle.getId());
+                preparedStatement.setLong(2, booking.getId());
+                preparedStatement.setString(3, license.getLicenseType().toString());
+                preparedStatement.setString(4, license.getLicenseNumber());
+                preparedStatement.setDate(5, Date.valueOf(license.getLicenseDate()));
+                preparedStatement.executeUpdate();
+            } else{
+                preparedStatement = connection.prepareStatement("INSERT  INTO VEHICLE_BOOKING VALUES (?,?,NULL,NULL,NULL)");
+                preparedStatement.setLong(1, vehicle.getId());
+                preparedStatement.setLong(2, booking.getId());
+                preparedStatement.executeUpdate();
+            }
 
             resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
@@ -96,8 +100,7 @@ public class SimpleBookingDAO implements BookingDAO{
     }
 
     //method called, gets all Bookings of a certain vehicle from the database
-    public List<Booking> getAllBookingsOfVehicle (Long id) {
-        //TODO: Change Parameter
+    public List<Booking> getAllBookingsOfVehicle (Vehicle vehicle) {
 
         List<Booking> bookingsOfVehicle = new ArrayList<>();
         List<Long> bookingIDs = new ArrayList<>();
@@ -106,7 +109,7 @@ public class SimpleBookingDAO implements BookingDAO{
 
         try {
             preparedStatement = connection.prepareStatement("SELECT BOOKING_ID FROM VEHICLE_BOOKING WHERE VEHICLE_ID = ?");
-            preparedStatement.setLong(1,id);
+            preparedStatement.setLong(1,vehicle.getId());
             resultSet = preparedStatement.executeQuery();
             bookingIDs = getBookingIDsFromResultSet(resultSet);
 
@@ -128,7 +131,6 @@ public class SimpleBookingDAO implements BookingDAO{
 
     //Gets a booking by its ID
     public Booking getBookingByID (Long id) throws PersistenceException{
-        //TODO: Change Parameter
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Booking currentBooking = null;
@@ -319,11 +321,12 @@ public class SimpleBookingDAO implements BookingDAO{
     }
 
     //update Booking to canceled
-    public void cancelBooking(Booking booking){
+    public void cancelBooking(Booking booking) throws PersistenceException {
         if(booking == null) {
             LOG.error("Booking is null!");
             throw new IllegalArgumentException("Booking is null");
         }
+
         PreparedStatement preparedStatement = null;
 
         try {
@@ -340,7 +343,9 @@ public class SimpleBookingDAO implements BookingDAO{
             preparedStatement.close();
             LOG.info("Booking was updated");
         } catch (SQLException e) {
-            LOG.error("Booking status couldn't be updated");
+            LOG.error("Booking status couldn't be updated",e);
+            throw new PersistenceException(e.getMessage(),e);
+
         }
 
 
@@ -384,19 +389,21 @@ public class SimpleBookingDAO implements BookingDAO{
                 Timestamp currentLicenseDate = resultSet.getTimestamp(2);
                 String currentLicenseNumber = resultSet.getString(3);
 
-                LocalDateTime licensedatetime = currentLicenseDate.toLocalDateTime();
-                LocalDate licensedate = LocalDate.of(licensedatetime.getYear(),licensedatetime.getMonth(),licensedatetime.getDayOfMonth());
+                if(currentLicenseDate != null && currentLicenseNumber != null && currentLicenseType != null) {
+                    LocalDateTime licensedatetime = currentLicenseDate.toLocalDateTime();
+                    LocalDate licensedate = LocalDate.of(licensedatetime.getYear(), licensedatetime.getMonth(), licensedatetime.getDayOfMonth());
 
-                LicenseType type = LicenseType.C;
-                if(currentLicenseType.equals("A")) {
-                    type = LicenseType.A;
-                }
-                if(currentLicenseType.equals("B")){
-                    type = LicenseType.B;
-                }
+                    LicenseType type = LicenseType.C;
+                    if (currentLicenseType.equals("A")) {
+                        type = LicenseType.A;
+                    }
+                    if (currentLicenseType.equals("B")) {
+                        type = LicenseType.B;
+                    }
 
-                License currentLicense = new License(type,licensedate,currentLicenseNumber);
-                currentData.add(currentLicense);
+                    License currentLicense = new License(type, licensedate, currentLicenseNumber);
+                    currentData.add(currentLicense);
+                }
             }
 
         } catch (SQLException e) {
