@@ -6,7 +6,7 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleBooki
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleVehicleService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.*;
-import fxml.StatisticsController;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

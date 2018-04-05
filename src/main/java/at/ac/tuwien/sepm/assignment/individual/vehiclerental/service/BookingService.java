@@ -30,5 +30,9 @@ public interface BookingService {
 
     Booking getBookingByIDFromPersistence (Long id);
 
+    void validateAddingVehicleToExistingBooking(Vehicle vehicle, Booking booking) throws InvalidBookingException;
+
+    void updateTotalPrice(Booking booking);
+
 
 }

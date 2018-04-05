@@ -177,6 +177,7 @@ public class Validator {
         }
     }
 
+
     public static void validateSearchInputs (String hourlyPriceMin, String hourlyPriceMax, LocalDateTime startTime, LocalDateTime endTime, String seats) throws InvalidSearchInputException{
         List<String> constraintViolations = new ArrayList<>();
 

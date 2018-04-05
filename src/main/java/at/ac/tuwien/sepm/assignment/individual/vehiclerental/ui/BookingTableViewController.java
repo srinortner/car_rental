@@ -21,11 +21,14 @@ import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Validator.validateBooking;
 import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
 import static javafx.scene.control.ButtonType.OK;
 
 public class BookingTableViewController {
@@ -198,24 +201,31 @@ public class BookingTableViewController {
 
     @FXML
     private void addToBooking(ActionEvent event) {
-        //TODO: Eingaben validieren
         Booking selectedBooking = bookingTableView.getSelectionModel().getSelectedItem();
-       // Booking bookingFromDatabase = currentService.getBookingByIDFromPersistence(selectedBooking.getId());
-        if(selectedBooking.getLicensedateA() != null){
-            License licenseA = new License(LicenseType.A,selectedBooking.getLicensedateA(),selectedBooking.getLicensenumberA());
-            currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseA);
+        try {
+            currentService.validateAddingVehicleToExistingBooking(vehicleForAddingToBooking,selectedBooking);
+            if(selectedBooking.getLicensedateA() != null){
+                License licenseA = new License(LicenseType.A,selectedBooking.getLicensedateA(),selectedBooking.getLicensenumberA());
+                currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseA);
+            }
+            if(selectedBooking.getLicensedateB() != null){
+                License licenseB = new License(LicenseType.B,selectedBooking.getLicensedateB(),selectedBooking.getLicensenumberB());
+                currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseB);
+            }
+            if(selectedBooking.getLicensedateC() != null){
+                License licenseC = new License(LicenseType.C,selectedBooking.getLicensedateC(),selectedBooking.getLicensenumberC());
+                currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseC);
+            }
+            if(selectedBooking.getPersonLicenseList().isEmpty()){
+                currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,null);
+            }
+            currentService.updateTotalPrice(selectedBooking);
+        } catch (InvalidBookingException e) {
+            buildAlert(ERROR,e.getMessage()).showAndWait();
+            LOG.error("Vehicle couldn't be added to booking!");
         }
-        if(selectedBooking.getLicensedateB() != null){
-            License licenseB = new License(LicenseType.B,selectedBooking.getLicensedateB(),selectedBooking.getLicensenumberB());
-            currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseB);
-        }
-        if(selectedBooking.getLicensedateC() != null){
-            License licenseC = new License(LicenseType.C,selectedBooking.getLicensedateC(),selectedBooking.getLicensenumberC());
-            currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseC);
-        }
-        if(selectedBooking.getPersonLicenseList().isEmpty()){
-            currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,null);
-        }
+        buildAlert(INFORMATION, "Vehicle was added to Booking!").showAndWait();
+        changeToNormalMode();
 
     }
 
@@ -232,6 +242,23 @@ public class BookingTableViewController {
         vehiclesButtonBooking.setDisable(true);
         finishButtonBooking.setVisible(false);
         finishButtonBooking.setDisable(true);
+    }
+
+    private void changeToNormalMode(){
+        vehicleForAddingToBooking = null;
+        addToBookingButton.setVisible(false);
+        addToBookingButton.setDisable(true);
+
+        cancelButtonBooking.setVisible(true);
+        cancelButtonBooking.setDisable(false);
+        detailViewButtonBookings.setVisible(true);
+        detailViewButtonBookings.setDisable(false);
+        vehiclesButtonBooking.setVisible(true);
+        vehiclesButtonBooking.setDisable(false);
+        finishButtonBooking.setVisible(true);
+        finishButtonBooking.setDisable(false);
+
+        bookingTableView.refresh();
     }
 
 }

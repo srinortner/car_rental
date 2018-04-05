@@ -20,6 +20,6 @@ public interface BookingDAO {
     List<Long> getVehicleIDsFromDatabase(Booking booking);
     Booking getBookingByID (Long id) throws PersistenceException;
     void updateBookingInDatabase(Booking booking);
-
+    void updateTotalPriceInDatabase(Booking booking);
 
 }

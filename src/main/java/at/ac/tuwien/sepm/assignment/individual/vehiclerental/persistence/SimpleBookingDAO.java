@@ -510,4 +510,24 @@ public class SimpleBookingDAO implements BookingDAO{
         }
 
     }
+
+    public void updateTotalPriceInDatabase(Booking booking){
+        if(booking == null) {
+            LOG.error("Booking is null!");
+            throw new IllegalArgumentException("Booking is null");
+        }
+
+        PreparedStatement preparedStatement = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("UPDATE BOOKING SET TOTAL_PRICE = ? WHERE ID = ?");
+            preparedStatement.setInt(1,booking.getTotalPrice());
+            preparedStatement.setLong(2,booking.getId());
+            preparedStatement.executeUpdate();
+
+            preparedStatement.close();
+        } catch (SQLException e) {
+            LOG.error(e.getMessage());
+        }
+    }
 }

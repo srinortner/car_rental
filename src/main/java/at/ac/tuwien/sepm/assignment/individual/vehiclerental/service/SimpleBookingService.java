@@ -18,7 +18,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Validator.validateBooking;
+import static javafx.scene.control.Alert.AlertType.ERROR;
 
 public class SimpleBookingService implements BookingService {
 
@@ -131,5 +133,54 @@ public class SimpleBookingService implements BookingService {
             LOG.error(e.getMessage(),e);
         }
         return null;
+    }
+
+    public void validateAddingVehicleToExistingBooking(Vehicle vehicle, Booking booking) throws InvalidBookingException{
+        List<String> violations = new ArrayList<>();
+        List<Long> vehicleIDsOfBooking = getVehicleIDsFromPersistence(booking);
+        List<Vehicle> vehiclesOfBookingList = new ArrayList<>();
+        for (Long id : vehicleIDsOfBooking) {
+            Vehicle currentVehicle = vehicleService.getVehiclesByIDFromPersistence(id);
+            vehiclesOfBookingList.add(currentVehicle);
+        }
+        booking.setBookedVehicles(vehiclesOfBookingList);
+        if(!checkAvailiabilityOfVehicle(vehicle,booking.getStartDate(),booking.getEndDate())){
+            violations.add("This vehicle is not available in that timeframe! ");
+        }
+        if(booking.getBookedVehicles().contains(vehicle)){
+            violations.add("This booking already contains the selected vehicle! ");
+        }
+        if(!booking.getStatus().equals(BookingStatus.BOOKED)){
+            violations.add("You can't add a vehicle to a paid/canceled booking! ");
+        }
+        if(!violations.isEmpty()){
+            throw new InvalidBookingException(violations);
+        }
+        vehiclesOfBookingList.add(vehicle);
+        booking.setBookedVehicles(vehiclesOfBookingList);
+        validateBooking(booking);
+    }
+
+    public void updateTotalPrice(Booking booking){
+        List<Vehicle> vehicleList = booking.getBookedVehicles();
+
+        int dailyPrice = 0;
+        for (Vehicle vehicle : vehicleList) {
+            dailyPrice += vehicle.getHourlyRateCents() * 24;
+        }
+
+
+        int pricePerMinute = (dailyPrice / 24) / 60;
+        Integer currentTotalPrice = 0;
+        LocalDateTime i = booking.getStartDate();
+
+        while (!i.equals(booking.getEndDate())) {
+            currentTotalPrice += pricePerMinute;
+            i = i.plusMinutes(1);
+        }
+
+        booking.setTotalPrice(currentTotalPrice);
+        bookingDAO.updateTotalPriceInDatabase(booking);
+
     }
 }

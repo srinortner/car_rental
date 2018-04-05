@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="558.0" prefWidth="759.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml.StatisticsController">
+<AnchorPane prefHeight="558.0" prefWidth="759.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.StatisticsController">
    <children>
       <HBox layoutX="31.0" layoutY="94.0" prefHeight="266.0" prefWidth="704.0" spacing="70.0">
          <children>
