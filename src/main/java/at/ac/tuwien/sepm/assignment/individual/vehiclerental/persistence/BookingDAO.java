@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence;
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
 import at.ac.tuwien.sepm.assignment.individual.entities.License;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
 
 import java.time.LocalDate;
@@ -16,7 +17,7 @@ public interface BookingDAO {
     List<Booking> getAllBookingsOfVehicle (Vehicle vehicle);
     List<Booking> getAllBookingsFromDatabase();
     void finishBooking(Booking booking);
-    void cancelBooking(Booking booking)  throws PersistenceException;
+    void cancelBooking(Booking booking) throws PersistenceException, InvalidBookingException;
     List<Long> getVehicleIDsFromDatabase(Booking booking);
     Booking getBookingByID (Long id) throws PersistenceException;
     void updateBookingInDatabase(Booking booking);

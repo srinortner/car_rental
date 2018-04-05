@@ -306,6 +306,7 @@ public class SimpleBookingDAO implements BookingDAO{
         }
         PreparedStatement preparedStatement = null;
 
+
         try {
             preparedStatement = connection.prepareStatement("UPDATE BOOKING SET TYPE = ?, PAIDTIME = ?, ivoice_number_booking = invoice_number.nextval WHERE ID = ?");
             preparedStatement.setString(1,"PAID");
@@ -321,10 +322,16 @@ public class SimpleBookingDAO implements BookingDAO{
     }
 
     //update Booking to canceled
-    public void cancelBooking(Booking booking) throws PersistenceException {
+    public void cancelBooking(Booking booking) throws PersistenceException, InvalidBookingException {
         if(booking == null) {
             LOG.error("Booking is null!");
             throw new IllegalArgumentException("Booking is null");
+        }
+
+        if(!booking.getStatus().equals(BookingStatus.BOOKED)){
+            List<String> constraintViolations = new ArrayList<>();
+            constraintViolations.add("Booking can't be canceled because it is alread finished");
+            throw new InvalidBookingException(constraintViolations);
         }
 
         PreparedStatement preparedStatement = null;
