@@ -60,6 +60,13 @@ public class Booking {
 
     }
 
+    public Booking(Long id, LocalDateTime startDate, LocalDateTime endDate, Integer totalPrice) {
+        this.id = id;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.totalPrice = totalPrice;
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,10 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.application;
 
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.*;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleBookingService;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.SimpleVehicleService;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.*;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.*;
 
 import javafx.application.Application;
@@ -50,12 +47,14 @@ public final class MainApplication extends Application {
         DetailViewController detailViewController = new DetailViewController(vehicleService,bookingController, bookingTableViewController,primaryStage);
         TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, bookingController, bookingTableViewController,searchController, primaryStage);
         VehicleController vehicleController = new VehicleController(vehicleService, tableViewController, primaryStage);
-        StatisticsController statisticsController = new StatisticsController();
+        StatisticsService statisticsService = new SimpleStatisticsService(vehicleService,bookingService);
+        StatisticsController statisticsController = new StatisticsController(statisticsService);
+        IndexController indexController = new IndexController(vehicleController,tableViewController,bookingTableViewController,statisticsController,primaryStage);
 
 
         // prepare fxml loader to inject controller
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/vehicle.fxml"));
-        fxmlLoader.setControllerFactory(param -> param.isInstance(vehicleController) ? vehicleController : null);
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
+        fxmlLoader.setControllerFactory(param -> param.isInstance(indexController) ? indexController : null);
         primaryStage.setScene(new Scene(fxmlLoader.load()));
     //    FXMLLoader fxmlLoader2 = new FXMLLoader(getClass().getResource("/fxml/statistics.fxml"));
       //  fxmlLoader2.setControllerFactory(param -> param.isInstance(statisticsController) ? statisticsController : null);

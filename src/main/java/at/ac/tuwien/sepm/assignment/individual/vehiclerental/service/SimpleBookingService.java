@@ -183,4 +183,8 @@ public class SimpleBookingService implements BookingService {
         bookingDAO.updateTotalPriceInDatabase(booking);
 
     }
+
+    public List<Booking> getBookingsInTimeInterval(LocalDateTime startTime, LocalDateTime endTime){
+       return bookingDAO.getBookingsInTimeIntervalFromDatabase(startTime,endTime);
+    }
 }

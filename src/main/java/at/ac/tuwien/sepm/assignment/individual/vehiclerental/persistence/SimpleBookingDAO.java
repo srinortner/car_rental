@@ -537,4 +537,50 @@ public class SimpleBookingDAO implements BookingDAO{
             LOG.error(e.getMessage());
         }
     }
+
+    public List<Booking> getBookingsInTimeIntervalFromDatabase(LocalDateTime starttime, LocalDateTime endtime) {
+        List<Booking> bookingsInTimeFrame = null;
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connection.prepareStatement("SELECT ID, STARTDATE, ENDDATE, TOTAL_PRICE FROM BOOKING WHERE STARTDATE BETWEEN ? AND ? OR ENDDATE BETWEEN ? AND ? OR STARTDATE < ? AND ENDDATE > ?");
+            preparedStatement.setTimestamp(1,Timestamp.valueOf(starttime));
+            preparedStatement.setTimestamp(2,Timestamp.valueOf(endtime));
+            preparedStatement.setTimestamp(3,Timestamp.valueOf(starttime));
+            preparedStatement.setTimestamp(4,Timestamp.valueOf(endtime));
+            preparedStatement.setTimestamp(5,Timestamp.valueOf(starttime));
+            preparedStatement.setTimestamp(6,Timestamp.valueOf(endtime));
+            preparedStatement.executeQuery();
+            resultSet = preparedStatement.getGeneratedKeys();
+            bookingsInTimeFrame = getBookingsInTimeIntervalFromResultSet(resultSet);
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return bookingsInTimeFrame;
+    }
+
+    private List<Booking> getBookingsInTimeIntervalFromResultSet(ResultSet resultSet){
+        List<Booking> bookingsInTimeFrame = new ArrayList<>();
+
+        try {
+            while (resultSet.next()) {
+                Long id = resultSet.getLong(1);
+                Timestamp start = resultSet.getTimestamp(2);
+                Timestamp end = resultSet.getTimestamp(3);
+                Integer totalPrice = resultSet.getInt(4);
+
+                Booking currentBooking = new Booking(id,start.toLocalDateTime(), end.toLocalDateTime(),totalPrice);
+
+                bookingsInTimeFrame.add(currentBooking);
+            }
+        }catch (Exception e){
+            LOG.error(e.getMessage());
+        }
+        return bookingsInTimeFrame;
+    }
 }

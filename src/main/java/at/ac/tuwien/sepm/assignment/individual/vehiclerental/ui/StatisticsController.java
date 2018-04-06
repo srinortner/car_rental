@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.StatisticsService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,6 +14,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 
 import java.text.DateFormatSymbols;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -72,22 +75,34 @@ public class StatisticsController {
     private Button generateNumberOfBookingsButton;
 
     private ObservableList<String> monthNames = FXCollections.observableArrayList();
+    private ObservableList<String> dayNames = FXCollections.observableArrayList();
+
+    private StatisticsService statisticsService = null;
+
+    public StatisticsController(StatisticsService statisticsService) {
+        this.statisticsService = statisticsService;
+    }
 
     @FXML
     private void initialize(){
         String[] months = DateFormatSymbols.getInstance(Locale.ENGLISH).getMonths();
+        String[] days = {"Mo", "Tue", "We", "Thur", "Fri", "Sa", "Sun"};
         monthNames.addAll(Arrays.asList(months));
+        dayNames.addAll(Arrays.asList(days));
         xAxisLineChart.setCategories(monthNames);
+        xAxisBarChart.setCategories(dayNames);
     }
 
     @FXML
-    void createNumberOfBookingsChart(ActionEvent event) {
+    private void createNumberOfBookingsChart(ActionEvent event) {
 
     }
 
     @FXML
-    void generateTurnoverChart(ActionEvent event) {
-
+    private void generateTurnoverChart(ActionEvent event) {
+        LocalDateTime start = LocalDateTime.of(fromDatePickerTurnover.getValue(), LocalTime.of(0,0));
+        LocalDateTime end = LocalDateTime.of(toDatePickerTurnover.getValue(), LocalTime.of(23,59));
+        statisticsService.getDataForTurnover(start,end);
     }
 
 }

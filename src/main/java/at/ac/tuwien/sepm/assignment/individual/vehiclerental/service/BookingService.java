@@ -34,5 +34,7 @@ public interface BookingService {
 
     void updateTotalPrice(Booking booking);
 
+    List<Booking> getBookingsInTimeInterval(LocalDateTime startTime, LocalDateTime endTime);
+
 
 }

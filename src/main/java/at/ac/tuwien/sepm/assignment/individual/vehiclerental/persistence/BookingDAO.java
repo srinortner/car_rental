@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidB
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingDAO {
@@ -22,5 +23,6 @@ public interface BookingDAO {
     Booking getBookingByID (Long id) throws PersistenceException;
     void updateBookingInDatabase(Booking booking);
     void updateTotalPriceInDatabase(Booking booking);
+    List<Booking> getBookingsInTimeIntervalFromDatabase(LocalDateTime starttime, LocalDateTime endtime);
 
 }
