@@ -552,9 +552,12 @@ public class SimpleBookingDAO implements BookingDAO{
             preparedStatement.setTimestamp(4,Timestamp.valueOf(endtime));
             preparedStatement.setTimestamp(5,Timestamp.valueOf(starttime));
             preparedStatement.setTimestamp(6,Timestamp.valueOf(endtime));
-            preparedStatement.executeQuery();
-            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet = preparedStatement.executeQuery();
             bookingsInTimeFrame = getBookingsInTimeIntervalFromResultSet(resultSet);
+
+
+            preparedStatement.close();
+            resultSet.close();
 
 
         } catch (SQLException e) {

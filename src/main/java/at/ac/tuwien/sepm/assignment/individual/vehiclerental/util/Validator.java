@@ -68,10 +68,6 @@ public class Validator {
         if(booking == null){
             constraintViolations.add("Booking is null!");
             throw new InvalidBookingException(constraintViolations);
-        }
-
-        if (booking == null) {
-            constraintViolations.add("Booking must not be null");
         } else {
             if(booking.getName() == null){
                 constraintViolations.add("Please enter the name of the person booking!");
@@ -87,6 +83,9 @@ public class Validator {
                 if (!IBAN_VALIDATOR.isValid(booking.getPaymentNumber())) {
                     constraintViolations.add("IBAN is invalid!");
                 }
+            }
+            if(booking.getStartDate().equals(booking.getEndDate())){
+                constraintViolations.add("Your start time is equal to the end time!");
             }
             if(booking.getStartDate().isAfter(booking.getEndDate())) {
                 constraintViolations.add("FROM-Date has to be before TO-Date!");
@@ -109,6 +108,7 @@ public class Validator {
                     constraintViolations.add("Licensedate must be before today!");
                 }
             }
+
         }
 
         //checks if the person booking the vehicle has the license for it for more than 3 years
@@ -160,12 +160,12 @@ public class Validator {
 
                 if(hasA && !hasB && !hasC) {
                     LocalDate today = LocalDate.now();
-                    if (today.minusYears(3).isBefore(booking.getLicensedateA())) {
+                    if (booking.getPersonLicenseList().contains(LicenseType.A) && today.minusYears(3).isBefore(booking.getLicensedateA())) {
                         constraintViolations.add("You are not allowed to book this vehicle!");
                     }
                 } else if(hasC && !hasB && !hasA) {
                     LocalDate today = LocalDate.now();
-                    if (today.minusYears(3).isBefore(booking.getLicensedateC())) {
+                    if ((booking.getPersonLicenseList().contains(LicenseType.C)) && today.minusYears(3).isBefore(booking.getLicensedateC())) {
                         constraintViolations.add("You are not allowed to book this vehicle!");
                     }
                 }

@@ -14,10 +14,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 
 import java.text.DateFormatSymbols;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 
 public class StatisticsController {
 
@@ -102,7 +104,8 @@ public class StatisticsController {
     private void generateTurnoverChart(ActionEvent event) {
         LocalDateTime start = LocalDateTime.of(fromDatePickerTurnover.getValue(), LocalTime.of(0,0));
         LocalDateTime end = LocalDateTime.of(toDatePickerTurnover.getValue(), LocalTime.of(23,59));
-        statisticsService.getDataForTurnover(start,end);
+        Map<LocalDate, Integer> dailyTurnovers = statisticsService.getDataForTurnover(start,end);
+        int i = 0;
     }
 
 }
