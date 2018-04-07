@@ -120,7 +120,8 @@ public class BookingTableViewController {
     @FXML
     void cancelBooking(ActionEvent event) {
         Booking selectedBooking = bookingTableView.getSelectionModel().getSelectedItem();
-        if (!selectedBooking.getStatus().equals(BookingStatus.BOOKED) || selectedBooking.getStartDate().isAfter(LocalDateTime.now())) {
+
+        if (!(selectedBooking.getStatus().equals(BookingStatus.BOOKED)) || selectedBooking.getStartDate().isBefore(LocalDateTime.now())) {
             buildAlert(ERROR,"This booking can't be canceled!").showAndWait();
         //    new Alert(ERROR, "This booking can't be canceled!", OK).showAndWait();
         } else {
