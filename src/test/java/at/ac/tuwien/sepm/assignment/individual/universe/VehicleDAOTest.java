@@ -21,7 +21,7 @@ import java.util.List;
 
 public class VehicleDAOTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private VehicleDAO vehicleDAO = new SimpleVehicleDAO();
 

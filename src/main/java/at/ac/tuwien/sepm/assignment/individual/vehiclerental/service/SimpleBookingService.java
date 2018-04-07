@@ -8,25 +8,21 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidB
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.BookingDAO;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.VehicleDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Validator.validateBooking;
-import static javafx.scene.control.Alert.AlertType.ERROR;
 
 public class SimpleBookingService implements BookingService {
 
     private BookingDAO bookingDAO;
     private VehicleService vehicleService;
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public SimpleBookingService(BookingDAO bookingDAO, VehicleService vehicleService) {
         this.bookingDAO = bookingDAO;
@@ -45,7 +41,7 @@ public class SimpleBookingService implements BookingService {
         return returnedBooking;
     }
 
-    public void addLicenseInformationToPersistence(Vehicle vehicle, Booking booking,  License license) {
+    public void addLicenseInformationToPersistence(Vehicle vehicle, Booking booking, License license) {
         bookingDAO.addLicenseToDatabase(vehicle, booking, license);
     }
 
@@ -57,8 +53,8 @@ public class SimpleBookingService implements BookingService {
         bookingDAO.finishBooking(booking);
     }
 
-    public void cancelBookingInPersistence(Booking booking) throws ServiceException, InvalidBookingException{
-        if(booking.getStatus() != BookingStatus.BOOKED){
+    public void cancelBookingInPersistence(Booking booking) throws ServiceException, InvalidBookingException {
+        if (booking.getStatus() != BookingStatus.BOOKED) {
             List<String> constraintViolations = new ArrayList<>();
             constraintViolations.add("Booking status is invalid!");
             throw new InvalidBookingException(constraintViolations);
@@ -83,7 +79,7 @@ public class SimpleBookingService implements BookingService {
             bookingDAO.cancelBooking(booking);
         } catch (PersistenceException e) {
             LOG.error("Booking couldn't be canceled", e);
-           throw new ServiceException(e.getMessage(), e);
+            throw new ServiceException(e.getMessage(), e);
         }
     }
 
@@ -92,33 +88,38 @@ public class SimpleBookingService implements BookingService {
     }
 
     public boolean checkAvailiabilityOfVehicle(Vehicle vehicle, LocalDateTime currentStartTime, LocalDateTime currentEndTime) {
-        boolean isAvailable = true;
-        List<Booking> allBookingsOfVehicle;
         for (Vehicle legacyVehicle : vehicleService.getAllLegacyVehicles(vehicle)) {
-            allBookingsOfVehicle = bookingDAO.getAllBookingsOfVehicle(legacyVehicle);
-            for (Booking booking : allBookingsOfVehicle) {
-                if (isAvailable && !(booking.getStatus() == BookingStatus.CANCELED)) {
-                    if (booking.getPaidtime() == null) {
-                        if (booking.getStartDate().isBefore(currentStartTime) && booking.getEndDate().isBefore(currentEndTime)) {
-                            isAvailable = true;
-                        } else if (booking.getStartDate().isAfter(currentStartTime) && booking.getEndDate().isAfter(currentEndTime)) {
-                            isAvailable = true;
-                        } else {
-                            isAvailable = false;
-                        }
-                    } else {
-                        if (booking.getStartDate().isBefore(currentStartTime) && booking.getPaidtime().toLocalDateTime().isBefore(currentEndTime)) {
-                            isAvailable = true;
-                        } else if (booking.getStartDate().isAfter(currentStartTime) && booking.getPaidtime().toLocalDateTime().isAfter(currentEndTime)) {
-                            isAvailable = true;
-                        } else {
-                            isAvailable = false;
-                        }
+            if (isVehicleBooked(currentStartTime, currentEndTime, legacyVehicle)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isVehicleBooked(LocalDateTime currentStartTime, LocalDateTime currentEndTime, Vehicle legacyVehicle) {
+        for (Booking booking : bookingDAO.getAllBookingsOfVehicle(legacyVehicle)) {
+            if (!(booking.getStatus() == BookingStatus.CANCELED)) {
+                if (booking.getPaidtime() == null) {
+                    LocalDateTime startDate = booking.getStartDate();
+                    LocalDateTime endDate = booking.getEndDate();
+                    if (isBetween(currentStartTime, startDate, endDate) ||
+                        isBetween(currentEndTime, startDate, endDate)) {
+                        LOG.info("vehicle with id {} with UUID {} is already booked between {} and {} in booking with id {}",
+                            legacyVehicle.getId(),
+                            legacyVehicle.getUUIDForEditing(),
+                            startDate,
+                            endDate,
+                            booking.getId());
+                        return true;
                     }
                 }
             }
         }
-        return isAvailable;
+        return false;
+    }
+
+    private boolean isBetween(LocalDateTime checkDate, LocalDateTime startDate, LocalDateTime endDate) {
+        return checkDate.isAfter(startDate) && checkDate.isBefore(endDate);
     }
 
 
@@ -126,16 +127,16 @@ public class SimpleBookingService implements BookingService {
         bookingDAO.updateBookingInDatabase(booking);
     }
 
-    public Booking getBookingByIDFromPersistence (Long id) {
+    public Booking getBookingByIDFromPersistence(Long id) {
         try {
-           return bookingDAO.getBookingByID(id);
+            return bookingDAO.getBookingByID(id);
         } catch (PersistenceException e) {
-            LOG.error(e.getMessage(),e);
+            LOG.error(e.getMessage(), e);
         }
         return null;
     }
 
-    public void validateAddingVehicleToExistingBooking(Vehicle vehicle, Booking booking) throws InvalidBookingException{
+    public void validateAddingVehicleToExistingBooking(Vehicle vehicle, Booking booking) throws InvalidBookingException {
         List<String> violations = new ArrayList<>();
         List<Long> vehicleIDsOfBooking = getVehicleIDsFromPersistence(booking);
         List<Vehicle> vehiclesOfBookingList = new ArrayList<>();
@@ -144,16 +145,16 @@ public class SimpleBookingService implements BookingService {
             vehiclesOfBookingList.add(currentVehicle);
         }
         booking.setBookedVehicles(vehiclesOfBookingList);
-        if(!checkAvailiabilityOfVehicle(vehicle,booking.getStartDate(),booking.getEndDate())){
+        if (!checkAvailiabilityOfVehicle(vehicle, booking.getStartDate(), booking.getEndDate())) {
             violations.add("This vehicle is not available in that timeframe! ");
         }
-        if(booking.getBookedVehicles().contains(vehicle)){
+        if (booking.getBookedVehicles().contains(vehicle)) {
             violations.add("This booking already contains the selected vehicle! ");
         }
-        if(!booking.getStatus().equals(BookingStatus.BOOKED)){
+        if (!booking.getStatus().equals(BookingStatus.BOOKED)) {
             violations.add("You can't add a vehicle to a paid/canceled booking! ");
         }
-        if(!violations.isEmpty()){
+        if (!violations.isEmpty()) {
             throw new InvalidBookingException(violations);
         }
         vehiclesOfBookingList.add(vehicle);
@@ -161,7 +162,7 @@ public class SimpleBookingService implements BookingService {
         validateBooking(booking);
     }
 
-    public void updateTotalPrice(Booking booking){
+    public void updateTotalPrice(Booking booking) {
         List<Vehicle> vehicleList = booking.getBookedVehicles();
 
         int dailyPrice = 0;
@@ -184,7 +185,7 @@ public class SimpleBookingService implements BookingService {
 
     }
 
-    public List<Booking> getBookingsInTimeInterval(LocalDateTime startTime, LocalDateTime endTime){
-       return bookingDAO.getBookingsInTimeIntervalFromDatabase(startTime,endTime);
+    public List<Booking> getBookingsInTimeInterval(LocalDateTime startTime, LocalDateTime endTime) {
+        return bookingDAO.getBookingsInTimeIntervalFromDatabase(startTime, endTime);
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 
 public class SimpleVehicleDAO implements VehicleDAO {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private Connection connection = DBConnection.getConnection();
     private boolean editing = false;
 

@@ -50,7 +50,7 @@ public class SimpleVehicleService implements VehicleService {
         this.bookingService = bookingService;
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
     public SimpleVehicleService(VehicleDAO vehicleDAO){

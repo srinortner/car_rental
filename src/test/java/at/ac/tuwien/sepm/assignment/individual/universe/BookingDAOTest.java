@@ -31,7 +31,7 @@ public class BookingDAOTest {
     private BookingDAO bookingDAO = new SimpleBookingDAO();
     private VehicleDAO vehicleDAO = new SimpleVehicleDAO();
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private Booking booking = null;
 

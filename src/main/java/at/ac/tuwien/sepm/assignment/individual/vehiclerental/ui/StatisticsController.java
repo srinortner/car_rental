@@ -5,10 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
@@ -20,6 +17,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class StatisticsController {
 
@@ -105,7 +103,14 @@ public class StatisticsController {
         LocalDateTime start = LocalDateTime.of(fromDatePickerTurnover.getValue(), LocalTime.of(0,0));
         LocalDateTime end = LocalDateTime.of(toDatePickerTurnover.getValue(), LocalTime.of(23,59));
         Map<LocalDate, Integer> dailyTurnovers = statisticsService.getDataForTurnover(start,end);
-        int i = 0;
+        XYChart.Series series = new XYChart.Series();
+        Set<LocalDate> keys = dailyTurnovers.keySet();
+        for (LocalDate date: keys) {
+       //     series.getData().add(date.getMonth().toString(),dailyTurnovers.get(date));
+
+        }
+
+
     }
 
 }

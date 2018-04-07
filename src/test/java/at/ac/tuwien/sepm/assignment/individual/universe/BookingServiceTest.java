@@ -29,7 +29,7 @@ import java.util.List;
 import static junit.framework.TestCase.fail;
 
 public class BookingServiceTest {
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private BookingDAO bookingDAO = new SimpleBookingDAO();
     private VehicleDAO vehicleDAO = new SimpleVehicleDAO();

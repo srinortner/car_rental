@@ -46,7 +46,7 @@ public class DetailViewController {
     private  TableViewController tableViewController = null;
     private BookingController bookingController = null;
     private BookingTableViewController bookingTableViewController = null;
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public DetailViewController(VehicleService vehicleService, BookingController bookingController, BookingTableViewController bookingTableViewController, Stage primaryStage) {
         this.vehicleService = vehicleService;
@@ -135,6 +135,9 @@ public class DetailViewController {
     @FXML
     private Button addToBookingButton;
 
+    @FXML
+    private Label edittimeLabelDetailView;
+
 
 
 
@@ -181,6 +184,7 @@ public class DetailViewController {
         } else {
             noPictureLabelDetailView.setVisible(true);
         }
+        edittimeLabelDetailView.setText(vehicle.getEdittime().toString());
 
     }
 

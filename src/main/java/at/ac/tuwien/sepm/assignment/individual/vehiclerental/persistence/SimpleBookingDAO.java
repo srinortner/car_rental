@@ -15,7 +15,7 @@ import java.util.List;
 
 public class SimpleBookingDAO implements BookingDAO{
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String INSERT_BOOKING = "INSERT INTO BOOKING VALUES(DEFAULT,?,?,?,?,?,?,?,?,?, DEFAULT, DEFAULT )";
     private Connection connection = DBConnection.getConnection();
 

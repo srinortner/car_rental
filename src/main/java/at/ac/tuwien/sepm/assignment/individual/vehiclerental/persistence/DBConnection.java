@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class DBConnection {
 
     private static Connection connection = null;
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static boolean testmode = false;
 
     private DBConnection() {
