@@ -13,7 +13,7 @@ public class SpinnerFactory {
             @Override
             public void decrement(int steps) {
                 Integer current = this.getValue();
-                if (current == 1) {
+                if (current == 0) {
                     this.setValue(maxSpinnerValue);
                 } else {
                     this.setValue(current - 1);
@@ -24,7 +24,7 @@ public class SpinnerFactory {
             public void increment(int steps) {
                 Integer current = this.getValue();
                 if (current == maxSpinnerValue) {
-                    this.setValue(1);
+                    this.setValue(0);
                 } else {
                     this.setValue(current + 1);
                 }

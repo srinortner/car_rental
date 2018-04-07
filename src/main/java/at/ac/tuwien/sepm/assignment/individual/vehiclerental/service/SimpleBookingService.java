@@ -102,8 +102,7 @@ public class SimpleBookingService implements BookingService {
                 if (booking.getPaidtime() == null) {
                     LocalDateTime startDate = booking.getStartDate();
                     LocalDateTime endDate = booking.getEndDate();
-                    if (isBetween(currentStartTime, startDate, endDate) ||
-                        isBetween(currentEndTime, startDate, endDate)) {
+                    if (!currentEndTime.isBefore(startDate) && !currentStartTime.isAfter(endDate)) {
                         LOG.info("vehicle with id {} with UUID {} is already booked between {} and {} in booking with id {}",
                             legacyVehicle.getId(),
                             legacyVehicle.getUUIDForEditing(),
@@ -112,16 +111,15 @@ public class SimpleBookingService implements BookingService {
                             booking.getId());
                         return true;
                     }
+                } else {
+                    LOG.info("Ignore booking with id {} cause it is already PAID", booking.getId());
                 }
+            }else {
+                LOG.info("Ignore booking with id {} cause it is CANCELLED", booking.getId());
             }
         }
         return false;
     }
-
-    private boolean isBetween(LocalDateTime checkDate, LocalDateTime startDate, LocalDateTime endDate) {
-        return checkDate.isAfter(startDate) && checkDate.isBefore(endDate);
-    }
-
 
     public void updateBookingInPersistence(Booking booking) {
         bookingDAO.updateBookingInDatabase(booking);

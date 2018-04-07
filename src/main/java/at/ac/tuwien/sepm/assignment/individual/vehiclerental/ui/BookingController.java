@@ -222,8 +222,8 @@ public class BookingController {
 
         SpinnerValueFactory<Integer> valueFactoryHourTo = buildSpinner(23);
 
-        valueFactoryHour.setValue(1);
-        valueFactoryHourTo.setValue(1);
+        valueFactoryHour.setValue(0);
+        valueFactoryHourTo.setValue(0);
         fromHourPicker.setValueFactory(valueFactoryHour);
         toHourPicker.setValueFactory(valueFactoryHourTo);
 

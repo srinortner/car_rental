@@ -35,14 +35,14 @@ public class Validator {
             if (isNull(vehicle.getName()) || vehicle.getName().isEmpty()) {
                 constraintViolations.add("Name must not be empty!");
             }
-            if (isNull(vehicle.getBuildyear()) || vehicle.getBuildyear() <= 0) {
+            if (isNull(vehicle.getBuildyear()) || vehicle.getBuildyear() <= 0 || vehicle.getBuildyear() > LocalDateTime.now().getYear()) {
                 constraintViolations.add("Buildyear must be a valid integer greater than zero!");
             }
-            if (isNull(vehicle.getHourlyRateCents()) || vehicle.getHourlyRateCents() < 0) {
+            if (isNull(vehicle.getHourlyRateCents()) || vehicle.getHourlyRateCents() < 0 ||vehicle.getHourlyRateCents() > Integer.MAX_VALUE) {
                 constraintViolations.add("Hourly price must be a valid number greater than zero!");
             }
             if (vehicle.getPowerSource().equals(PowerSource.ENGINE) &&
-                (isNull(vehicle.getPower()) || vehicle.getPower() <= 0)) {
+                (isNull(vehicle.getPower()) || vehicle.getPower() <= 0 || vehicle.getPower() > Double.MAX_VALUE)) {
                 constraintViolations.add("The power must be a valid number greater than zero!");
             }
             if (isNull(vehicle.getPowerSource())) {
@@ -54,8 +54,8 @@ public class Validator {
             if(!vehicle.getLicenseType().isEmpty() && vehicle.getPowerSource().equals(PowerSource.MUSCLE)){
                 constraintViolations.add("If a license is required, the vehicle has to have an engine!");
             }
-            if(!isNull(vehicle.getSeats()) && vehicle.getSeats() < 0) {
-                constraintViolations.add("Seats mustn't be negative!");
+            if(!isNull(vehicle.getSeats()) && vehicle.getSeats() < 0 && vehicle.getSeats() > Integer.MAX_VALUE) {
+                constraintViolations.add("Seats must be a valid positive number!");
             }
         }
         if (!constraintViolations.isEmpty()) {
@@ -201,8 +201,8 @@ public class Validator {
         if (!seats.equals("")) {
             if (!INTEGER_VALIDATOR.isValid(seats)) {
                 constraintViolations.add("Number of seats has to be a number without any decimals!");
-            } else if (!INTEGER_VALIDATOR.isInRange(parseInt(hourlyPriceMin), 0, Integer.MAX_VALUE)) {
-                constraintViolations.add("Number of seats has to be a number without any decimals!");
+            } else if (!INTEGER_VALIDATOR.isInRange(parseInt(seats), 0, Integer.MAX_VALUE)) {
+                constraintViolations.add("Number of seats has to be a positive number without any decimals!");
             }
         }
 

@@ -169,11 +169,11 @@ public class SearchController {
             }
 
             foundVehicles = currentService.searchForVehiclesInPersistence(licenses, currentHourlyPriceMin, currentHourlyPriceMax, currentStartTime, currentEndTime, currentName, currentPowerSource, currentSeats);
-
+            ((Stage) searchButton.getScene().getWindow()).close();
         } catch (InvalidSearchInputException e) {
             buildAlert(ERROR, e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
         }
-        ((Stage) searchButton.getScene().getWindow()).close();
+
 
     }
 
