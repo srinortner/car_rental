@@ -28,6 +28,7 @@ public class IndexController {
         this.bookingTableViewController = bookingTableViewController;
         this.statisticsController = statisticsController;
         this.primaryStage = primaryStage;
+        statisticsController.setIndexController(this);
     }
 
     @FXML

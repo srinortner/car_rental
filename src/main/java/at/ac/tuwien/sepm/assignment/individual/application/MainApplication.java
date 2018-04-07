@@ -40,7 +40,7 @@ public final class MainApplication extends Application {
         BookingDAO bookingDAO = new SimpleBookingDAO();
         VehicleService vehicleService = new SimpleVehicleService(vehicleDAO);
         BookingService bookingService = new SimpleBookingService(bookingDAO, vehicleService);
-        InvoiceController invoiceController = new InvoiceController(bookingService, vehicleService);
+        InvoiceController invoiceController = new InvoiceController(bookingService, vehicleService, primaryStage);
         BookingTableViewController bookingTableViewController = new BookingTableViewController(bookingService, invoiceController,primaryStage);
         BookingController bookingController = new BookingController(bookingService, vehicleService, bookingTableViewController, primaryStage);
         SearchController searchController = new SearchController(vehicleService, bookingService);
@@ -48,7 +48,7 @@ public final class MainApplication extends Application {
         TableViewController tableViewController = new TableViewController(vehicleService, detailViewController, bookingController, bookingTableViewController,searchController, primaryStage);
         VehicleController vehicleController = new VehicleController(vehicleService, tableViewController, primaryStage);
         StatisticsService statisticsService = new SimpleStatisticsService(vehicleService,bookingService);
-        StatisticsController statisticsController = new StatisticsController(statisticsService);
+        StatisticsController statisticsController = new StatisticsController(statisticsService,primaryStage);
         IndexController indexController = new IndexController(vehicleController,tableViewController,bookingTableViewController,statisticsController,primaryStage);
 
 

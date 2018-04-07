@@ -14,13 +14,20 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.TestCase.fail;
+
 public class VehicleServiceTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private VehicleDAO vehicleDAO = new SimpleVehicleDAO();
     private VehicleService vehicleService = new SimpleVehicleService(vehicleDAO);
@@ -46,14 +53,14 @@ public class VehicleServiceTest {
         try {
             vehicleService.addVehicleToPersistence(vehicle,null);
         } catch (InvalidVehicleException | IOException e) {
-            e.printStackTrace();
+            LOG.error("Couldn't create valid Vehicle for testing!", e);
         }
         long id = 4;
         vehicle.setId(id);
         try {
             Assert.assertEquals(vehicle, vehicleDAO.getById(id));
         } catch (PersistenceException e) {
-            e.printStackTrace();
+           fail();
         }
     }
 

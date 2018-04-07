@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
+import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +20,8 @@ public class SimpleStatisticsService implements StatisticsService {
 
     @Override
     public HashMap<LocalDate, Integer> getDataForTurnover(LocalDateTime startDate, LocalDateTime endDate) {
+
+
         HashMap<LocalDate, Integer> dailyData = new HashMap<>();
         List<Booking> bookingsInTimeframe = bookingService.getBookingsInTimeInterval(startDate, endDate);
 

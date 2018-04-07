@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.TestCase.fail;
+
 public class VehicleDAOTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -47,7 +49,7 @@ public class VehicleDAOTest {
         try {
             vehicleDAO.addVehicleToDatabase(vehicle);
         } catch (PersistenceException e) {
-            e.printStackTrace();
+           LOG.error("Couldn't create valid vehicle for testing!", e);
         }
         long id = 4;
         vehicle.setId(id);
@@ -57,7 +59,7 @@ public class VehicleDAOTest {
             LOG.debug("Vehicle by ID {}", vehicle1);
             Assert.assertEquals(vehicle, vehicleByID);
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            fail();
         }
     }
 

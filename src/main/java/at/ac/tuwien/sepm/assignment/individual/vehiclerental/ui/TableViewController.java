@@ -180,11 +180,12 @@ public class TableViewController {
 
             if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                 currentService.deleteVehicleFromPersistence(vehicleToDelete);
-                tableViewVehicles.getItems().removeAll(selectedVehicles);
             } else {
                 alert.close();
             }
+
         }
+        tableViewVehicles.getItems().removeAll(selectedVehicles);
 
     }
 

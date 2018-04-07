@@ -36,7 +36,7 @@ public class SimpleBookingService implements BookingService {
         try {
             returnedBooking = bookingDAO.addBookingToDatabase(booking);
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            LOG.error("Booking couldn't be added to persistence!");
         }
         return returnedBooking;
     }
@@ -90,9 +90,20 @@ public class SimpleBookingService implements BookingService {
     public boolean checkAvailiabilityOfVehicle(Vehicle vehicle, LocalDateTime currentStartTime, LocalDateTime currentEndTime) {
         for (Vehicle legacyVehicle : vehicleService.getAllLegacyVehicles(vehicle)) {
             if (isVehicleBooked(currentStartTime, currentEndTime, legacyVehicle)) {
+                LOG.info("vehicle with id {} with UUID {} is already booked between {} and {} ",
+                    legacyVehicle.getId(),
+                    legacyVehicle.getUUIDForEditing(),
+                    currentStartTime,
+                    currentEndTime);
                 return false;
+
             }
         }
+        LOG.info("vehicle with id {} with UUID {} is not booked between {} and {} ",
+            vehicle.getId(),
+            vehicle.getUUIDForEditing(),
+            currentStartTime,
+            currentEndTime);
         return true;
     }
 
@@ -111,6 +122,12 @@ public class SimpleBookingService implements BookingService {
                             booking.getId());
                         return true;
                     }
+                    LOG.info("vehicle with id {} with UUID {} is not booked between {} and {} in booking with id {}",
+                        legacyVehicle.getId(),
+                        legacyVehicle.getUUIDForEditing(),
+                        currentStartTime,
+                        currentEndTime,
+                        booking.getId());
                 } else {
                     LOG.info("Ignore booking with id {} cause it is already PAID", booking.getId());
                 }

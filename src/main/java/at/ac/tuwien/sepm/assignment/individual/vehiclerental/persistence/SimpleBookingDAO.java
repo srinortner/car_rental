@@ -118,12 +118,12 @@ public class SimpleBookingDAO implements BookingDAO{
                 try {
                     currentBooking = getBookingByID(bookingId);
                 } catch (PersistenceException e) {
-                    e.printStackTrace();
+                    LOG.error("Getting bookings from persistence failed!", e);
                 }
                 bookingsOfVehicle.add(currentBooking);
             }
         } catch (SQLException e) {
-            LOG.error("License requirements couldn't be loaded from database!");
+            LOG.error("License requirements couldn't be loaded from database!", e);
         }
 
         return bookingsOfVehicle;
@@ -561,7 +561,7 @@ public class SimpleBookingDAO implements BookingDAO{
 
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Get bookings in time interval from database failed!", e);
         }
 
         return bookingsInTimeFrame;

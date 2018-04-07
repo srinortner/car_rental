@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <VBox spacing="20.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui.VehicleController">
    <children>
       <Label alignment="TOP_CENTER" text="Add New Vehicle">
@@ -50,14 +49,14 @@
                   <Insets left="50.0" />
                </padding>
             </CheckBox>
-            <Label alignment="CENTER" text="Name:" />
-            <Label text="Buildyear:" GridPane.rowIndex="1" />
+            <Label alignment="CENTER" text="Name:*" />
+            <Label text="Buildyear:*" GridPane.rowIndex="1" />
             <Label text="Description:" GridPane.rowIndex="2" />
             <Label text="Number of Seats:" GridPane.rowIndex="3" />
-            <Label fx:id="addVehicleLicenseplateLabel" opacity="0.5" text="Licenseplate:" GridPane.rowIndex="5" />
-            <Label text="Type:" GridPane.rowIndex="6" />
-            <Label fx:id="addVehiclePowerLabel" opacity="0.5" text="Power:" GridPane.rowIndex="7" />
-            <Label text="Hourly rate:" GridPane.rowIndex="8" />
+            <Label fx:id="addVehicleLicenseplateLabel" opacity="0.5" text="Licenseplate:*" GridPane.rowIndex="5" />
+            <Label text="Type:*" GridPane.rowIndex="6" />
+            <Label fx:id="addVehiclePowerLabel" opacity="0.5" text="Power:*" GridPane.rowIndex="7" />
+            <Label text="Hourly rate:*" GridPane.rowIndex="8" />
             <TextField fx:id="addVehicleName" GridPane.columnIndex="1" />
             <TextField fx:id="addVehicleBuildyear" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="addVehicleDescription" GridPane.columnIndex="1" GridPane.rowIndex="2" />

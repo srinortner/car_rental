@@ -8,17 +8,27 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleServ
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class InvoiceController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private BookingTableViewController bookingTableViewController;
     private BookingService bookingService;
@@ -27,17 +37,20 @@ public class InvoiceController {
     private ObservableList<Vehicle> vehicleData = FXCollections.observableArrayList();
     private HashMap<Long,Integer> currentPricesOfVehicles = new HashMap<>();
 
-    public InvoiceController(BookingService bookingService, VehicleService vehicleService) {
+    public InvoiceController(BookingService bookingService, VehicleService vehicleService, Stage primaryStage) {
         this.bookingService = bookingService;
         this.vehicleService = vehicleService;
+        this.primaryStage = primaryStage;
     }
 
     public BookingTableViewController getBookingTableViewController() {
         return bookingTableViewController;
     }
+    private Stage primaryStage = null;
 
     public void setBookingTableViewController(BookingTableViewController bookingTableViewController) {
         this.bookingTableViewController = bookingTableViewController;
+
     }
 
     @FXML
@@ -72,6 +85,7 @@ public class InvoiceController {
 
     @FXML
     private TableColumn<Vehicle, String> vehiclePriceColumn;
+
 
     public void fillInvoiceView(Booking booking) {
         numberLabelInvoice.setText(booking.getInvoiceNumber().toString());
@@ -113,6 +127,21 @@ public class InvoiceController {
         vehicleData = FXCollections.observableArrayList(temp);
         tableViewBookedVehiclesInvoice.setItems(vehicleData);
     }
+
+    @FXML
+    void changeToBookingTableView(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking_tableview.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingTableViewController) ? bookingTableViewController : null);
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Bookings");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage couldn't be changed", e);
+        }
+    }
+
 
 
 

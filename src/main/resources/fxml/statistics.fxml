@@ -19,7 +19,7 @@
    <children>
       <HBox layoutX="31.0" layoutY="94.0" prefHeight="266.0" prefWidth="704.0" spacing="70.0">
          <children>
-            <LineChart fx:id="turnoverLineChart" prefHeight="266.0" prefWidth="313.0" animated="false">
+            <LineChart fx:id="turnoverLineChart" animated="false" prefHeight="266.0" prefWidth="313.0">
               <xAxis>
                 <CategoryAxis side="BOTTOM" fx:id="xAxisLineChart" />
               </xAxis>
@@ -27,7 +27,7 @@
                 <NumberAxis fx:id="yAxisLineChart" side="LEFT" />
               </yAxis>
             </LineChart>
-            <BarChart fx:id="numberOfBookingsBarChart" prefHeight="266.0" prefWidth="296.0" animated="false">
+            <BarChart fx:id="numberOfBookingsBarChart" animated="false" prefHeight="266.0" prefWidth="296.0">
               <xAxis>
                 <CategoryAxis side="BOTTOM" fx:id="xAxisBarChart" />
               </xAxis>
@@ -112,5 +112,6 @@
       </HBox>
       <Button fx:id="generateTurnoverButton" layoutX="258.0" layoutY="465.0" mnemonicParsing="false" onAction="#generateTurnoverChart" text="Generate" />
       <Button fx:id="generateNumberOfBookingsButton" layoutX="629.0" layoutY="465.0" mnemonicParsing="false" onAction="#createNumberOfBookingsChart" text="Generate" />
+      <Button fx:id="backButtonStatistics" layoutX="658.0" layoutY="518.0" mnemonicParsing="false" onAction="#changeToIndexView" text="Back" />
    </children>
 </AnchorPane>

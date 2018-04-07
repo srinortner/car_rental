@@ -56,14 +56,14 @@
                   <ToggleGroup fx:id="paymenttype" />
                </toggleGroup>
             </RadioButton>
-            <Label text="Name:" />
+            <Label text="Name:*" />
             <TextField fx:id="nameOfPersonBooking" GridPane.columnIndex="1" />
-            <Label text="Payment Type:" GridPane.rowIndex="4" />
+            <Label text="Payment Type:*" GridPane.rowIndex="4" />
             <RadioButton fx:id="creditCardButtonBooking" mnemonicParsing="false" selected="true" text="Credit card" toggleGroup="$paymenttype" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <Label text="Number:" GridPane.rowIndex="5" />
+            <Label text="Number:*" GridPane.rowIndex="5" />
             <TextField fx:id="paymentNumberBooking" text="4532642579652817" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <Label text="From:" GridPane.rowIndex="6" />
-            <Label text="To:" GridPane.rowIndex="7" />
+            <Label text="From:*" GridPane.rowIndex="6" />
+            <Label text="To:*" GridPane.rowIndex="7" />
             <Label fx:id="vehiclesLabel" text="Vehicles:" GridPane.rowIndex="10" />
             <Label fx:id="vehiclesOfBooking" text="None" GridPane.columnIndex="1" GridPane.rowIndex="10" />
             <Label fx:id="hourlyPricesLabel" text="Hourly prices per vehicle:" GridPane.rowIndex="11" />

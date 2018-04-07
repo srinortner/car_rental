@@ -29,8 +29,7 @@ public class DBConnection {
         try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            LOG.error("Class.forName failed");
+            LOG.error("Class.forName failed",e);
         }
         if (testmode) {
             try {
@@ -40,8 +39,7 @@ public class DBConnection {
                     "", "");
                 LOG.info("Connection to database found");
             } catch (SQLException e) {
-                e.printStackTrace();
-                LOG.error("Connection to database not found");
+                LOG.error("Connection to database not found",e);
 
 
             }
@@ -54,8 +52,7 @@ public class DBConnection {
                     "", "");
                 LOG.info("Connection to database found");
             } catch (SQLException e) {
-                e.printStackTrace();
-                LOG.error("Connection to database not found");
+                LOG.error("Connection to database not found",e);
 
             }
         }
@@ -71,8 +68,7 @@ public class DBConnection {
                 connection = null;
                 LOG.info("Connection to database closed");
             } catch (SQLException e) {
-                e.printStackTrace();
-                LOG.error("Closing connection failed");
+                LOG.error("Closing connection failed",e);
             }
         }
     }

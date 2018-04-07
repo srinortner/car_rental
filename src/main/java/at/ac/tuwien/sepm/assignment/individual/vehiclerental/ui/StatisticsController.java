@@ -4,11 +4,18 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.StatisticsS
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
+import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -75,13 +82,22 @@ public class StatisticsController {
     @FXML
     private Button generateNumberOfBookingsButton;
 
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     private ObservableList<String> monthNames = observableArrayList();
     private ObservableList<String> dayNames = observableArrayList();
 
     private StatisticsService statisticsService = null;
+    private IndexController indexController = null;
+    private Stage primaryStage = null;
 
-    public StatisticsController(StatisticsService statisticsService) {
+    public void setIndexController(IndexController indexController) {
+        this.indexController = indexController;
+    }
+
+    public StatisticsController(StatisticsService statisticsService, Stage primaryStage) {
         this.statisticsService = statisticsService;
+        this.primaryStage = primaryStage;
     }
 
     @FXML
@@ -113,6 +129,21 @@ public class StatisticsController {
             series.setName("Daily Turnover");
             turnoverLineChart.setData(observableArrayList(series));
     }
+
+    @FXML
+    void changeToIndexView(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(indexController) ? indexController : null);
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Bookings");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage couldn't be changed", e);
+        }
+    }
+
 
 }
 

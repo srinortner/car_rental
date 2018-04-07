@@ -31,6 +31,7 @@ import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Spinner
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
 import static javafx.scene.control.ButtonType.OK;
 
 public class BookingController {
@@ -271,6 +272,7 @@ public class BookingController {
                     try {
                         currentService.addBookingToPersistence(currentBooking);
                         saveLicenseInformation();
+                        buildAlert(INFORMATION, "Your booking was added!").showAndWait();
                     } catch (InvalidBookingException e) {
                         LOG.error("Booking couldn't be added to Persistence! {}", e.getMessage());
                         buildAlert(ERROR,e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
@@ -315,6 +317,7 @@ public class BookingController {
         this.updateCurrentDateTime();
 
         int dailyPrice = 0;
+        vehiclesAvailable = true;
         for (Vehicle vehicle : vehicleList) {
             dailyPrice += vehicle.getHourlyRateCents() * 24;
             if (!currentService.checkAvailiabilityOfVehicle(vehicle, currentStartTime, currentEndTime)) {

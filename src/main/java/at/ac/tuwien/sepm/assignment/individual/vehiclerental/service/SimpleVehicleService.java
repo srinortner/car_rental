@@ -75,7 +75,7 @@ public class SimpleVehicleService implements VehicleService {
         try {
             returnedVehicle =  vehicleDAO.addVehicleToDatabase(vehicle);
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            LOG.error("Vehicle couldn't be added to persistence!", e);
         }
         return returnedVehicle;
     }
@@ -93,7 +93,7 @@ public class SimpleVehicleService implements VehicleService {
         try {
             vehicleDAO.editVehicle(newVehicle,oldVehicle);
         } catch (PersistenceException e) {
-            e.printStackTrace();
+            LOG.error("Edited vehicle couldn't be passed to persistence!", e);
         }
 
     }
