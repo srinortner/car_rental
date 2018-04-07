@@ -38,7 +38,7 @@ public class StatisticsController {
     private NumberAxis yAxisLineChart;
 
     @FXML
-    private BarChart<?, ?> numberOfBookingsBarChart;
+    private BarChart<String, Integer> numberOfBookingsBarChart;
 
     @FXML
     private CategoryAxis xAxisBarChart;
@@ -103,7 +103,7 @@ public class StatisticsController {
     @FXML
     private void initialize() {
         String[] months = DateFormatSymbols.getInstance(Locale.ENGLISH).getMonths();
-        String[] days = {"Mo", "Tue", "We", "Thur", "Fri", "Sa", "Sun"};
+        String[] days = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"};
         monthNames.addAll(Arrays.asList(months));
         dayNames.addAll(Arrays.asList(days));
         xAxisBarChart.setCategories(dayNames);
@@ -112,6 +112,18 @@ public class StatisticsController {
 
     @FXML
     private void createNumberOfBookingsChart(ActionEvent event) {
+        LocalDateTime start = LocalDateTime.of(fromDatePickerNumberOfBookings.getValue(), LocalTime.of(0, 0));
+        LocalDateTime end = LocalDateTime.of(toDatePickerNumberOfBookings.getValue(), LocalTime.of(23, 59));
+        Map<String, Integer> weekdayBookingNumber = statisticsService.getDataForWeekdayBookingNumber(start, end);
+        XYChart.Series<String, Integer> series = new XYChart.Series<>();
+
+        for (int i = 0; i < 7; i++) {
+            String dayname = dayNames.get(i);
+            int x = weekdayBookingNumber.get(dayNames.get(i));
+            int y = 0;
+            series.getData().add(new XYChart.Data<>(dayNames.get(i), x));
+        }
+        numberOfBookingsBarChart.setData(observableArrayList(series));
 
     }
 
