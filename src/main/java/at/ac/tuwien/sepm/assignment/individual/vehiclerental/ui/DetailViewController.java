@@ -233,6 +233,23 @@ public class DetailViewController {
 
         changePictureButtonDetailView.setDisable(false);
         saveButtonDetailView.setDisable(false);
+
+        if(!vehicle.getLicenseType().isEmpty()) {
+            if(vehicle.getLicenseType().contains(LicenseType.A)){
+                licenseACheckBoxEdit.setSelected(true);
+                engineButtonEdit.setSelected(true);
+            }
+            if(vehicle.getLicenseType().contains(LicenseType.B)){
+                licenseBCheckBoxEdit.setSelected(true);
+                engineButtonEdit.setSelected(true);
+            }
+            if(vehicle.getLicenseType().contains(LicenseType.C)){
+                licenseCCheckBoxEdit.setSelected(true);
+                engineButtonEdit.setSelected(true);
+            }
+        }
+
+
     }
 
     @FXML

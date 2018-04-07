@@ -166,7 +166,7 @@ public class BookingTableViewController {
                 primaryStage.show();
 
             } catch (IOException e) {
-                LOG.error("Stage for Tableview couldn't be changed");
+                LOG.error("Stage for Tableview couldn't be changed", e);
             }
         } else {
             final FXMLLoader fxmlLoaderInvoice = new FXMLLoader(getClass().getResource("/fxml/invoice.fxml"));
@@ -178,7 +178,7 @@ public class BookingTableViewController {
                 primaryStage.show();
 
             } catch (IOException e) {
-                LOG.error("Stage for Tableview couldn't be changed");
+                LOG.error("Stage for Tableview couldn't be changed", e);
             }
         }
     }
@@ -194,7 +194,7 @@ public class BookingTableViewController {
             primaryStage.show();
 
         } catch (IOException e) {
-            LOG.error("Stage for Tableview couldn't be changed");
+            LOG.error("Stage for Tableview couldn't be changed", e);
         }
 
     }
@@ -220,11 +220,12 @@ public class BookingTableViewController {
                 currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,null);
             }
             currentService.updateTotalPrice(selectedBooking);
+            buildAlert(INFORMATION, "Vehicle was added to Booking!").showAndWait();
         } catch (InvalidBookingException e) {
             buildAlert(ERROR,e.getMessage()).showAndWait();
             LOG.error("Vehicle couldn't be added to booking!");
         }
-        buildAlert(INFORMATION, "Vehicle was added to Booking!").showAndWait();
+
         changeToNormalMode();
 
     }

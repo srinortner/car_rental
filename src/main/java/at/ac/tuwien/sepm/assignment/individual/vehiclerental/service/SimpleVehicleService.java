@@ -39,7 +39,7 @@ public class SimpleVehicleService implements VehicleService {
     private VehicleDAO vehicleDAO;
     private static final Path imageDestinationPath = Paths.get(System.getProperty("user.home"),"/.sepm/images");
     private String currentPictureTitle = null;
-    private static final List<String> SUPPORTED_FILE_TYPES = of(".jpg", ".png");
+    private static final List<String> SUPPORTED_FILE_TYPES = of(".jpg", ".png", ".jpeg");
     private BookingService bookingService = null;
 
     public BookingService getBookingService() {

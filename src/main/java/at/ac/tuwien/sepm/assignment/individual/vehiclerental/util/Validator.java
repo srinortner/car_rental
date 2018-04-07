@@ -46,10 +46,13 @@ public class Validator {
                 constraintViolations.add("The power must be a valid number greater than zero!");
             }
             if (isNull(vehicle.getPowerSource())) {
-                constraintViolations.add("Power source mustn't be emptry!");
+                constraintViolations.add("Power source mustn't be empty!");
             }
             if (!vehicle.getLicenseType().isEmpty() && vehicle.getLicenseplate().equals("")) {
                 constraintViolations.add("This vehicle must have a licenseplate!");
+            }
+            if(!vehicle.getLicenseType().isEmpty() && vehicle.getPowerSource().equals(PowerSource.MUSCLE)){
+                constraintViolations.add("If a license is required, the vehicle has to have an engine!");
             }
             if(!isNull(vehicle.getSeats()) && vehicle.getSeats() < 0) {
                 constraintViolations.add("Seats mustn't be negative!");

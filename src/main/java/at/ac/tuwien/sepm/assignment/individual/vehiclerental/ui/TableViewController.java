@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
 import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.ButtonType.OK;
 
@@ -244,9 +245,13 @@ public class TableViewController {
 
     @FXML
     private void backButtonClicked() {
-        if (returnToScene != null) {
+        final List<Vehicle> selectedVehicles = tableViewVehicles.getSelectionModel().getSelectedItems();
+        if(selectedVehicles.isEmpty()){
+            buildAlert(ERROR, "Please select at least one vehicle!").showAndWait();
+        }
+        else if (returnToScene != null) {
             primaryStage.setScene(returnToScene);
-            final List<Vehicle> selectedVehicles = tableViewVehicles.getSelectionModel().getSelectedItems();
+
             bookingController.updateSelectedVehiclesOfBooking(selectedVehicles);
             primaryStage.show();
             this.setEditMode(false);
