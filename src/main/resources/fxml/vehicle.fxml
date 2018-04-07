@@ -82,8 +82,9 @@
       </GridPane>
       <HBox alignment="CENTER_RIGHT" spacing="20.0">
          <children>
-            <Button fx:id="addVehicleBackButton" mnemonicParsing="false" onAction="#openTableView" text="Back" />
+            <Button fx:id="addVehicleBackButton" mnemonicParsing="false" onAction="#openTableView" text="Vehicles" />
             <Button fx:id="addVehicleAddButton" mnemonicParsing="false" onAction="#saveVehicle" text="Add" />
+            <Button mnemonicParsing="false" onAction="#backToIndexView" text="Home" />
          </children>
       </HBox>
    </children>

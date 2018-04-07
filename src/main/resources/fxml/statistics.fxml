@@ -112,6 +112,6 @@
       </HBox>
       <Button fx:id="generateTurnoverButton" layoutX="258.0" layoutY="465.0" mnemonicParsing="false" onAction="#generateTurnoverChart" text="Generate" />
       <Button fx:id="generateNumberOfBookingsButton" layoutX="629.0" layoutY="465.0" mnemonicParsing="false" onAction="#createNumberOfBookingsChart" text="Generate" />
-      <Button fx:id="backButtonStatistics" layoutX="658.0" layoutY="518.0" mnemonicParsing="false" onAction="#changeToIndexView" text="Back" />
+      <Button fx:id="backButtonStatistics" layoutX="651.0" layoutY="518.0" mnemonicParsing="false" onAction="#changeToIndexView" text="Home" />
    </children>
 </AnchorPane>

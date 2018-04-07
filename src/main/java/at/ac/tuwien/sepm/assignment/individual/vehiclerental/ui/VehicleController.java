@@ -91,12 +91,17 @@ public class VehicleController {
 
     private File picture = null;
     private Stage primaryStage;
+    private IndexController indexController;
 
+    public void setIndexController(IndexController indexController) {
+        this.indexController = indexController;
+    }
 
     public VehicleController(VehicleService currentService, TableViewController tableViewController, Stage primaryStage) {
         this.currentService = currentService;
         this.tableViewController = tableViewController;
         this.primaryStage = primaryStage;
+        tableViewController.setVehicleController(this);
 
     }
 
@@ -208,6 +213,20 @@ public class VehicleController {
            LOG.error("Stage couldn't be changed", e);
         }
 
+    }
+
+    @FXML
+    void backToIndexView(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(indexController) ? indexController : null);
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Home");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage couldn't be changed", e);
+        }
     }
 
 }

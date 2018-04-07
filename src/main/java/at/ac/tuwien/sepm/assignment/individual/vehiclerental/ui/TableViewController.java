@@ -34,7 +34,17 @@ public class TableViewController {
     private BookingController bookingController;
     private SearchController searchController;
     private BookingTableViewController bookingTableViewController;
+    private VehicleController vehicleController;
+    private IndexController indexController;
     private Stage primaryStage;
+
+    public void setVehicleController(VehicleController vehicleController) {
+        this.vehicleController = vehicleController;
+    }
+
+    public void setIndexController(IndexController indexController) {
+        this.indexController = indexController;
+    }
 
     private boolean editing = false;
 
@@ -281,4 +291,35 @@ public class TableViewController {
                 hBoxAllButtonsChildren.add(hBoxOther);
         }
     }
+
+    @FXML
+    public void openNewVehicleView(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/vehicle.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(vehicleController) ? vehicleController : null);
+
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("New Vehicle");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage couldn't be changed to DetailView");
+        }
+    }
+
+    @FXML
+    void backToIndexView(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(indexController) ? indexController : null);
+
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Home");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage couldn't be changed to DetailView");
+        }
+    }
+
 }

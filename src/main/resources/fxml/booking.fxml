@@ -38,6 +38,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <RadioButton fx:id="canceledRadioButton" disable="true" mnemonicParsing="false" text="Canceled" GridPane.columnIndex="1" GridPane.rowIndex="8">
@@ -64,10 +65,10 @@
             <TextField fx:id="paymentNumberBooking" text="4532642579652817" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <Label text="From:*" GridPane.rowIndex="6" />
             <Label text="To:*" GridPane.rowIndex="7" />
-            <Label fx:id="vehiclesLabel" text="Vehicles:" GridPane.rowIndex="10" />
-            <Label fx:id="vehiclesOfBooking" text="None" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-            <Label fx:id="hourlyPricesLabel" text="Hourly prices per vehicle:" GridPane.rowIndex="11" />
-            <Label fx:id="pricesOfBooking" text="None" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <Label fx:id="vehiclesLabel" text="Vehicles:" GridPane.rowIndex="11" />
+            <Label fx:id="vehiclesOfBooking" text="None" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <Label fx:id="hourlyPricesLabel" text="Hourly prices per vehicle:" GridPane.rowIndex="12" />
+            <Label fx:id="pricesOfBooking" text="None" GridPane.columnIndex="1" GridPane.rowIndex="12" />
             <Label text="Status:" GridPane.rowIndex="8" />
             <RadioButton fx:id="paidRadioButton" disable="true" mnemonicParsing="false" text="Paid" toggleGroup="$bookingtype" GridPane.columnIndex="1" GridPane.rowIndex="8">
                <padding>
@@ -138,6 +139,8 @@
             </HBox>
             <Label text="Date of Booking:" GridPane.rowIndex="9" />
             <Label fx:id="createTimeLabelBooking" text="today" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Label fx:id="totalPriceLabel" text="Total Price:" visible="false" GridPane.rowIndex="10" />
+            <Label fx:id="showTotalPriceLabel" text="None" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="10" />
          </children>
       </GridPane>
       <Label layoutX="453.0" layoutY="90.0" text="New Booking">

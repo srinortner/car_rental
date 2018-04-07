@@ -70,6 +70,7 @@ public class BookingTableViewController {
     private BookingController bookingController = null;
     private InvoiceController invoiceController = null;
     private TableViewController tableViewController = null;
+    private IndexController indexController = null;
     private Stage primaryStage;
     private Vehicle vehicleForAddingToBooking = null;
 
@@ -84,6 +85,10 @@ public class BookingTableViewController {
 
     public void setTableViewController(TableViewController tableViewController) {
         this.tableViewController = tableViewController;
+    }
+
+    public void setIndexController(IndexController indexController) {
+        this.indexController = indexController;
     }
 
     private ObservableList<Booking> bookingData = FXCollections.observableArrayList();
@@ -252,6 +257,21 @@ public class BookingTableViewController {
         finishButtonBooking.setDisable(false);
 
         bookingTableView.refresh();
+    }
+
+    @FXML
+    void backToIndexView(ActionEvent event) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
+        fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(indexController) ? indexController : null);
+
+        try {
+            primaryStage.setScene(new Scene(fxmlLoader.load()));
+            primaryStage.setTitle("Home");
+            primaryStage.show();
+
+        } catch (IOException e) {
+            LOG.error("Stage couldn't be changed to DetailView");
+        }
     }
 
 }

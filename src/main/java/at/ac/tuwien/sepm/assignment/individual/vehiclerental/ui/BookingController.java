@@ -27,6 +27,7 @@ import java.time.LocalTime;
 import java.util.*;
 
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
+import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.SpinnerFactory.buildSpinner;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.joining;
@@ -172,6 +173,13 @@ public class BookingController {
 
     @FXML
     private TableColumn<Vehicle, String> vehiclePriceColumn;
+
+    @FXML
+    private Label totalPriceLabel;
+
+    @FXML
+    private Label showTotalPriceLabel;
+
 
     @FXML
     private Button editButtonBookings;
@@ -418,6 +426,7 @@ public class BookingController {
     }
 
     void fillBookingDetailView(Booking booking) {
+        disableEverything();
         nameOfPersonBooking.setText(booking.getName());
         List<LicenseType> personLicenseList = booking.getPersonLicenseList();
         if (personLicenseList.contains(LicenseType.A)) {
@@ -465,6 +474,8 @@ public class BookingController {
 
         currentStartTime = booking.getStartDate();
         currentEndTime = booking.getEndDate();
+        double totalpriceInEuro = booking.getTotalPrice()/100;
+        showTotalPriceLabel.setText(String.valueOf(totalpriceInEuro) + "€");
 
         List<Long> vehicleIDsOfBooking = currentService.getVehicleIDsFromPersistence(booking);
 
@@ -474,7 +485,6 @@ public class BookingController {
             vehiclesOfBookingList.add(vehicle);
         }
         initializeTableView();
-        disableEverything();
         currentBooking = booking;
         currentBooking.setBookedVehicles(vehiclesOfBookingList);
 
@@ -490,12 +500,29 @@ public class BookingController {
         List<Vehicle> temp = vehiclesOfBookingList;
         vehicleData = FXCollections.observableArrayList(temp);
         tableViewBookedVehicles.setItems(vehicleData);
+        showTotalPriceLabel.setText(calculateCurrentTotalprice());
+
     }
 
     private String renderPriceForVehicleInCurrentBookingInEuro(Vehicle vehicle) {
         int pricePerMinute = vehicle.getHourlyRateCents() / 60;
         float priceForVehicle = (float) (Duration.between(this.currentStartTime, this.currentEndTime).toMinutes() * pricePerMinute) / 100;
         return String.format("%.2f €", priceForVehicle);
+    }
+
+    private Double caluclatePriceForVehicleInCurrentBookingCent(Vehicle vehicle){
+        double pricePerMinute = vehicle.getHourlyRateCents() / 60;
+        double priceForVehicle = (double) (Duration.between(this.currentStartTime, this.currentEndTime).toMinutes() * pricePerMinute) / 100;
+        return priceForVehicle;
+    }
+
+    private String calculateCurrentTotalprice(){
+        Double priceInEu = 0.0;
+        for (Vehicle vehicle:vehiclesOfBookingList) {
+           double vehiclePrice = caluclatePriceForVehicleInCurrentBookingCent(vehicle);
+            priceInEu += vehiclePrice ;
+        }
+        return String.format("%.2f €", priceInEu);
     }
 
     private void disableEverything() {
@@ -519,11 +546,21 @@ public class BookingController {
         toHourPicker.setDisable(true);
         toMinutePicker.setDisable(true);
         bookedRadioButton.setSelected(true);
+        showTotalPriceLabel.setVisible(true);
+        totalPriceLabel.setVisible(true);
+        saveButtonBooking.setDisable(true);
+        editButtonBookings.setVisible(true);
+        editButtonBookings.setDisable(false);
 
         vehiclesOfBooking.setVisible(false);
         vehiclesLabel.setVisible(false);
         hourlyPricesLabel.setVisible(false);
         pricesOfBooking.setVisible(false);
+        saveChangesButton.setDisable(true);
+        saveChangesButton.setVisible(false);
+        editVehicleListButton.setDisable(true);
+        editVehicleListButton.setVisible(false);
+
     }
 
     @FXML
@@ -553,6 +590,7 @@ public class BookingController {
     }
 
     private void enableEverything() {
+        bookedRadioButton.setSelected(true);
         nameOfPersonBooking.setDisable(false);
         ALicenseCheckBox.setDisable(false);
         BLicenseCheckBox.setDisable(false);
@@ -579,9 +617,12 @@ public class BookingController {
         hourlyPricesLabel.setVisible(false);
         pricesOfBooking.setVisible(false);
         editButtonBookings.setVisible(false);
-        saveButtonBooking.setVisible(false);
+        saveButtonBooking.setDisable(true);
         saveChangesButton.setVisible(true);
         editVehicleListButton.setVisible(true);
+        saveChangesButton.setDisable(false);
+        editVehicleListButton.setDisable(false);
+
     }
 
     @FXML
@@ -610,6 +651,10 @@ public class BookingController {
         createNewBooking();
         currentService.updateBookingInPersistence(currentBooking);
         saveLicenseInformation();
+        buildAlert(INFORMATION, "Your booking was updated!").showAndWait();
+        disableEverything();
+
+
     }
 
 

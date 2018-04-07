@@ -42,10 +42,11 @@
             <HBox fx:id="hBoxOther" spacing="20.0">
                <children>
                   <Button fx:id="newBookingButtonTableView" mnemonicParsing="false" onAction="#changeToNewBookingView" text="New Booking" />
-                  <Button fx:id="NewEntryTableView" mnemonicParsing="false" text="New Entry" />
+                  <Button fx:id="NewEntryTableView" mnemonicParsing="false" onAction="#openNewVehicleView" text="New Entry" />
                   <Button fx:id="DetailsTableView" mnemonicParsing="false" onAction="#openDetailView" text="Details" />
                   <Button fx:id="DeleteEntryTableView" mnemonicParsing="false" onAction="#deleteEntry" text="Delete" />
                   <Button fx:id="searchButtonTableview" mnemonicParsing="false" onAction="#searchButtonClicked" text="Search" />
+                  <Button mnemonicParsing="false" onAction="#backToIndexView" text="Home" />
                </children>
             </HBox>
          </children>

@@ -29,6 +29,9 @@ public class IndexController {
         this.statisticsController = statisticsController;
         this.primaryStage = primaryStage;
         statisticsController.setIndexController(this);
+        tableViewController.setIndexController(this);
+        vehicleController.setIndexController(this);
+        bookingTableViewController.setIndexController(this);
     }
 
     @FXML

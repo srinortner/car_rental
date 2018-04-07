@@ -32,6 +32,7 @@ import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
 import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 public class DetailViewController {
 
@@ -312,6 +313,7 @@ public class DetailViewController {
 
         try {
             vehicleService.passEditedVehicleToPersistence(currentVehicle,picture,vehicle);
+            buildAlert(INFORMATION, "Your vehicle was edited successfully!").showAndWait();
         } catch (InvalidVehicleException e) {
             LOG.error("Vehicle couldn't be passed to Service");
             buildAlert(ERROR,e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
