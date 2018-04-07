@@ -6,7 +6,6 @@ import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

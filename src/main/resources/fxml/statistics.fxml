@@ -19,7 +19,7 @@
    <children>
       <HBox layoutX="31.0" layoutY="94.0" prefHeight="266.0" prefWidth="704.0" spacing="70.0">
          <children>
-            <LineChart fx:id="turnoverLineChart" prefHeight="266.0" prefWidth="313.0">
+            <LineChart fx:id="turnoverLineChart" prefHeight="266.0" prefWidth="313.0" animated="false">
               <xAxis>
                 <CategoryAxis side="BOTTOM" fx:id="xAxisLineChart" />
               </xAxis>
@@ -27,7 +27,7 @@
                 <NumberAxis fx:id="yAxisLineChart" side="LEFT" />
               </yAxis>
             </LineChart>
-            <BarChart fx:id="numberOfBookingsBarChart" prefHeight="266.0" prefWidth="296.0">
+            <BarChart fx:id="numberOfBookingsBarChart" prefHeight="266.0" prefWidth="296.0" animated="false">
               <xAxis>
                 <CategoryAxis side="BOTTOM" fx:id="xAxisBarChart" />
               </xAxis>

@@ -8,8 +8,6 @@ import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleServ
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
@@ -22,7 +20,6 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
@@ -30,7 +27,6 @@ import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Parser.parseInt;
 import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
-import static javafx.scene.control.ButtonType.OK;
 
 public class VehicleController {
 

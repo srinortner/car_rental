@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.entities;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class License {
 

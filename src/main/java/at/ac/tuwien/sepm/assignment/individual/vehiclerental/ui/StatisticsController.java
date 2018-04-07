@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.StatisticsService;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +16,9 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+
+import static java.util.Comparator.comparing;
+import static javafx.collections.FXCollections.observableArrayList;
 
 public class StatisticsController {
 
@@ -74,8 +75,8 @@ public class StatisticsController {
     @FXML
     private Button generateNumberOfBookingsButton;
 
-    private ObservableList<String> monthNames = FXCollections.observableArrayList();
-    private ObservableList<String> dayNames = FXCollections.observableArrayList();
+    private ObservableList<String> monthNames = observableArrayList();
+    private ObservableList<String> dayNames = observableArrayList();
 
     private StatisticsService statisticsService = null;
 
@@ -84,13 +85,13 @@ public class StatisticsController {
     }
 
     @FXML
-    private void initialize(){
+    private void initialize() {
         String[] months = DateFormatSymbols.getInstance(Locale.ENGLISH).getMonths();
         String[] days = {"Mo", "Tue", "We", "Thur", "Fri", "Sa", "Sun"};
         monthNames.addAll(Arrays.asList(months));
         dayNames.addAll(Arrays.asList(days));
-        xAxisLineChart.setCategories(monthNames);
         xAxisBarChart.setCategories(dayNames);
+        xAxisLineChart.setTickLabelRotation(90);
     }
 
     @FXML
@@ -100,17 +101,17 @@ public class StatisticsController {
 
     @FXML
     private void generateTurnoverChart(ActionEvent event) {
-        LocalDateTime start = LocalDateTime.of(fromDatePickerTurnover.getValue(), LocalTime.of(0,0));
-        LocalDateTime end = LocalDateTime.of(toDatePickerTurnover.getValue(), LocalTime.of(23,59));
-        Map<LocalDate, Integer> dailyTurnovers = statisticsService.getDataForTurnover(start,end);
-        XYChart.Series series = new XYChart.Series();
-        Set<LocalDate> keys = dailyTurnovers.keySet();
-        for (LocalDate date: keys) {
-       //     series.getData().add(date.getMonth().toString(),dailyTurnovers.get(date));
-
-        }
-
-
+            LocalDateTime start = LocalDateTime.of(fromDatePickerTurnover.getValue(), LocalTime.of(0, 0));
+            LocalDateTime end = LocalDateTime.of(toDatePickerTurnover.getValue(), LocalTime.of(23, 59));
+            Map<LocalDate, Integer> dailyTurnovers = statisticsService.getDataForTurnover(start, end);
+            XYChart.Series<String, Integer> series = new XYChart.Series<>();
+            dailyTurnovers.entrySet()
+                .stream()
+                .sorted(comparing(Map.Entry::getKey))
+                .map(e -> new XYChart.Data<>(e.getKey().toString(), e.getValue()))
+                .forEach(e -> series.getData().add(e));
+            series.setName("Daily Turnover");
+            turnoverLineChart.setData(observableArrayList(series));
     }
 
 }

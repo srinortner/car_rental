@@ -39,7 +39,6 @@ public class Vehicle {
         this.power = power;
         this.hourlyRateCents = hourlyRateCents;
         this.createtime = createtime;
-        this.picture = picture;
         this.UUIDForEditing = UUID.randomUUID().toString();
         this.edittime = edittime;
     }

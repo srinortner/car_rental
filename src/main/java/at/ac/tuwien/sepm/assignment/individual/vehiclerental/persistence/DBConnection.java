@@ -17,8 +17,6 @@ public class DBConnection {
     private DBConnection() {
     }
 
-    ;
-
     public static Connection getConnection() {
         if (connection == null) {
             connection = newConnection();

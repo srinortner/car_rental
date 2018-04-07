@@ -6,7 +6,6 @@ import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidSearchInputException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.SpinnerFactory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -23,7 +22,6 @@ import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Spinner
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Validator.validateSearchInputs;
 import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
-import static javafx.scene.control.ButtonType.OK;
 
 public class SearchController {
 

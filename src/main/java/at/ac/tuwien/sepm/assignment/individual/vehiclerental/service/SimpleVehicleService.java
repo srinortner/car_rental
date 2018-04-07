@@ -114,7 +114,7 @@ public class SimpleVehicleService implements VehicleService {
     public String addPicture(File file) throws IOException {
         if (file != null) {
             String title = createSha1Hash(file);
-            String fileExtention = getFileExtention(file.getAbsolutePath().toString());
+            String fileExtention = getFileExtention(file.getAbsolutePath());
             File destinationFile = new File(imageDestinationPath.toFile(), title+ "." + fileExtention);
             if(destinationFile.exists()) {
                 LOG.debug("File already exists, using existing file");

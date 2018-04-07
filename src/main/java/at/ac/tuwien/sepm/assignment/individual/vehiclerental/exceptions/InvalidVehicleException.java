@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

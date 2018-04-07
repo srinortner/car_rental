@@ -18,18 +18,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.AlertFactory.buildAlert;
-import static at.ac.tuwien.sepm.assignment.individual.vehiclerental.util.Validator.validateBooking;
-import static java.util.stream.Collectors.joining;
 import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.Alert.AlertType.INFORMATION;
-import static javafx.scene.control.ButtonType.OK;
 
 public class BookingTableViewController {
 
@@ -127,9 +121,7 @@ public class BookingTableViewController {
         } else {
             try {
                 currentService.cancelBookingInPersistence(selectedBooking);
-            } catch (ServiceException e) {
-                LOG.error("Booking couldn't be canceled in Service!", e);
-            } catch (InvalidBookingException e) {
+            } catch (ServiceException | InvalidBookingException e) {
                 LOG.error("Booking couldn't be canceled in Service!", e);
             }
             selectedBooking.setStatus(BookingStatus.CANCELED);

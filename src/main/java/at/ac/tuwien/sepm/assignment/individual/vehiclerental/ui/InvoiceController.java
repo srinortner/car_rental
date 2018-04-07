@@ -28,7 +28,6 @@ public class InvoiceController {
     private HashMap<Long,Integer> currentPricesOfVehicles = new HashMap<>();
 
     public InvoiceController(BookingService bookingService, VehicleService vehicleService) {
-        this.bookingTableViewController = bookingTableViewController;
         this.bookingService = bookingService;
         this.vehicleService = vehicleService;
     }
@@ -92,7 +91,7 @@ public class InvoiceController {
             Vehicle vehicle = vehicleService.getVehiclesByIDFromPersistence(id);
             vehiclesOfInvoiceList.add(vehicle);
             Integer priceOfVehicle = 0;
-            LocalDateTime i = booking.getStartDate();;
+            LocalDateTime i = booking.getStartDate();
             Integer pricePerMinute = vehicle.getHourlyRateCents()/60;
             while (!i.equals(booking.getEndDate())) {
                 priceOfVehicle += pricePerMinute;

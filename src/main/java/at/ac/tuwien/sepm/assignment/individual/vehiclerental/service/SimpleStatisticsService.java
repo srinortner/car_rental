@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
-import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

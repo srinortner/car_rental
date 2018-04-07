@@ -39,7 +39,7 @@ public class SimpleBookingDAO implements BookingDAO{
             preparedStatement.setString(3,booking.getPaymentNumber());
             preparedStatement.setTimestamp(4, Timestamp.valueOf(booking.getStartDate()));
             preparedStatement.setTimestamp(5,Timestamp.valueOf(booking.getEndDate()));
-            if(booking.getBookedVehicles().equals(null)) {
+            if(booking.getBookedVehicles() == null) {
                 preparedStatement.setString(6,"NONE");
             } else {
                 preparedStatement.setString(6, booking.getBookedVehicles().toString());

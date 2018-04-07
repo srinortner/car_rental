@@ -5,8 +5,6 @@ import at.ac.tuwien.sepm.assignment.individual.entities.BookingStatus;
 import at.ac.tuwien.sepm.assignment.individual.entities.PaymentType;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
-import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.*;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
@@ -69,9 +67,7 @@ public class BookingServiceTest {
             bookingService.cancelBookingInPersistence(booking);
             Booking newBooking = bookingService.getBookingByIDFromPersistence(booking.getId());
             Assert.assertEquals(BookingStatus.CANCELED, newBooking.getStatus());
-        } catch (ServiceException e) {
-            fail();
-        } catch (InvalidBookingException e) {
+        } catch (ServiceException | InvalidBookingException e) {
             fail();
         }
     }

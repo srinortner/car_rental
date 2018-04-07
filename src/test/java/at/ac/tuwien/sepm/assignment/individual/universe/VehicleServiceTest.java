@@ -45,9 +45,7 @@ public class VehicleServiceTest {
         Vehicle vehicle = new Vehicle("VW", 2009, "This is a car", 4, licenseTypeList, "VB12345", PowerSource.ENGINE, 44.12, 200, LocalDateTime.now(), LocalDateTime.now());
         try {
             vehicleService.addVehicleToPersistence(vehicle,null);
-        } catch (InvalidVehicleException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (InvalidVehicleException | IOException e) {
             e.printStackTrace();
         }
         long id = 4;
