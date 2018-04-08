@@ -562,7 +562,7 @@ public class SimpleBookingDAO implements BookingDAO{
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connection.prepareStatement("SELECT ID, STARTDATE, ENDDATE, TOTAL_PRICE FROM BOOKING WHERE STARTDATE BETWEEN ? AND ? OR ENDDATE BETWEEN ? AND ? OR STARTDATE < ? AND ENDDATE > ?");
+            preparedStatement = connection.prepareStatement("SELECT ID, STARTDATE, ENDDATE, TOTAL_PRICE, TYPE FROM BOOKING WHERE STARTDATE BETWEEN ? AND ? OR ENDDATE BETWEEN ? AND ? OR STARTDATE < ? AND ENDDATE > ?");
             preparedStatement.setTimestamp(1,Timestamp.valueOf(starttime));
             preparedStatement.setTimestamp(2,Timestamp.valueOf(endtime));
             preparedStatement.setTimestamp(3,Timestamp.valueOf(starttime));
@@ -594,8 +594,16 @@ public class SimpleBookingDAO implements BookingDAO{
                 Timestamp start = resultSet.getTimestamp(2);
                 Timestamp end = resultSet.getTimestamp(3);
                 Integer totalPrice = resultSet.getInt(4);
+                String currentStatus = resultSet.getString(5);
+                BookingStatus status = BookingStatus.BOOKED;
+                if(currentStatus.equals("PAID")){
+                    status = BookingStatus.PAID;
+                }
+                if(currentStatus.equals("CANCELED")){
+                    status = BookingStatus.CANCELED;
+                }
 
-                Booking currentBooking = new Booking(id,start.toLocalDateTime(), end.toLocalDateTime(),totalPrice);
+                Booking currentBooking = new Booking(id,start.toLocalDateTime(), end.toLocalDateTime(),totalPrice,status);
 
                 bookingsInTimeFrame.add(currentBooking);
             }

@@ -64,11 +64,12 @@ public class Booking {
 
     }
 
-    public Booking(Long id, LocalDateTime startDate, LocalDateTime endDate, Integer totalPrice) {
+    public Booking(Long id, LocalDateTime startDate, LocalDateTime endDate, Integer totalPrice, BookingStatus status) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
         this.totalPrice = totalPrice;
+        this.status = status;
     }
 
     public Long getId() {

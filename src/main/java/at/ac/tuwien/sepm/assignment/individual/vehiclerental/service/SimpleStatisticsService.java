@@ -38,67 +38,69 @@ public class SimpleStatisticsService implements StatisticsService {
         }
 
         for (Booking booking : bookingsInTimeframe) {
-            LocalDate start = booking.getStartDate().toLocalDate();
-            int dayscount = 1;
-            while (start.isBefore(booking.getEndDate().toLocalDate())) {
-                dayscount++;
-                start = start.plusDays(1);
-            }
-            int dailyPrice = booking.getTotalPrice() / dayscount;
-            //If whole booking is in the timeframe
-            if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isBefore(endDate)) {
-                start = booking.getStartDate().toLocalDate();
+            if(!booking.getStatus().equals(BookingStatus.CANCELED)) {
+                LocalDate start = booking.getStartDate().toLocalDate();
+                int dayscount = 1;
                 while (start.isBefore(booking.getEndDate().toLocalDate())) {
-                    if (dailyData.containsKey(start)) {
-                        int dailyTurnover = dailyData.get(start);
-                        dailyTurnover += dailyPrice;
-                        dailyData.put(start, dailyTurnover);
-                    } else {
-                        dailyData.put(start, dailyPrice);
-                    }
+                    dayscount++;
                     start = start.plusDays(1);
                 }
-                //If the booking starts before the timeframe
-            }
-            if (booking.getStartDate().isBefore(startDate) && booking.getEndDate().isBefore(endDate)) {
-                start = startDate.toLocalDate();
-                while (start.isBefore(booking.getEndDate().toLocalDate())) {
-                    if (dailyData.containsKey(start)) {
-                        int dailyTurnover = dailyData.get(start);
-                        dailyTurnover += dailyPrice;
-                        dailyData.put(start, dailyTurnover);
-                    } else {
-                        dailyData.put(start, dailyPrice);
+                int dailyPrice = booking.getTotalPrice() / dayscount;
+                //If whole booking is in the timeframe
+                if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isBefore(endDate)) {
+                    start = booking.getStartDate().toLocalDate();
+                    while (start.isBefore(booking.getEndDate().toLocalDate())) {
+                        if (dailyData.containsKey(start)) {
+                            int dailyTurnover = dailyData.get(start);
+                            dailyTurnover += dailyPrice;
+                            dailyData.put(start, dailyTurnover);
+                        } else {
+                            dailyData.put(start, dailyPrice);
+                        }
+                        start = start.plusDays(1);
                     }
-                    start = start.plusDays(1);
+                    //If the booking starts before the timeframe
                 }
-            }
-            //If booking ends after the timeframe
-            if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isAfter(endDate)) {
-                start = booking.getStartDate().toLocalDate();
-                while (start.isBefore(endDate.toLocalDate())) {
-                    if (dailyData.containsKey(start)) {
-                        int dailyTurnover = dailyData.get(start);
-                        dailyTurnover += dailyPrice;
-                        dailyData.put(start, dailyTurnover);
-                    } else {
-                        dailyData.put(start, dailyPrice);
+                if (booking.getStartDate().isBefore(startDate) && booking.getEndDate().isBefore(endDate)) {
+                    start = startDate.toLocalDate();
+                    while (start.isBefore(booking.getEndDate().toLocalDate())) {
+                        if (dailyData.containsKey(start)) {
+                            int dailyTurnover = dailyData.get(start);
+                            dailyTurnover += dailyPrice;
+                            dailyData.put(start, dailyTurnover);
+                        } else {
+                            dailyData.put(start, dailyPrice);
+                        }
+                        start = start.plusDays(1);
                     }
-                    start = start.plusDays(1);
                 }
-            }
-            //If booking starts before and ends after timeframe
-            if (booking.getStartDate().isBefore(startDate) && booking.getEndDate().isAfter(endDate)) {
-                start = booking.getStartDate().toLocalDate();
-                while (start.isBefore(endDate.toLocalDate())) {
-                    if (dailyData.containsKey(start)) {
-                        int dailyTurnover = dailyData.get(start);
-                        dailyTurnover += dailyPrice;
-                        dailyData.put(start, dailyTurnover);
-                    } else {
-                        dailyData.put(start, dailyPrice);
+                //If booking ends after the timeframe
+                if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isAfter(endDate)) {
+                    start = booking.getStartDate().toLocalDate();
+                    while (start.isBefore(endDate.toLocalDate())) {
+                        if (dailyData.containsKey(start)) {
+                            int dailyTurnover = dailyData.get(start);
+                            dailyTurnover += dailyPrice;
+                            dailyData.put(start, dailyTurnover);
+                        } else {
+                            dailyData.put(start, dailyPrice);
+                        }
+                        start = start.plusDays(1);
                     }
-                    start = start.plusDays(1);
+                }
+                //If booking starts before and ends after timeframe
+                if (booking.getStartDate().isBefore(startDate) && booking.getEndDate().isAfter(endDate)) {
+                    start = booking.getStartDate().toLocalDate();
+                    while (start.isBefore(endDate.toLocalDate())) {
+                        if (dailyData.containsKey(start)) {
+                            int dailyTurnover = dailyData.get(start);
+                            dailyTurnover += dailyPrice;
+                            dailyData.put(start, dailyTurnover);
+                        } else {
+                            dailyData.put(start, dailyPrice);
+                        }
+                        start = start.plusDays(1);
+                    }
                 }
             }
         }
