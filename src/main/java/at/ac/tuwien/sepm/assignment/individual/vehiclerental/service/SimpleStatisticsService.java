@@ -3,7 +3,11 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
 import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SimpleStatisticsService implements StatisticsService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private VehicleService vehicleService = null;
     private BookingService bookingService = null;
@@ -23,7 +29,12 @@ public class SimpleStatisticsService implements StatisticsService {
     @Override
     public HashMap<LocalDate, Integer> getDataForTurnover(LocalDateTime startDate, LocalDateTime endDate) {
         HashMap<LocalDate, Integer> dailyData = new HashMap<>();
-        List<Booking> bookingsInTimeframe = bookingService.getBookingsInTimeInterval(startDate, endDate);
+        List<Booking> bookingsInTimeframe = null;
+        try {
+            bookingsInTimeframe = bookingService.getBookingsInTimeInterval(startDate, endDate);
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+        }
 
         for (Booking booking : bookingsInTimeframe) {
             //If whole booking is in the timeframe
@@ -124,7 +135,12 @@ public class SimpleStatisticsService implements StatisticsService {
         dailyData.put("FRIDAY", 0);
         dailyData.put("SATURDAY", 0);
         dailyData.put("SUNDAY", 0);
-        List<Booking> bookingsInTimeframe = bookingService.getBookingsInTimeInterval(startDate, endDate);
+        List<Booking> bookingsInTimeframe = null;
+        try {
+            bookingsInTimeframe = bookingService.getBookingsInTimeInterval(startDate, endDate);
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+        }
 
         for (Booking booking : bookingsInTimeframe) {
             //If whole booking is in the timeframe

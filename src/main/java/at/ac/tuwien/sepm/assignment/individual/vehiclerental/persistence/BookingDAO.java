@@ -29,26 +29,26 @@ public interface BookingDAO {
      * @param booking of which the license needs to be saved
      * @param license the license that needs to be saved
      */
-    void addLicenseToDatabase (Vehicle vehicle, Booking booking, License license);
+    void addLicenseToDatabase (Vehicle vehicle, Booking booking, License license) throws PersistenceException;
 
     /**
      * returns all bookings that contain given vehicle
      * @param vehicle vehicle of which bookings shall be returned
      * @return List of bookings of vehicle
      */
-    List<Booking> getAllBookingsOfVehicle (Vehicle vehicle);
+    List<Booking> getAllBookingsOfVehicle (Vehicle vehicle) throws PersistenceException;
 
     /**
      * Gets all entries of booking table
      * @return all saved bookings
      */
-    List<Booking> getAllBookingsFromDatabase();
+    List<Booking> getAllBookingsFromDatabase() throws PersistenceException;
 
     /**
      * sets status of given booking to paid, updates entry in booking table
      * @param booking which needs to change status
      */
-    void finishBooking(Booking booking);
+    void finishBooking(Booking booking) throws PersistenceException;
 
     /**
      * sets status of given booking to canceled, updates entry in booking table
@@ -63,7 +63,7 @@ public interface BookingDAO {
      * @param booking of which vehicle ids shall be returned
      * @return list of ids
      */
-    List<Long> getVehicleIDsFromDatabase(Booking booking);
+    List<Long> getVehicleIDsFromDatabase(Booking booking) throws PersistenceException;
 
     /**
      * gets one booking by it's ID from booking table
@@ -77,13 +77,13 @@ public interface BookingDAO {
      * updates booking after editing
      * @param booking that needs to be updated
      */
-    void updateBookingInDatabase(Booking booking);
+    void updateBookingInDatabase(Booking booking) throws PersistenceException;
 
     /**
      * updates total price of booking after editing
      * @param booking of which the price needs to be updated
      */
-    void updateTotalPriceInDatabase(Booking booking);
+    void updateTotalPriceInDatabase(Booking booking) throws PersistenceException;
 
     /**
      * gets all bookings in a certain time interval for statistics
@@ -91,6 +91,6 @@ public interface BookingDAO {
      * @param endtime of interval
      * @return List of bookings that are in between or partially in  between starttime and enddtime
      */
-    List<Booking> getBookingsInTimeIntervalFromDatabase(LocalDateTime starttime, LocalDateTime endtime);
+    List<Booking> getBookingsInTimeIntervalFromDatabase(LocalDateTime starttime, LocalDateTime endtime) throws PersistenceException;
 
 }

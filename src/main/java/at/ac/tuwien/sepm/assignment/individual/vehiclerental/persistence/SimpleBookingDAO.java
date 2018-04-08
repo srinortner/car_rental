@@ -59,13 +59,13 @@ public class SimpleBookingDAO implements BookingDAO{
             LOG.info("Booking added to database!");
 
         } catch (SQLException e) {
-            LOG.error("Booking couldn't be added to database!");
-            throw new PersistenceException("Booking couldn't be added to database!", e);
+            LOG.error("Booking couldn't be added to database!", e);
+            throw new PersistenceException(e.getMessage(), e);
         }
         return booking;
     }
 
-    public void addLicenseToDatabase (Vehicle vehicle, Booking booking,  License license) {
+    public void addLicenseToDatabase (Vehicle vehicle, Booking booking,  License license) throws PersistenceException {
 
 
         PreparedStatement preparedStatement = null;
@@ -95,12 +95,14 @@ public class SimpleBookingDAO implements BookingDAO{
 
             LOG.info("Licensenumber and date added to database!");
         } catch (SQLException e) {
-            LOG.error("Licensenumber and date couldn't be added to Database!");
+            LOG.error("Licensenumber and date couldn't be added to Database!", e);
+            throw new PersistenceException(e.getMessage(), e);
+
         }
     }
 
     //method called, gets all Bookings of a certain vehicle from the database
-    public List<Booking> getAllBookingsOfVehicle (Vehicle vehicle) {
+    public List<Booking> getAllBookingsOfVehicle (Vehicle vehicle) throws PersistenceException {
 
         List<Booking> bookingsOfVehicle = new ArrayList<>();
         List<Long> bookingIDs = new ArrayList<>();
@@ -124,6 +126,8 @@ public class SimpleBookingDAO implements BookingDAO{
             }
         } catch (SQLException e) {
             LOG.error("License requirements couldn't be loaded from database!", e);
+            throw new PersistenceException(e.getMessage(), e);
+
         }
 
         return bookingsOfVehicle;
@@ -142,8 +146,8 @@ public class SimpleBookingDAO implements BookingDAO{
             currentBooking = getDataFromResultSet(resultSet);
 
         } catch (SQLException e) {
-            LOG.error("License requirements couldn't be loaded from database!");
-            throw new PersistenceException("License requirements couldn't be loaded from database!", e);
+            LOG.error("License requirements couldn't be loaded from database!",e);
+            throw new PersistenceException(e.getMessage(), e);
         }
 
         return currentBooking;
@@ -151,7 +155,7 @@ public class SimpleBookingDAO implements BookingDAO{
 
 
     //gets all IDs from the resultset
-    private List<Long> getBookingIDsFromResultSet (ResultSet resultSet){
+    private List<Long> getBookingIDsFromResultSet (ResultSet resultSet) throws PersistenceException {
         List<Long> currentlist = new ArrayList<>();
         try {
             while (resultSet.next()) {
@@ -159,7 +163,8 @@ public class SimpleBookingDAO implements BookingDAO{
                 currentlist.add(currentBookingID);
             }
         } catch (SQLException e) {
-            LOG.error("Error while trying to load license requirements from reslutSet");
+            LOG.error("Error while trying to load license requirements from reslutSet",e);
+            throw new PersistenceException(e.getMessage(), e);
         }
         return currentlist;
     }
@@ -205,13 +210,13 @@ public class SimpleBookingDAO implements BookingDAO{
                 currentlist.add(currentBooking);
             }
         } catch (SQLException e) {
-            LOG.error("Error while trying to load license requirements from reslutSet");
+            LOG.error("Error while trying to load license requirements from reslutSet",e);
         }
         return currentBooking;
     }
 
     //get all Bookings
-    public List<Booking> getAllBookingsFromDatabase(){
+    public List<Booking> getAllBookingsFromDatabase() throws PersistenceException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         List<Booking> currentList = new ArrayList<>();
@@ -222,14 +227,15 @@ public class SimpleBookingDAO implements BookingDAO{
             currentList = getAllDataFromResultSet(resultSet);
 
         } catch (SQLException e) {
-            LOG.error("License requirements couldn't be loaded from database!");
+            LOG.error("License requirements couldn't be loaded from database!", e);
+            throw new PersistenceException(e.getMessage(), e);
         }
 
         return currentList;
     }
 
     //get data from all bookings from result set
-    private List<Booking> getAllDataFromResultSet(ResultSet resultSet) {
+    private List<Booking> getAllDataFromResultSet(ResultSet resultSet) throws PersistenceException {
         List<Booking> currentList = new ArrayList<>();
 
         try {
@@ -293,13 +299,14 @@ public class SimpleBookingDAO implements BookingDAO{
                 currentBooking.setPersonLicenseList(licenseTypesOfPersonBooking);
             }
         } catch (SQLException e) {
-            LOG.error("Error while getting data from resultSet");
+            LOG.error("Error while getting data from resultSet", e);
+            throw new PersistenceException(e.getMessage(),e);
         }
         return currentList;
     }
 
     //update Booking to finished
-    public void finishBooking(Booking booking){
+    public void finishBooking(Booking booking) throws PersistenceException {
         if(booking == null) {
             LOG.error("Booking is null!");
             throw new IllegalArgumentException("Booking is null");
@@ -317,7 +324,8 @@ public class SimpleBookingDAO implements BookingDAO{
             preparedStatement.close();
             LOG.info("Booking was updated!");
         } catch (SQLException e) {
-            LOG.error("Booking status couldn't be updated!");
+            LOG.error("Booking status couldn't be updated!",e);
+            throw new PersistenceException(e.getMessage(),e);
         }
     }
 
@@ -360,7 +368,7 @@ public class SimpleBookingDAO implements BookingDAO{
 
 
     //gets all Licensensedata as well as vehicleIDs
-    public List<License> getLicenseDataFromDatabase(Booking booking) {
+    public List<License> getLicenseDataFromDatabase(Booking booking) throws PersistenceException {
         if(booking == null) {
             LOG.error("Booking is null!");
             throw new IllegalArgumentException("Booking is null");
@@ -380,14 +388,15 @@ public class SimpleBookingDAO implements BookingDAO{
 
 
         } catch (SQLException e) {
-            LOG.error("License requirements couldn't be loaded from database!");
+            LOG.error("License requirements couldn't be loaded from database!",e);
+            throw new PersistenceException(e.getMessage(),e);
         }
 
         return licenseData;
 
     }
 
-    private List<License> getLicenseDataFromResultSet (ResultSet resultSet) {
+    private List<License> getLicenseDataFromResultSet (ResultSet resultSet) throws PersistenceException {
         List<License> currentData = new ArrayList<>();
 
         try{
@@ -414,13 +423,14 @@ public class SimpleBookingDAO implements BookingDAO{
             }
 
         } catch (SQLException e) {
-            LOG.error("Licensedata couldn't be loaded from database.");
+            LOG.error("Licensedata couldn't be loaded from database.", e);
+            throw new PersistenceException(e.getMessage(), e);
         }
 
         return currentData;
     }
 
-    public List<Long> getVehicleIDsFromDatabase(Booking booking) {
+    public List<Long> getVehicleIDsFromDatabase(Booking booking) throws PersistenceException {
         if(booking == null) {
             LOG.error("Booking is null!");
             throw new IllegalArgumentException("Booking is null");
@@ -439,12 +449,13 @@ public class SimpleBookingDAO implements BookingDAO{
             vehicleIDs = getVehicleIDsFromResultSet(resultSet);
 
         } catch (SQLException e) {
-            LOG.error("License requirements couldn't be loaded from database!");
+            LOG.error("License requirements couldn't be loaded from database!",e);
+            throw new PersistenceException(e.getMessage(),e);
         }
         return vehicleIDs;
     }
 
-    public List<Long> getVehicleIDsFromResultSet(ResultSet resultSet) {
+    public List<Long> getVehicleIDsFromResultSet(ResultSet resultSet) throws PersistenceException {
         List<Long> vehicleIDs = new ArrayList<>();
 
         try{
@@ -456,14 +467,15 @@ public class SimpleBookingDAO implements BookingDAO{
             }
 
         } catch (SQLException e) {
-            LOG.error("Vehicle IDs couldn't be loaded from database.");
+            LOG.error("Vehicle IDs couldn't be loaded from database.",e);
+            throw new PersistenceException(e.getMessage(),e);
         }
 
         return vehicleIDs;
     }
 
     @Override
-    public void updateBookingInDatabase(Booking booking) {
+    public void updateBookingInDatabase(Booking booking) throws PersistenceException {
         if(booking == null) {
             LOG.error("Booking is null!");
             throw new IllegalArgumentException("Booking is null");
@@ -491,12 +503,13 @@ public class SimpleBookingDAO implements BookingDAO{
             LOG.info("Booking was updated succesfully!");
         } catch (SQLException e) {
             LOG.error("Booking couldn't be updated!", e);
+            throw new PersistenceException(e.getMessage(),e);
         }
 
 
     }
 
-    private void clearVehicleAndLicenseInformationForBooking(Booking booking){
+    private void clearVehicleAndLicenseInformationForBooking(Booking booking) throws PersistenceException {
         if(booking == null) {
             LOG.error("Booking is null!");
             throw new IllegalArgumentException("Booking is null");
@@ -514,11 +527,12 @@ public class SimpleBookingDAO implements BookingDAO{
             LOG.info("Vehicles were deleted from booking!");
         } catch (SQLException e) {
             LOG.error("Vehicles couldn't be deleted from booking!", e);
+            throw new PersistenceException(e.getMessage(),e);
         }
 
     }
 
-    public void updateTotalPriceInDatabase(Booking booking){
+    public void updateTotalPriceInDatabase(Booking booking) throws PersistenceException {
         if(booking == null) {
             LOG.error("Booking is null!");
             throw new IllegalArgumentException("Booking is null");
@@ -534,11 +548,12 @@ public class SimpleBookingDAO implements BookingDAO{
 
             preparedStatement.close();
         } catch (SQLException e) {
-            LOG.error(e.getMessage());
+            LOG.error("Updating total price failed!", e);
+            throw new PersistenceException(e.getMessage(),e);
         }
     }
 
-    public List<Booking> getBookingsInTimeIntervalFromDatabase(LocalDateTime starttime, LocalDateTime endtime) {
+    public List<Booking> getBookingsInTimeIntervalFromDatabase(LocalDateTime starttime, LocalDateTime endtime) throws PersistenceException {
         List<Booking> bookingsInTimeFrame = null;
 
         PreparedStatement preparedStatement = null;
@@ -562,12 +577,13 @@ public class SimpleBookingDAO implements BookingDAO{
 
         } catch (SQLException e) {
             LOG.error("Get bookings in time interval from database failed!", e);
+            throw new PersistenceException(e.getMessage(),e);
         }
 
         return bookingsInTimeFrame;
     }
 
-    private List<Booking> getBookingsInTimeIntervalFromResultSet(ResultSet resultSet){
+    private List<Booking> getBookingsInTimeIntervalFromResultSet(ResultSet resultSet) throws PersistenceException {
         List<Booking> bookingsInTimeFrame = new ArrayList<>();
 
         try {
@@ -582,7 +598,8 @@ public class SimpleBookingDAO implements BookingDAO{
                 bookingsInTimeFrame.add(currentBooking);
             }
         }catch (Exception e){
-            LOG.error(e.getMessage());
+            LOG.error("Getting bookings in time interval from resultset failed!",e);
+            throw new PersistenceException(e.getMessage(),e);
         }
         return bookingsInTimeFrame;
     }

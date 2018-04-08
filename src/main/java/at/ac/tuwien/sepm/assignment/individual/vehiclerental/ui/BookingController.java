@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.*;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidBookingException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.beans.property.SimpleStringProperty;
@@ -391,18 +392,34 @@ public class BookingController {
         for (Vehicle vehicle : vehicleList) {
             if (ALicenseCheckBox.isSelected()) {
                 License licenseA = new License(LicenseType.A,ALicenseDateBooking.getValue(), licenseNumberA.getText());
-                currentService.addLicenseInformationToPersistence(vehicle, currentBooking, licenseA);
+                try {
+                    currentService.addLicenseInformationToPersistence(vehicle, currentBooking, licenseA);
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
+                }
             }
             if (BLicenseCheckBox.isSelected()) {
                 License licenseB = new License(LicenseType.B,BLicenseDateBooking.getValue(), licenseNumberB.getText());
-                currentService.addLicenseInformationToPersistence(vehicle, currentBooking, licenseB);
+                try {
+                    currentService.addLicenseInformationToPersistence(vehicle, currentBooking, licenseB);
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
+                }
             }
             if (CLicenseCheckBox.isSelected()) {
                 License licenseC = new License(LicenseType.C,CLicenseDateBooking.getValue(), licenseNumberC.getText());
-                currentService.addLicenseInformationToPersistence(vehicle, currentBooking, licenseC);
+                try {
+                    currentService.addLicenseInformationToPersistence(vehicle, currentBooking, licenseC);
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
+                }
             }
             if(!ALicenseCheckBox.isSelected() && !BLicenseCheckBox.isSelected() && !CLicenseCheckBox.isSelected()){
-                currentService.addLicenseInformationToPersistence(vehicle,currentBooking,null);
+                try {
+                    currentService.addLicenseInformationToPersistence(vehicle,currentBooking,null);
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
+                }
             }
 
         }
@@ -477,7 +494,12 @@ public class BookingController {
         double totalpriceInEuro = booking.getTotalPrice()/100;
         showTotalPriceLabel.setText(String.valueOf(totalpriceInEuro) + "€");
 
-        List<Long> vehicleIDsOfBooking = currentService.getVehicleIDsFromPersistence(booking);
+        List<Long> vehicleIDsOfBooking = null;
+        try {
+            vehicleIDsOfBooking = currentService.getVehicleIDsFromPersistence(booking);
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+        }
 
         vehiclesOfBookingList = new ArrayList<>();
         for (Long id : vehicleIDsOfBooking) {
@@ -649,7 +671,11 @@ public class BookingController {
         //damit createNewBooking wiederverwendet werden kann
         vehicleList = vehiclesOfBookingList;
         createNewBooking();
-        currentService.updateBookingInPersistence(currentBooking);
+        try {
+            currentService.updateBookingInPersistence(currentBooking);
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+        }
         saveLicenseInformation();
         buildAlert(INFORMATION, "Your booking was updated!").showAndWait();
         disableEverything();

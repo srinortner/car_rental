@@ -29,19 +29,19 @@ public interface BookingService {
      * @param booking that needs to be passed to persistence
      * @param license information that needs to be passed to persistence
      */
-    void addLicenseInformationToPersistence (Vehicle vehicle, Booking booking, License license);
+    void addLicenseInformationToPersistence (Vehicle vehicle, Booking booking, License license) throws ServiceException;
 
     /**
      * calls method for getting all bookings in database
      * @return list of all bookings in database as returned from persistence layer
      */
-    List<Booking> getAllBookingsFromPersistence();
+    List<Booking> getAllBookingsFromPersistence() throws ServiceException;
 
     /**
      * calls method to finish booking in database
      * @param booking which needs to be finished
      */
-    void finishBookingInPersistence(Booking booking);
+    void finishBookingInPersistence(Booking booking) throws ServiceException;
 
     /**
      * checks booking status, calculates cancellation fee and calls method for changing status to canceled in persistence
@@ -56,7 +56,7 @@ public interface BookingService {
      * @param booking that ids of vehicles it contains are needed
      * @return list of ids as returned form persistence
      */
-    List<Long> getVehicleIDsFromPersistence(Booking booking);
+    List<Long> getVehicleIDsFromPersistence(Booking booking) throws ServiceException;
 
     /**
      * gets all previous versions from vehicle and checks if any version is between or partially between currentStartTime and currentEndTime
@@ -71,7 +71,7 @@ public interface BookingService {
      * calls method for updating bookings in persistence
      * @param booking that needs to be updated
      */
-    void updateBookingInPersistence(Booking booking);
+    void updateBookingInPersistence(Booking booking) throws ServiceException;
 
     /**
      * calls method for getting booking by ID in persistence
@@ -92,7 +92,7 @@ public interface BookingService {
      * calculates current total price and calling method for updating it in persistence
      * @param booking of which
      */
-    void updateTotalPrice(Booking booking);
+    void updateTotalPrice(Booking booking) throws ServiceException;
 
     /**
      * calls method for getting bookings in time interval from persistence
@@ -100,7 +100,7 @@ public interface BookingService {
      * @param endTime of interval
      * @return list returned by persistence
      */
-    List<Booking> getBookingsInTimeInterval(LocalDateTime startTime, LocalDateTime endTime);
+    List<Booking> getBookingsInTimeInterval(LocalDateTime startTime, LocalDateTime endTime) throws ServiceException;
 
 
 }

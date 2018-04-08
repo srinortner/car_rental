@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
 import at.ac.tuwien.sepm.assignment.individual.entities.BookingStatus;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.BookingService;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.beans.property.SimpleStringProperty;
@@ -100,7 +101,12 @@ public class InvoiceController {
             totalPriceLabelInvoice.setText("€" + priceInEUR);
         }
 
-        List<Long> vehicleIDsOfBooking = bookingService.getVehicleIDsFromPersistence(booking);
+        List<Long> vehicleIDsOfBooking = null;
+        try {
+            vehicleIDsOfBooking = bookingService.getVehicleIDsFromPersistence(booking);
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+        }
         for (Long id: vehicleIDsOfBooking) {
             Vehicle vehicle = vehicleService.getVehiclesByIDFromPersistence(id);
             vehiclesOfInvoiceList.add(vehicle);

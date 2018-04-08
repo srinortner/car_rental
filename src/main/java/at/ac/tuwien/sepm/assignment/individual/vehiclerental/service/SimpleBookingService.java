@@ -41,16 +41,28 @@ public class SimpleBookingService implements BookingService {
         return returnedBooking;
     }
 
-    public void addLicenseInformationToPersistence(Vehicle vehicle, Booking booking, License license) {
-        bookingDAO.addLicenseToDatabase(vehicle, booking, license);
+    public void addLicenseInformationToPersistence(Vehicle vehicle, Booking booking, License license) throws ServiceException {
+        try {
+            bookingDAO.addLicenseToDatabase(vehicle, booking, license);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(),e);
+        }
     }
 
-    public List<Booking> getAllBookingsFromPersistence() {
-        return bookingDAO.getAllBookingsFromDatabase();
+    public List<Booking> getAllBookingsFromPersistence() throws ServiceException {
+        try {
+            return bookingDAO.getAllBookingsFromDatabase();
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 
-    public void finishBookingInPersistence(Booking booking) {
-        bookingDAO.finishBooking(booking);
+    public void finishBookingInPersistence(Booking booking) throws ServiceException {
+        try {
+            bookingDAO.finishBooking(booking);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(),e);
+        }
     }
 
     public void cancelBookingInPersistence(Booking booking) throws ServiceException, InvalidBookingException {
@@ -83,20 +95,28 @@ public class SimpleBookingService implements BookingService {
         }
     }
 
-    public List<Long> getVehicleIDsFromPersistence(Booking booking) {
-        return bookingDAO.getVehicleIDsFromDatabase(booking);
+    public List<Long> getVehicleIDsFromPersistence(Booking booking) throws ServiceException {
+        try {
+            return bookingDAO.getVehicleIDsFromDatabase(booking);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(),e);
+        }
     }
 
     public boolean checkAvailiabilityOfVehicle(Vehicle vehicle, LocalDateTime currentStartTime, LocalDateTime currentEndTime) {
         for (Vehicle legacyVehicle : vehicleService.getAllLegacyVehicles(vehicle)) {
-            if (isVehicleBooked(currentStartTime, currentEndTime, legacyVehicle)) {
-                LOG.info("vehicle with id {} with UUID {} is already booked between {} and {} ",
-                    legacyVehicle.getId(),
-                    legacyVehicle.getUUIDForEditing(),
-                    currentStartTime,
-                    currentEndTime);
-                return false;
+            try {
+                if (isVehicleBooked(currentStartTime, currentEndTime, legacyVehicle)) {
+                    LOG.info("vehicle with id {} with UUID {} is already booked between {} and {} ",
+                        legacyVehicle.getId(),
+                        legacyVehicle.getUUIDForEditing(),
+                        currentStartTime,
+                        currentEndTime);
+                    return false;
 
+                }
+            } catch (ServiceException e) {
+                LOG.error(e.getMessage());
             }
         }
         LOG.info("vehicle with id {} with UUID {} is not booked between {} and {} ",
@@ -107,39 +127,47 @@ public class SimpleBookingService implements BookingService {
         return true;
     }
 
-    private boolean isVehicleBooked(LocalDateTime currentStartTime, LocalDateTime currentEndTime, Vehicle legacyVehicle) {
-        for (Booking booking : bookingDAO.getAllBookingsOfVehicle(legacyVehicle)) {
-            if (!(booking.getStatus() == BookingStatus.CANCELED)) {
-                if (booking.getPaidtime() == null) {
-                    LocalDateTime startDate = booking.getStartDate();
-                    LocalDateTime endDate = booking.getEndDate();
-                    if (!currentEndTime.isBefore(startDate) && !currentStartTime.isAfter(endDate)) {
-                        LOG.info("vehicle with id {} with UUID {} is already booked between {} and {} in booking with id {}",
+    private boolean isVehicleBooked(LocalDateTime currentStartTime, LocalDateTime currentEndTime, Vehicle legacyVehicle) throws ServiceException {
+        try {
+            for (Booking booking : bookingDAO.getAllBookingsOfVehicle(legacyVehicle)) {
+                if (!(booking.getStatus() == BookingStatus.CANCELED)) {
+                    if (booking.getPaidtime() == null) {
+                        LocalDateTime startDate = booking.getStartDate();
+                        LocalDateTime endDate = booking.getEndDate();
+                        if (!currentEndTime.isBefore(startDate) && !currentStartTime.isAfter(endDate)) {
+                            LOG.info("vehicle with id {} with UUID {} is already booked between {} and {} in booking with id {}",
+                                legacyVehicle.getId(),
+                                legacyVehicle.getUUIDForEditing(),
+                                startDate,
+                                endDate,
+                                booking.getId());
+                            return true;
+                        }
+                        LOG.info("vehicle with id {} with UUID {} is not booked between {} and {} in booking with id {}",
                             legacyVehicle.getId(),
                             legacyVehicle.getUUIDForEditing(),
-                            startDate,
-                            endDate,
+                            currentStartTime,
+                            currentEndTime,
                             booking.getId());
-                        return true;
+                    } else {
+                        LOG.info("Ignore booking with id {} cause it is already PAID", booking.getId());
                     }
-                    LOG.info("vehicle with id {} with UUID {} is not booked between {} and {} in booking with id {}",
-                        legacyVehicle.getId(),
-                        legacyVehicle.getUUIDForEditing(),
-                        currentStartTime,
-                        currentEndTime,
-                        booking.getId());
-                } else {
-                    LOG.info("Ignore booking with id {} cause it is already PAID", booking.getId());
+                }else {
+                    LOG.info("Ignore booking with id {} cause it is CANCELLED", booking.getId());
                 }
-            }else {
-                LOG.info("Ignore booking with id {} cause it is CANCELLED", booking.getId());
             }
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(),e);
         }
         return false;
     }
 
-    public void updateBookingInPersistence(Booking booking) {
-        bookingDAO.updateBookingInDatabase(booking);
+    public void updateBookingInPersistence(Booking booking) throws ServiceException {
+        try {
+            bookingDAO.updateBookingInDatabase(booking);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(),e);
+        }
     }
 
     public Booking getBookingByIDFromPersistence(Long id) {
@@ -153,7 +181,12 @@ public class SimpleBookingService implements BookingService {
 
     public void validateAddingVehicleToExistingBooking(Vehicle vehicle, Booking booking) throws InvalidBookingException {
         List<String> violations = new ArrayList<>();
-        List<Long> vehicleIDsOfBooking = getVehicleIDsFromPersistence(booking);
+        List<Long> vehicleIDsOfBooking = null;
+        try {
+            vehicleIDsOfBooking = getVehicleIDsFromPersistence(booking);
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+        }
         List<Vehicle> vehiclesOfBookingList = new ArrayList<>();
         for (Long id : vehicleIDsOfBooking) {
             Vehicle currentVehicle = vehicleService.getVehiclesByIDFromPersistence(id);
@@ -177,7 +210,7 @@ public class SimpleBookingService implements BookingService {
         validateBooking(booking);
     }
 
-    public void updateTotalPrice(Booking booking) {
+    public void updateTotalPrice(Booking booking) throws ServiceException {
         List<Vehicle> vehicleList = booking.getBookedVehicles();
 
         int dailyPrice = 0;
@@ -196,11 +229,19 @@ public class SimpleBookingService implements BookingService {
         }
 
         booking.setTotalPrice(currentTotalPrice);
-        bookingDAO.updateTotalPriceInDatabase(booking);
+        try {
+            bookingDAO.updateTotalPriceInDatabase(booking);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(),e);
+        }
 
     }
 
-    public List<Booking> getBookingsInTimeInterval(LocalDateTime startTime, LocalDateTime endTime) {
-        return bookingDAO.getBookingsInTimeIntervalFromDatabase(startTime, endTime);
+    public List<Booking> getBookingsInTimeInterval(LocalDateTime startTime, LocalDateTime endTime) throws ServiceException {
+        try {
+            return bookingDAO.getBookingsInTimeIntervalFromDatabase(startTime, endTime);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(),e);
+        }
     }
 }

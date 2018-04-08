@@ -102,7 +102,11 @@ public class BookingTableViewController {
 
     @FXML
     private void initialize() {
-        bookingList = currentService.getAllBookingsFromPersistence();
+        try {
+            bookingList = currentService.getAllBookingsFromPersistence();
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+        }
 
         customerColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         fromColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStartDate().toString()));
@@ -110,7 +114,12 @@ public class BookingTableViewController {
         statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
         totalPriceColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTotalPrice().toString()));
         fromColumn.setSortType(TableColumn.SortType.DESCENDING);
-        List<Booking> temp = currentService.getAllBookingsFromPersistence();
+        List<Booking> temp = null;
+        try {
+            temp = currentService.getAllBookingsFromPersistence();
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+        }
         bookingData = FXCollections.observableArrayList(temp);
         bookingTableView.setItems(bookingData);
 
@@ -143,7 +152,11 @@ public class BookingTableViewController {
             buildAlert(ERROR,"This booking is already finished!").showAndWait();
            // new Alert(ERROR,"This booking is already finished!", OK).showAndWait();
         } else {
-            currentService.finishBookingInPersistence(selectedBooking);
+            try {
+                currentService.finishBookingInPersistence(selectedBooking);
+            } catch (ServiceException e) {
+                LOG.error(e.getMessage());
+            }
             selectedBooking.setStatus(BookingStatus.PAID);
             bookingTableView.refresh();
         }
@@ -204,20 +217,40 @@ public class BookingTableViewController {
             currentService.validateAddingVehicleToExistingBooking(vehicleForAddingToBooking,selectedBooking);
             if(selectedBooking.getLicensedateA() != null){
                 License licenseA = new License(LicenseType.A,selectedBooking.getLicensedateA(),selectedBooking.getLicensenumberA());
-                currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseA);
+                try {
+                    currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseA);
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
+                }
             }
             if(selectedBooking.getLicensedateB() != null){
                 License licenseB = new License(LicenseType.B,selectedBooking.getLicensedateB(),selectedBooking.getLicensenumberB());
-                currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseB);
+                try {
+                    currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseB);
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
+                }
             }
             if(selectedBooking.getLicensedateC() != null){
                 License licenseC = new License(LicenseType.C,selectedBooking.getLicensedateC(),selectedBooking.getLicensenumberC());
-                currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseC);
+                try {
+                    currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,licenseC);
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
+                }
             }
             if(selectedBooking.getPersonLicenseList().isEmpty()){
-                currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,null);
+                try {
+                    currentService.addLicenseInformationToPersistence(vehicleForAddingToBooking,selectedBooking,null);
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
+                }
             }
-            currentService.updateTotalPrice(selectedBooking);
+            try {
+                currentService.updateTotalPrice(selectedBooking);
+            } catch (ServiceException e) {
+                LOG.error(e.getMessage());
+            }
             buildAlert(INFORMATION, "Vehicle was added to Booking!").showAndWait();
         } catch (InvalidBookingException e) {
             buildAlert(ERROR,e.getMessage()).showAndWait();
