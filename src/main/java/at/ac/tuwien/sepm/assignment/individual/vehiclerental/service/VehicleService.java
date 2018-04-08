@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,7 @@ public interface VehicleService {
      * @throws InvalidVehicleException if validating of vehicle fails
      * @throws IOException if adding picture fails
      */
-    Vehicle addVehicleToPersistence(Vehicle vehicle, File file) throws InvalidVehicleException, IOException;
+    Vehicle addVehicleToPersistence(Vehicle vehicle, File file) throws InvalidVehicleException, IOException, ServiceException;
 
     /**
      * adds picture to persistence, validates picture
@@ -48,20 +49,20 @@ public interface VehicleService {
      * @param oldVehicle vehicle after editing
      * @throws InvalidVehicleException if validating of vehicle fails
      */
-    void passEditedVehicleToPersistence(Vehicle newVehicle, File picture, Vehicle oldVehicle) throws InvalidVehicleException;
+    void passEditedVehicleToPersistence(Vehicle newVehicle, File picture, Vehicle oldVehicle) throws InvalidVehicleException, ServiceException;
 
     /**
      * calls method in persistence to delete vehicle from database
      * @param vehicle that needs to be deleted
      */
-    void deleteVehicleFromPersistence(Vehicle vehicle);
+    void deleteVehicleFromPersistence(Vehicle vehicle) throws ServiceException;
 
     /**
      * gets vehicle from persistence by id
      * @param id of vehicle to get
      * @return vehicle with given id from persistence
      */
-    Vehicle getVehiclesByIDFromPersistence(Long id);
+    Vehicle getVehiclesByIDFromPersistence(Long id) throws ServiceException;
 
     /**
      * pass filter criteria to persistence and check availability of each vehicle returned

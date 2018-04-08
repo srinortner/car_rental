@@ -82,7 +82,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
         return vehicle;
     }
 
-    public void addLicenseRequirementsToDatabase(Long id, LicenseType licenseType) {
+    public void addLicenseRequirementsToDatabase(Long id, LicenseType licenseType) throws PersistenceException {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
@@ -101,7 +101,8 @@ public class SimpleVehicleDAO implements VehicleDAO {
             LOG.info("License Requirement added to Database!");
 
         } catch (SQLException e) {
-            LOG.error("License Requirement couldn't be added to database!");
+            LOG.error("License Requirement couldn't be added to database!",e);
+            throw new PersistenceException(e.getMessage(),e);
         }
     }
 
@@ -123,7 +124,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
         return licenseList;
     }
 
-    public List<LicenseType> getLicenseRequirementsFromResultSet(ResultSet resultSet) {
+    public List<LicenseType> getLicenseRequirementsFromResultSet(ResultSet resultSet) throws PersistenceException {
         List<LicenseType> currentlist = new ArrayList<>();
 
         try {
@@ -141,6 +142,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
             }
         } catch (SQLException e) {
             LOG.error("Error while trying to load license requirements from reslutSet");
+            throw new PersistenceException(e.getMessage(),e);
         }
         return currentlist;
     }
@@ -153,7 +155,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
     }
 
 
-    public void deleteVehicleFromDatabase(Vehicle vehicle) {
+    public void deleteVehicleFromDatabase(Vehicle vehicle) throws PersistenceException {
         if (vehicle == null) {
             LOG.warn("Vehicle in addVehicleToDatabase is null!");
         }
@@ -171,7 +173,8 @@ public class SimpleVehicleDAO implements VehicleDAO {
             editing = true;
             LOG.info("Vehicle is updated!");
         } catch (SQLException e) {
-            LOG.error("Vehicle couldn't be updated!");
+            LOG.error("Vehicle couldn't be updated!",e);
+            throw new PersistenceException(e.getMessage(),e);
         }
     }
 
@@ -190,7 +193,8 @@ public class SimpleVehicleDAO implements VehicleDAO {
             resultSet.close();
             preparedStatement.close();
         } catch (SQLException e) {
-            LOG.error("Error while loading data from database!");
+            LOG.error("Error while loading data from database!",e);
+            throw new PersistenceException(e.getMessage(),e);
         }
         return vehicleList;
     }
@@ -291,6 +295,7 @@ public class SimpleVehicleDAO implements VehicleDAO {
             }
         } catch (SQLException e) {
             LOG.error("Error while getting data from resultSet");
+            throw new PersistenceException(e.getMessage(),e);
         }
 
         return currentVehicle;

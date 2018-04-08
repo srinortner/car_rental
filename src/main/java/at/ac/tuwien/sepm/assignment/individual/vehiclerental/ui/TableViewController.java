@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -189,7 +190,11 @@ public class TableViewController {
             alert.setContentText("Are you sure you want to delete " + vehicleToDelete.getName() + "?");
 
             if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-                currentService.deleteVehicleFromPersistence(vehicleToDelete);
+                try {
+                    currentService.deleteVehicleFromPersistence(vehicleToDelete);
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
+                }
             } else {
                 alert.close();
             }

@@ -189,7 +189,12 @@ public class SimpleBookingService implements BookingService {
         }
         List<Vehicle> vehiclesOfBookingList = new ArrayList<>();
         for (Long id : vehicleIDsOfBooking) {
-            Vehicle currentVehicle = vehicleService.getVehiclesByIDFromPersistence(id);
+            Vehicle currentVehicle = null;
+            try {
+                currentVehicle = vehicleService.getVehiclesByIDFromPersistence(id);
+            } catch (ServiceException e) {
+                LOG.error(e.getMessage());
+            }
             vehiclesOfBookingList.add(currentVehicle);
         }
         booking.setBookedVehicles(vehiclesOfBookingList);

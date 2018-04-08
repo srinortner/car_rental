@@ -51,7 +51,7 @@ public class VehicleDAOTest {
         } catch (PersistenceException e) {
            LOG.error("Couldn't create valid vehicle for testing!", e);
         }
-        long id = 4;
+        long id = 12;
         vehicle.setId(id);
         try {
             Vehicle vehicleByID = vehicleDAO.getById(id);

@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.IllegalPictureException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.VehicleDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,7 @@ public class SimpleVehicleService implements VehicleService {
     }
 
     @Override
-    public Vehicle addVehicleToPersistence(Vehicle vehicle, File file) throws InvalidVehicleException, IOException {
+    public Vehicle addVehicleToPersistence(Vehicle vehicle, File file) throws InvalidVehicleException, IOException, ServiceException {
         if (file != null) {
             currentPictureTitle = addPicture(file);
             vehicle.setPicture(currentPictureTitle);
@@ -76,11 +77,12 @@ public class SimpleVehicleService implements VehicleService {
             returnedVehicle =  vehicleDAO.addVehicleToDatabase(vehicle);
         } catch (PersistenceException e) {
             LOG.error("Vehicle couldn't be added to persistence!", e);
+            throw new ServiceException(e.getMessage(),e);
         }
         return returnedVehicle;
     }
 
-    public void passEditedVehicleToPersistence(Vehicle newVehicle, File picture, Vehicle oldVehicle) throws InvalidVehicleException {
+    public void passEditedVehicleToPersistence(Vehicle newVehicle, File picture, Vehicle oldVehicle) throws InvalidVehicleException, ServiceException {
         if (picture != null) {
             try {
                 currentPictureTitle = addPicture(picture);
@@ -94,13 +96,18 @@ public class SimpleVehicleService implements VehicleService {
             vehicleDAO.editVehicle(newVehicle,oldVehicle);
         } catch (PersistenceException e) {
             LOG.error("Edited vehicle couldn't be passed to persistence!", e);
+            throw new ServiceException(e.getMessage(),e);
         }
 
     }
 
-    public void deleteVehicleFromPersistence(Vehicle vehicle) {
+    public void deleteVehicleFromPersistence(Vehicle vehicle) throws ServiceException {
         if(vehicle != null) {
-            vehicleDAO.deleteVehicleFromDatabase(vehicle);
+            try {
+                vehicleDAO.deleteVehicleFromDatabase(vehicle);
+            } catch (PersistenceException e) {
+                throw new ServiceException(e.getMessage(),e);
+            }
         }
     }
 
@@ -200,12 +207,13 @@ public class SimpleVehicleService implements VehicleService {
         }
     }
 
-    public Vehicle getVehiclesByIDFromPersistence(Long id) {
+    public Vehicle getVehiclesByIDFromPersistence(Long id) throws ServiceException {
         Vehicle vehicle = null;
         try {
             vehicle = vehicleDAO.getById(id);
         } catch (PersistenceException e) {
             LOG.error("Vehicles couldn't be loaded from persistence!", e);
+            throw new ServiceException(e.getMessage(),e);
         }
         return vehicle;
     }

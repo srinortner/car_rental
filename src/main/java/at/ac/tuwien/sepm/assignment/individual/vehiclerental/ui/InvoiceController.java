@@ -108,7 +108,12 @@ public class InvoiceController {
             LOG.error(e.getMessage());
         }
         for (Long id: vehicleIDsOfBooking) {
-            Vehicle vehicle = vehicleService.getVehiclesByIDFromPersistence(id);
+            Vehicle vehicle = null;
+            try {
+                vehicle = vehicleService.getVehiclesByIDFromPersistence(id);
+            } catch (ServiceException e) {
+                LOG.error(e.getMessage());
+            }
             vehiclesOfInvoiceList.add(vehicle);
             Integer priceOfVehicle = 0;
             LocalDateTime i = booking.getStartDate();

@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -195,6 +196,8 @@ public class VehicleController {
             LOG.error("Vehicle couldn't be added to Persistence! {}", e.getMessage());
             buildAlert(ERROR,e.getConstraintViolations().stream().collect(joining("\n"))).showAndWait();
            // new Alert(ERROR, e.getConstraintViolations().stream().collect(joining("\n")), OK).showAndWait();
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
         }
 
     }

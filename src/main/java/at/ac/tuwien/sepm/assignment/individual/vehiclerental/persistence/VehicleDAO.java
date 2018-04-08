@@ -41,7 +41,7 @@ public interface VehicleDAO {
      * sets deleted flag of entry in database true
      * @param vehicle which needs to be deleted
      */
-    void deleteVehicleFromDatabase(Vehicle vehicle);
+    void deleteVehicleFromDatabase(Vehicle vehicle) throws PersistenceException;
 
     /**
      * gets one vehicle by its id from vehicle table

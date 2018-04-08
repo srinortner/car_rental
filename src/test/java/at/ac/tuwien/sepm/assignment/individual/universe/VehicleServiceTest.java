@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.PersistenceException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.DBConnection;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.SimpleVehicleDAO;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.persistence.VehicleDAO;
@@ -51,11 +52,15 @@ public class VehicleServiceTest {
         licenseTypeList.add(LicenseType.B);
         Vehicle vehicle = new Vehicle("VW", 2009, "This is a car", 4, licenseTypeList, "VB12345", PowerSource.ENGINE, 44.12, 200, LocalDateTime.now(), LocalDateTime.now());
         try {
-            vehicleService.addVehicleToPersistence(vehicle,null);
+            try {
+                vehicleService.addVehicleToPersistence(vehicle,null);
+            } catch (ServiceException e) {
+                LOG.error(e.getMessage());
+            }
         } catch (InvalidVehicleException | IOException e) {
             LOG.error("Couldn't create valid Vehicle for testing!", e);
         }
-        long id = 4;
+        long id = 12;
         vehicle.setId(id);
         try {
             Assert.assertEquals(vehicle, vehicleDAO.getById(id));
@@ -66,6 +71,10 @@ public class VehicleServiceTest {
 
     @Test(expected = InvalidVehicleException.class)
     public void createInvalidVehicle() throws PersistenceException, IOException, InvalidVehicleException {
-        vehicleService.addVehicleToPersistence(null,null);
+        try {
+            vehicleService.addVehicleToPersistence(null,null);
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+        }
     }
 }

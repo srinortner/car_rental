@@ -503,7 +503,12 @@ public class BookingController {
 
         vehiclesOfBookingList = new ArrayList<>();
         for (Long id : vehicleIDsOfBooking) {
-            Vehicle vehicle = currentVehicleService.getVehiclesByIDFromPersistence(id);
+            Vehicle vehicle = null;
+            try {
+                vehicle = currentVehicleService.getVehiclesByIDFromPersistence(id);
+            } catch (ServiceException e) {
+                LOG.error(e.getMessage());
+            }
             vehiclesOfBookingList.add(vehicle);
         }
         initializeTableView();

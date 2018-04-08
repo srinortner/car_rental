@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 import at.ac.tuwien.sepm.assignment.individual.entities.PowerSource;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.InvalidVehicleException;
+import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.VehicleService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -312,7 +313,11 @@ public class DetailViewController {
         currentVehicle.setUUIDForEditing(vehicle.getUUIDForEditing());
 
         try {
-            vehicleService.passEditedVehicleToPersistence(currentVehicle,picture,vehicle);
+            try {
+                vehicleService.passEditedVehicleToPersistence(currentVehicle,picture,vehicle);
+            } catch (ServiceException e) {
+                LOG.error(e.getMessage());
+            }
             buildAlert(INFORMATION, "Your vehicle was edited successfully!").showAndWait();
         } catch (InvalidVehicleException e) {
             LOG.error("Vehicle couldn't be passed to Service");
@@ -323,7 +328,11 @@ public class DetailViewController {
 
     @FXML
     private void deleteButtonDetailViewClicked(ActionEvent event) {
-        vehicleService.deleteVehicleFromPersistence(vehicle);
+        try {
+            vehicleService.deleteVehicleFromPersistence(vehicle);
+        } catch (ServiceException e) {
+            LOG.error(e.getMessage());
+        }
         changeToTableView();
     }
 
