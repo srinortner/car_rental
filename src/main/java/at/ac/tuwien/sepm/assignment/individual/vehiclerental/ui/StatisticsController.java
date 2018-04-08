@@ -109,9 +109,7 @@ public class StatisticsController {
 
     @FXML
     private void initialize() {
-        String[] months = DateFormatSymbols.getInstance(Locale.ENGLISH).getMonths();
         String[] days = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"};
-        monthNames.addAll(Arrays.asList(months));
         dayNames.addAll(Arrays.asList(days));
         xAxisBarChart.setCategories(dayNames);
         xAxisLineChart.setTickLabelRotation(90);
@@ -134,17 +132,12 @@ public class StatisticsController {
         if(licenseCheckboxNoneNumberOfBookings.isSelected()){
             selectedLicenserequirements.add(LicenseType.NONE);
         }
-     /*   if(selectedLicenserequirements.isEmpty()){
-            selectedLicenserequirements.add(LicenseType.A);
-            selectedLicenserequirements.add(LicenseType.B);
-            selectedLicenserequirements.add(LicenseType.C);
-            selectedLicenserequirements.add(LicenseType.NONE);
-        }*/
 
         Map<String, Integer> weekdayBookingNumber = statisticsService.getDataForWeekdayBookingNumber(start, end, selectedLicenserequirements);
 
         XYChart.Series<String, Integer> series = new XYChart.Series<>();
 
+        //adds weekday data to series for chart
         for (int i = 0; i < 7; i++) {
             String dayname = dayNames.get(i);
             int x = weekdayBookingNumber.get(dayNames.get(i));
@@ -161,6 +154,7 @@ public class StatisticsController {
             LocalDateTime end = LocalDateTime.of(toDatePickerTurnover.getValue(), LocalTime.of(23, 59));
             Map<LocalDate, Integer> dailyTurnovers = statisticsService.getDataForTurnover(start, end);
             XYChart.Series<String, Integer> series = new XYChart.Series<>();
+            //sorts all entries in dailyTurnovers by key and adds it to series
             dailyTurnovers.entrySet()
                 .stream()
                 .sorted(comparing(Map.Entry::getKey))

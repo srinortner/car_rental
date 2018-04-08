@@ -276,7 +276,7 @@ public class TableViewController {
         }
     }
 
-
+    //so initialize is not called when returning to scene, used in editing vehicles of booking
     public void setReturnToScene(Scene returnToScene) {
         this.returnToScene = returnToScene;
     }

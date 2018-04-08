@@ -675,7 +675,7 @@ public class BookingController {
 
     @FXML
     private void updateBooking(ActionEvent event) {
-        //damit createNewBooking wiederverwendet werden kann
+        //makes createNewBooking reusable
         vehicleList = vehiclesOfBookingList;
         createNewBooking();
         try {

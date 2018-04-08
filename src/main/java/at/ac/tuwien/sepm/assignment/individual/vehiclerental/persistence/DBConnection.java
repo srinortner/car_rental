@@ -45,7 +45,7 @@ public class DBConnection {
         }
         if (testmode) {
             try {
-                con = DriverManager.getConnection("jdbc:h2:mem:db1;" +
+                con = DriverManager.getConnection("jdbc:h2:file:~/.sepm/database/sepm_test;" +
                         "IGNORECASE=TRUE;" +
                         "INIT=runscript from 'classpath:/database/createAndInsert.sql'",
                     "", "");
