@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.ui;
 
+import at.ac.tuwien.sepm.assignment.individual.entities.License;
+import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.service.StatisticsService;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,9 +22,7 @@ import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Comparator.comparing;
 import static javafx.collections.FXCollections.observableArrayList;
@@ -62,6 +62,9 @@ public class StatisticsController {
     private CheckBox LicenseCheckBoxTurnoverC;
 
     @FXML
+    private CheckBox LicenseCheckBoxTurnoverNone;
+
+    @FXML
     private DatePicker fromDatePickerNumberOfBookings;
 
     @FXML
@@ -75,6 +78,10 @@ public class StatisticsController {
 
     @FXML
     private CheckBox licenseCheckboxCNumberOfBookings;
+
+    @FXML
+    private CheckBox licenseCheckboxNoneNumberOfBookings;
+
 
     @FXML
     private Button generateTurnoverButton;
@@ -114,7 +121,28 @@ public class StatisticsController {
     private void createNumberOfBookingsChart(ActionEvent event) {
         LocalDateTime start = LocalDateTime.of(fromDatePickerNumberOfBookings.getValue(), LocalTime.of(0, 0));
         LocalDateTime end = LocalDateTime.of(toDatePickerNumberOfBookings.getValue(), LocalTime.of(23, 59));
-        Map<String, Integer> weekdayBookingNumber = statisticsService.getDataForWeekdayBookingNumber(start, end);
+        List<LicenseType> selectedLicenserequirements = new ArrayList<>();
+        if(licenseCheckboxANumberOfBookings.isSelected()){
+            selectedLicenserequirements.add(LicenseType.A);
+        }
+        if(licenseCheckboxBNumberOfBookings.isSelected()){
+            selectedLicenserequirements.add(LicenseType.B);
+        }
+        if(licenseCheckboxCNumberOfBookings.isSelected()){
+            selectedLicenserequirements.add(LicenseType.C);
+        }
+        if(licenseCheckboxNoneNumberOfBookings.isSelected()){
+            selectedLicenserequirements.add(LicenseType.NONE);
+        }
+     /*   if(selectedLicenserequirements.isEmpty()){
+            selectedLicenserequirements.add(LicenseType.A);
+            selectedLicenserequirements.add(LicenseType.B);
+            selectedLicenserequirements.add(LicenseType.C);
+            selectedLicenserequirements.add(LicenseType.NONE);
+        }*/
+
+        Map<String, Integer> weekdayBookingNumber = statisticsService.getDataForWeekdayBookingNumber(start, end, selectedLicenserequirements);
+
         XYChart.Series<String, Integer> series = new XYChart.Series<>();
 
         for (int i = 0; i < 7; i++) {

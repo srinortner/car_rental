@@ -37,15 +37,15 @@ public class SimpleStatisticsService implements StatisticsService {
         }
 
         for (Booking booking : bookingsInTimeframe) {
+            LocalDate start = booking.getStartDate().toLocalDate();
+            int dayscount = 1;
+            while (start.isBefore(booking.getEndDate().toLocalDate())) {
+                dayscount++;
+                start = start.plusDays(1);
+            }
+            int dailyPrice = booking.getTotalPrice() / dayscount;
             //If whole booking is in the timeframe
             if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isBefore(endDate)) {
-                LocalDate start = booking.getStartDate().toLocalDate();
-                int dayscount = 1;
-                while (start.isBefore(booking.getEndDate().toLocalDate())) {
-                    dayscount++;
-                    start = start.plusDays(1);
-                }
-                int dailyPrice = booking.getTotalPrice() / dayscount;
                 start = booking.getStartDate().toLocalDate();
                 while (start.isBefore(booking.getEndDate().toLocalDate())) {
                     if (dailyData.containsKey(start)) {
@@ -60,13 +60,6 @@ public class SimpleStatisticsService implements StatisticsService {
                 //If the booking starts before the timeframe
             }
             if (booking.getStartDate().isBefore(startDate) && booking.getEndDate().isBefore(endDate)) {
-                LocalDate start = startDate.toLocalDate();
-                int dayscount = 1;
-                while (start.isBefore(booking.getEndDate().toLocalDate())) {
-                    dayscount++;
-                    start = start.plusDays(1);
-                }
-                int dailyPrice = booking.getTotalPrice() / dayscount;
                 start = startDate.toLocalDate();
                 while (start.isBefore(booking.getEndDate().toLocalDate())) {
                     if (dailyData.containsKey(start)) {
@@ -81,14 +74,7 @@ public class SimpleStatisticsService implements StatisticsService {
             }
             //If booking ends after the timeframe
             if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isAfter(endDate)) {
-                LocalDate start = booking.getStartDate().toLocalDate();
-                int dayscount = 1;
-                while (start.isBefore(endDate.toLocalDate())) {
-                    dayscount++;
-                    start = start.plusDays(1);
-                }
                 start = booking.getStartDate().toLocalDate();
-                int dailyPrice = booking.getTotalPrice() / dayscount;
                 while (start.isBefore(endDate.toLocalDate())) {
                     if (dailyData.containsKey(start)) {
                         int dailyTurnover = dailyData.get(start);
@@ -102,14 +88,7 @@ public class SimpleStatisticsService implements StatisticsService {
             }
             //If booking starts before and ends after timeframe
             if (booking.getStartDate().isBefore(startDate) && booking.getEndDate().isAfter(endDate)) {
-                LocalDate start = startDate.toLocalDate();
-                int dayscount = 1;
-                while (start.isBefore(endDate.toLocalDate())) {
-                    dayscount++;
-                    start = start.plusDays(1);
-                }
                 start = booking.getStartDate().toLocalDate();
-                int dailyPrice = booking.getTotalPrice() / dayscount;
                 while (start.isBefore(endDate.toLocalDate())) {
                     if (dailyData.containsKey(start)) {
                         int dailyTurnover = dailyData.get(start);
@@ -125,8 +104,10 @@ public class SimpleStatisticsService implements StatisticsService {
         return dailyData;
     }
 
+
     @Override
-    public HashMap<String, Integer> getDataForWeekdayBookingNumber(LocalDateTime startDate, LocalDateTime endDate) {
+    public HashMap<String, Integer> getDataForWeekdayBookingNumber(LocalDateTime startDate, LocalDateTime endDate, List<LicenseType> licenseTypes) {
+
         HashMap<String, Integer> dailyData = new HashMap<>();
         dailyData.put("MONDAY", 0);
         dailyData.put("TUESDAY", 0);
@@ -135,21 +116,66 @@ public class SimpleStatisticsService implements StatisticsService {
         dailyData.put("FRIDAY", 0);
         dailyData.put("SATURDAY", 0);
         dailyData.put("SUNDAY", 0);
-        List<Booking> bookingsInTimeframe = null;
+        List<Booking> bookingsInTimeframe = new ArrayList<>();
         try {
             bookingsInTimeframe = bookingService.getBookingsInTimeInterval(startDate, endDate);
         } catch (ServiceException e) {
             LOG.error(e.getMessage());
         }
 
+
+        //checks if all license requirements are met
         for (Booking booking : bookingsInTimeframe) {
+            try {
+                List<Long> currentIDs = bookingService.getVehicleIDsFromPersistence(booking);
+                List<Vehicle> vehiclesOfBooking = new ArrayList<>();
+                for (Long id : currentIDs) {
+                    Vehicle current = vehicleService.getVehiclesByIDFromPersistence(id);
+                    //if list is empty add all vehicles
+                    if (licenseTypes.isEmpty()) {
+                        vehiclesOfBooking.add(current);
+                    } else {
+                        //If NONE is Selected
+                        if(licenseTypes.contains(LicenseType.NONE)){
+                            if(current.getLicenseType().isEmpty()){
+                                vehiclesOfBooking.add(current);
+                            }
+                            for(int i = 0; i < licenseTypes.size()-1; i++){
+                                if (current.getLicenseType().contains(licenseTypes.get(i))) {
+                                    if(!vehiclesOfBooking.contains(current)) {
+                                        vehiclesOfBooking.add(current);
+                                    }
+                                }
+                            }
+                        }
+                        else if(!licenseTypes.contains(LicenseType.NONE)) {
+                            //if one of the license requirements is met
+                            for (LicenseType license : licenseTypes) {
+                                if (current.getLicenseType().contains(license)) {
+                                    if(!vehiclesOfBooking.contains(current)) {
+                                        vehiclesOfBooking.add(current);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+                booking.setBookedVehicles(vehiclesOfBooking);
+            } catch (ServiceException e) {
+                LOG.error(e.getMessage());
+            }
+        }
+
+        for (Booking booking : bookingsInTimeframe) {
+
             //If whole booking is in the timeframe
             if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isBefore(endDate)) {
                 LocalDate start = booking.getStartDate().toLocalDate();
                 while (start.isBefore(booking.getEndDate().toLocalDate())) {
                     String dayOfWeek = start.getDayOfWeek().toString();
                     int numberOfBookings = dailyData.get(dayOfWeek);
-                    numberOfBookings += 1;
+                    numberOfBookings += booking.getBookedVehicles().size();
                     dailyData.put(dayOfWeek, numberOfBookings);
                     start = start.plusDays(1);
                 }
@@ -161,7 +187,7 @@ public class SimpleStatisticsService implements StatisticsService {
                 while (start.isBefore(booking.getEndDate().toLocalDate())) {
                     String dayOfWeek = start.getDayOfWeek().toString();
                     int numberOfBookings = dailyData.get(dayOfWeek);
-                    numberOfBookings += 1;
+                    numberOfBookings += booking.getBookedVehicles().size();
                     dailyData.put(dayOfWeek, numberOfBookings);
                     start = start.plusDays(1);
                 }
@@ -172,7 +198,7 @@ public class SimpleStatisticsService implements StatisticsService {
                 while (start.isBefore(endDate.toLocalDate())) {
                     String dayOfWeek = start.getDayOfWeek().toString();
                     int numberOfBookings = dailyData.get(dayOfWeek);
-                    numberOfBookings += 1;
+                    numberOfBookings += booking.getBookedVehicles().size();
                     dailyData.put(dayOfWeek, numberOfBookings);
                     start = start.plusDays(1);
                 }
@@ -183,11 +209,12 @@ public class SimpleStatisticsService implements StatisticsService {
                 while (start.isBefore(endDate.toLocalDate())) {
                     String dayOfWeek = start.getDayOfWeek().toString();
                     int numberOfBookings = dailyData.get(dayOfWeek);
-                    numberOfBookings += 1;
+                    numberOfBookings += booking.getBookedVehicles().size();
                     dailyData.put(dayOfWeek, numberOfBookings);
                     start = start.plusDays(1);
                 }
             }
+
         }
         return dailyData;
 
