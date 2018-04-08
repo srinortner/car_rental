@@ -3,6 +3,10 @@ package at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Is thrown when validating of vehicle information fails
+ */
+
 public class InvalidVehicleException extends Exception{
 
     private final List<String> constraintViolations;

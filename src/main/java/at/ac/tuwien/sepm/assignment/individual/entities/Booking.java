@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * DTO for booking information
+ */
+
 public class Booking {
 
     private Long id;

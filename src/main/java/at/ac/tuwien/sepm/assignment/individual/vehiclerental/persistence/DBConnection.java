@@ -8,6 +8,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * used for creating and closing connections to the database
+ */
+
 public class DBConnection {
 
     private static Connection connection = null;
@@ -17,6 +21,10 @@ public class DBConnection {
     private DBConnection() {
     }
 
+    /**
+     * creates new connection if none exists
+     * @return current connection
+     */
     public static Connection getConnection() {
         if (connection == null) {
             connection = newConnection();
@@ -24,6 +32,10 @@ public class DBConnection {
         return connection;
     }
 
+    /**
+     * creates new connection
+     * @return created connection
+     */
     private static Connection newConnection() {
         Connection con = null;
         try {
@@ -61,6 +73,9 @@ public class DBConnection {
     }
 
 
+    /**
+     * closes current connection
+     */
     public static void closeConnection() {
         if (connection != null) {
             try {

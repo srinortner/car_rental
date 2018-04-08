@@ -2,6 +2,10 @@ package at.ac.tuwien.sepm.assignment.individual.entities;
 
 import java.time.LocalDate;
 
+/**
+ * DTO for License information
+ */
+
 public class License {
 
     private LicenseType licenseType;

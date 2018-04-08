@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * DTO for vehicle information
+ */
+
 public class Vehicle {
 
     private Long id;
