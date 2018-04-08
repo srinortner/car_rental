@@ -25,6 +25,7 @@ public interface VehicleService {
      * @return that was added to database
      * @throws InvalidVehicleException if validating of vehicle fails
      * @throws IOException if adding picture fails
+     * @throws ServiceException if vehicle can't be added in persistence
      */
     Vehicle addVehicleToPersistence(Vehicle vehicle, File file) throws InvalidVehicleException, IOException, ServiceException;
 
@@ -48,12 +49,14 @@ public interface VehicleService {
      * @param picture picture of vehicle
      * @param oldVehicle vehicle after editing
      * @throws InvalidVehicleException if validating of vehicle fails
+     * @throws ServiceException if vehicle can't be edited in persistence
      */
     void passEditedVehicleToPersistence(Vehicle newVehicle, File picture, Vehicle oldVehicle) throws InvalidVehicleException, ServiceException;
 
     /**
      * calls method in persistence to delete vehicle from database
      * @param vehicle that needs to be deleted
+     * @throws ServiceException if vehicle can't be deleted in persistence
      */
     void deleteVehicleFromPersistence(Vehicle vehicle) throws ServiceException;
 
@@ -61,6 +64,7 @@ public interface VehicleService {
      * gets vehicle from persistence by id
      * @param id of vehicle to get
      * @return vehicle with given id from persistence
+     * @throws ServiceException if vehicle can't be fetched in persistence
      */
     Vehicle getVehiclesByIDFromPersistence(Long id) throws ServiceException;
 

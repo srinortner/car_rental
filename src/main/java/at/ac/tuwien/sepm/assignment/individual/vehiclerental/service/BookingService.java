@@ -34,12 +34,14 @@ public interface BookingService {
     /**
      * calls method for getting all bookings in database
      * @return list of all bookings in database as returned from persistence layer
+     * @throws ServiceException if bookings can't be fetched from persistence
      */
     List<Booking> getAllBookingsFromPersistence() throws ServiceException;
 
     /**
      * calls method to finish booking in database
      * @param booking which needs to be finished
+     * @throws ServiceException if bookings can't be finished in persistence
      */
     void finishBookingInPersistence(Booking booking) throws ServiceException;
 
@@ -55,6 +57,7 @@ public interface BookingService {
      * calls method for getting ids of vehicles contained in booking in persistence
      * @param booking that ids of vehicles it contains are needed
      * @return list of ids as returned form persistence
+     * @throws ServiceException if IDs can't be fetched from persistence
      */
     List<Long> getVehicleIDsFromPersistence(Booking booking) throws ServiceException;
 
@@ -70,6 +73,7 @@ public interface BookingService {
     /**
      * calls method for updating bookings in persistence
      * @param booking that needs to be updated
+     * @throws ServiceException if booking can't be updated in persistence
      */
     void updateBookingInPersistence(Booking booking) throws ServiceException;
 
@@ -91,6 +95,7 @@ public interface BookingService {
     /**
      * calculates current total price and calling method for updating it in persistence
      * @param booking of which
+     * @throws ServiceException if total price can't be updated in persistence
      */
     void updateTotalPrice(Booking booking) throws ServiceException;
 
@@ -99,6 +104,7 @@ public interface BookingService {
      * @param startTime of interval
      * @param endTime of interval
      * @return list returned by persistence
+     * @throws ServiceException if bookings can't be fetched in persistence
      */
     List<Booking> getBookingsInTimeInterval(LocalDateTime startTime, LocalDateTime endTime) throws ServiceException;
 
