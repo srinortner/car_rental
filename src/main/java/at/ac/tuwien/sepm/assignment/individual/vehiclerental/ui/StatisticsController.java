@@ -171,7 +171,7 @@ public class StatisticsController {
     }
 
     @FXML
-    void changeToIndexView(ActionEvent event) {
+    private void changeToIndexView(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(indexController) ? indexController : null);
         try {

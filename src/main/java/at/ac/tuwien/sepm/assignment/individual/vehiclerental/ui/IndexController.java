@@ -35,7 +35,7 @@ public class IndexController {
     }
 
     @FXML
-    void showBookingTableViewController(ActionEvent event) {
+    private void showBookingTableViewController(ActionEvent event) {
 
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking_tableview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingTableViewController) ? bookingTableViewController : null);
@@ -50,7 +50,7 @@ public class IndexController {
     }
 
     @FXML
-    void showStatisticsController(ActionEvent event) {
+    private void showStatisticsController(ActionEvent event) {
 
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/statistics.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(statisticsController) ? statisticsController : null);
@@ -65,7 +65,7 @@ public class IndexController {
     }
 
     @FXML
-    void showTableViewController(ActionEvent event) {
+    private void showTableViewController(ActionEvent event) {
 
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
@@ -80,7 +80,7 @@ public class IndexController {
     }
 
     @FXML
-    void showVehicleController(ActionEvent event) {
+    private void showVehicleController(ActionEvent event) {
 
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/vehicle.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(vehicleController) ? vehicleController : null);

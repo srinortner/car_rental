@@ -208,7 +208,7 @@ public class DetailViewController {
     }
 
     @FXML
-    void editVehicle(ActionEvent event) {
+    private void editVehicle(ActionEvent event) {
         createBookingWithVehicleButton.setDisable(true);
         addToBookingButton.setDisable(true);
         editButtonDetailView.setDisable(true);
@@ -341,7 +341,7 @@ public class DetailViewController {
     }
 
     @FXML
-    void createBookingWithCurrentVehicle(ActionEvent event) {
+    private void createBookingWithCurrentVehicle(ActionEvent event) {
         List<Vehicle> currentVehicleList = new ArrayList<>();
         currentVehicleList.add(vehicle);
         bookingController.setVehicleList(currentVehicleList);
@@ -360,7 +360,7 @@ public class DetailViewController {
     }
 
     @FXML
-    void addVehicleToExistingBooking(ActionEvent event) {
+    private void addVehicleToExistingBooking(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking_tableview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingTableViewController) ? bookingTableViewController : null);
         try {

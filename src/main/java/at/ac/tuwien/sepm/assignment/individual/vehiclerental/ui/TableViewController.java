@@ -162,7 +162,7 @@ public class TableViewController {
     }
 
     @FXML
-    void openDetailView(ActionEvent event) {
+    private void openDetailView(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/detailview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(detailViewController) ? detailViewController : null);
 
@@ -180,7 +180,7 @@ public class TableViewController {
     }
 
     @FXML
-    void deleteEntry(ActionEvent event) {
+    private void deleteEntry(ActionEvent event) {
         final ObservableList<Vehicle> selectedVehicles = tableViewVehicles.getSelectionModel().getSelectedItems();
 
         for (Vehicle vehicleToDelete : selectedVehicles) {
@@ -206,7 +206,7 @@ public class TableViewController {
 
 
     @FXML
-    void changeToNewBookingView(ActionEvent event) {
+    private void changeToNewBookingView(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingController) ? bookingController : null);
         final List<Vehicle> selectedVehicles = tableViewVehicles.getSelectionModel().getSelectedItems();
@@ -236,7 +236,7 @@ public class TableViewController {
     }
 
     @FXML
-    void searchButtonClicked(ActionEvent event) {
+    private void searchButtonClicked(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/search.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(searchController) ? searchController : null);
         Stage stage = new Stage();
@@ -313,7 +313,7 @@ public class TableViewController {
     }
 
     @FXML
-    void backToIndexView(ActionEvent event) {
+   private void backToIndexView(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(indexController) ? indexController : null);
 

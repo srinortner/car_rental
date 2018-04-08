@@ -339,10 +339,12 @@ public class BookingController {
         Integer currentTotalPrice = 0;
         LocalDateTime i = currentStartTime;
 
-        while (!i.equals(currentEndTime)) {
-            currentTotalPrice += pricePerMinute;
-            i = i.plusMinutes(1);
+        if(currentStartTime.isBefore(currentEndTime)) {
+            while (!i.equals(currentEndTime)) {
+                currentTotalPrice += pricePerMinute;
+                i = i.plusMinutes(1);
 
+            }
         }
 
 
@@ -442,7 +444,7 @@ public class BookingController {
         }
     }
 
-    void fillBookingDetailView(Booking booking) {
+    public void fillBookingDetailView(Booking booking) {
         disableEverything();
         nameOfPersonBooking.setText(booking.getName());
         List<LicenseType> personLicenseList = booking.getPersonLicenseList();
@@ -653,7 +655,7 @@ public class BookingController {
     }
 
     @FXML
-    void changeToBookingTableView(ActionEvent event) {
+    private void changeToBookingTableView(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/tableview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(tableViewController) ? tableViewController : null);
 
@@ -672,7 +674,7 @@ public class BookingController {
     }
 
     @FXML
-    void updateBooking(ActionEvent event) {
+    private void updateBooking(ActionEvent event) {
         //damit createNewBooking wiederverwendet werden kann
         vehicleList = vehiclesOfBookingList;
         createNewBooking();

@@ -128,7 +128,7 @@ public class InvoiceController {
 
     }
 
-    public void initializeTableView() {
+    private void initializeTableView() {
 
         vehicleNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
         vehicleBuildyearColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getBuildyear().toString()));
@@ -140,7 +140,7 @@ public class InvoiceController {
     }
 
     @FXML
-    void changeToBookingTableView(ActionEvent event) {
+    private void changeToBookingTableView(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/booking_tableview.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(bookingTableViewController) ? bookingTableViewController : null);
         try {

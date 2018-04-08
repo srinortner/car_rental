@@ -88,6 +88,9 @@ public class Validator {
             if (booking.getStartDate().equals(booking.getEndDate())) {
                 constraintViolations.add("Your start time is equal to the end time!");
             }
+            if(booking.getStartDate().isBefore(LocalDateTime.now())){
+                constraintViolations.add("Please select a date after today!");
+            }
             if (booking.getStartDate().isAfter(booking.getEndDate())) {
                 constraintViolations.add("FROM-Date has to be before TO-Date!");
             }

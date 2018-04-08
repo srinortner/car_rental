@@ -219,7 +219,7 @@ public class VehicleController {
     }
 
     @FXML
-    void backToIndexView(ActionEvent event) {
+    private void backToIndexView(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(indexController) ? indexController : null);
         try {

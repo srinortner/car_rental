@@ -131,7 +131,7 @@ public class BookingTableViewController {
     }
 
     @FXML
-    void cancelBooking(ActionEvent event) {
+   private void cancelBooking(ActionEvent event) {
         Booking selectedBooking = bookingTableView.getSelectionModel().getSelectedItem();
 
         if (!(selectedBooking.getStatus().equals(BookingStatus.BOOKED)) || selectedBooking.getStartDate().isBefore(LocalDateTime.now())) {
@@ -150,7 +150,7 @@ public class BookingTableViewController {
     }
 
     @FXML
-    void finishBooking(ActionEvent event) {
+    private void finishBooking(ActionEvent event) {
         Booking selectedBooking = bookingTableView.getSelectionModel().getSelectedItem();
         if(!selectedBooking.getStatus().equals(BookingStatus.BOOKED) || selectedBooking.getStartDate().isBefore(LocalDateTime.now())){
             buildAlert(ERROR,"This booking is already finished!").showAndWait();
@@ -301,7 +301,7 @@ public class BookingTableViewController {
     }
 
     @FXML
-    void backToIndexView(ActionEvent event) {
+    private void backToIndexView(ActionEvent event) {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/index.fxml"));
         fxmlLoader.setControllerFactory(classToLoad -> classToLoad.isInstance(indexController) ? indexController : null);
 

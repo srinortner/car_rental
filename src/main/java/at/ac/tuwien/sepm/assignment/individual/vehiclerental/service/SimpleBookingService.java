@@ -105,18 +105,20 @@ public class SimpleBookingService implements BookingService {
 
     public boolean checkAvailiabilityOfVehicle(Vehicle vehicle, LocalDateTime currentStartTime, LocalDateTime currentEndTime) {
         for (Vehicle legacyVehicle : vehicleService.getAllLegacyVehicles(vehicle)) {
-            try {
-                if (isVehicleBooked(currentStartTime, currentEndTime, legacyVehicle)) {
-                    LOG.info("vehicle with id {} with UUID {} is already booked between {} and {} ",
-                        legacyVehicle.getId(),
-                        legacyVehicle.getUUIDForEditing(),
-                        currentStartTime,
-                        currentEndTime);
-                    return false;
+            if (currentStartTime.isBefore(currentEndTime)) {
+                try {
+                    if (isVehicleBooked(currentStartTime, currentEndTime, legacyVehicle)) {
+                        LOG.info("vehicle with id {} with UUID {} is already booked between {} and {} ",
+                            legacyVehicle.getId(),
+                            legacyVehicle.getUUIDForEditing(),
+                            currentStartTime,
+                            currentEndTime);
+                        return false;
 
+                    }
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
                 }
-            } catch (ServiceException e) {
-                LOG.error(e.getMessage());
             }
         }
         LOG.info("vehicle with id {} with UUID {} is not booked between {} and {} ",
