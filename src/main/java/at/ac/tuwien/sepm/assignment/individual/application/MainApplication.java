@@ -26,7 +26,7 @@ public final class MainApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // setup application
-        primaryStage.setTitle("Universe Calculator");
+        primaryStage.setTitle("Home");
         primaryStage.setWidth(1366);
         primaryStage.setHeight(768);
         primaryStage.centerOnScreen();
