@@ -64,6 +64,10 @@ public class BookingTableViewController {
     @FXML
     private Button addToBookingButton;
 
+    @FXML
+    private Button homeButtonBookingTableview;
+
+
 
     private List<Booking> bookingList = null;
     private BookingService currentService = null;
@@ -252,12 +256,13 @@ public class BookingTableViewController {
                 LOG.error(e.getMessage());
             }
             buildAlert(INFORMATION, "Vehicle was added to Booking!").showAndWait();
+            changeToNormalMode();
         } catch (InvalidBookingException e) {
             buildAlert(ERROR,e.getMessage()).showAndWait();
             LOG.error("Vehicle couldn't be added to booking!");
         }
 
-        changeToNormalMode();
+
 
     }
 
@@ -274,6 +279,8 @@ public class BookingTableViewController {
         vehiclesButtonBooking.setDisable(true);
         finishButtonBooking.setVisible(false);
         finishButtonBooking.setDisable(true);
+
+
     }
 
     private void changeToNormalMode(){

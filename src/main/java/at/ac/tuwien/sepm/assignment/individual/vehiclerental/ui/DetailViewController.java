@@ -209,6 +209,10 @@ public class DetailViewController {
 
     @FXML
     void editVehicle(ActionEvent event) {
+        createBookingWithVehicleButton.setDisable(true);
+        addToBookingButton.setDisable(true);
+        editButtonDetailView.setDisable(true);
+        deleteButtonDetailView.setDisable(true);
         nameDetailView.setDisable(false);
         nameDetailView.setEditable(true);
         buildyearDetailView.setDisable(false);

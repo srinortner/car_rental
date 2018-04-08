@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.assignment.individual.vehiclerental.service;
 
 import at.ac.tuwien.sepm.assignment.individual.entities.Booking;
+import at.ac.tuwien.sepm.assignment.individual.entities.BookingStatus;
 import at.ac.tuwien.sepm.assignment.individual.entities.LicenseType;
 import at.ac.tuwien.sepm.assignment.individual.entities.Vehicle;
 import at.ac.tuwien.sepm.assignment.individual.vehiclerental.exceptions.ServiceException;
@@ -123,95 +124,97 @@ public class SimpleStatisticsService implements StatisticsService {
             LOG.error(e.getMessage());
         }
 
-
         //checks if all license requirements are met
         for (Booking booking : bookingsInTimeframe) {
-            try {
-                List<Long> currentIDs = bookingService.getVehicleIDsFromPersistence(booking);
-                List<Vehicle> vehiclesOfBooking = new ArrayList<>();
-                for (Long id : currentIDs) {
-                    Vehicle current = vehicleService.getVehiclesByIDFromPersistence(id);
-                    //if list is empty add all vehicles
-                    if (licenseTypes.isEmpty()) {
-                        vehiclesOfBooking.add(current);
-                    } else {
-                        //If NONE is Selected
-                        if(licenseTypes.contains(LicenseType.NONE)){
-                            if(current.getLicenseType().isEmpty()){
-                                vehiclesOfBooking.add(current);
-                            }
-                            for(int i = 0; i < licenseTypes.size()-1; i++){
-                                if (current.getLicenseType().contains(licenseTypes.get(i))) {
-                                    if(!vehiclesOfBooking.contains(current)) {
-                                        vehiclesOfBooking.add(current);
+            if(!booking.getStatus().equals(BookingStatus.CANCELED)) {
+                try {
+                    List<Long> currentIDs = bookingService.getVehicleIDsFromPersistence(booking);
+                    List<Vehicle> vehiclesOfBooking = new ArrayList<>();
+                    for (Long id : currentIDs) {
+                        Vehicle current = vehicleService.getVehiclesByIDFromPersistence(id);
+                        //if list is empty add all vehicles
+                        if (licenseTypes.isEmpty()) {
+                            vehiclesOfBooking.add(current);
+                        } else {
+                            //If NONE is Selected
+                            if (licenseTypes.contains(LicenseType.NONE)) {
+                                if (current.getLicenseType().isEmpty()) {
+                                    vehiclesOfBooking.add(current);
+                                }
+                                for (int i = 0; i < licenseTypes.size() - 1; i++) {
+                                    if (current.getLicenseType().contains(licenseTypes.get(i))) {
+                                        if (!vehiclesOfBooking.contains(current)) {
+                                            vehiclesOfBooking.add(current);
+                                        }
+                                    }
+                                }
+                            } else if (!licenseTypes.contains(LicenseType.NONE)) {
+                                //if one of the license requirements is met
+                                for (LicenseType license : licenseTypes) {
+                                    if (current.getLicenseType().contains(license)) {
+                                        if (!vehiclesOfBooking.contains(current)) {
+                                            vehiclesOfBooking.add(current);
+                                        }
                                     }
                                 }
                             }
                         }
-                        else if(!licenseTypes.contains(LicenseType.NONE)) {
-                            //if one of the license requirements is met
-                            for (LicenseType license : licenseTypes) {
-                                if (current.getLicenseType().contains(license)) {
-                                    if(!vehiclesOfBooking.contains(current)) {
-                                        vehiclesOfBooking.add(current);
-                                    }
-                                }
-                            }
-                        }
-                    }
 
+                    }
+                    booking.setBookedVehicles(vehiclesOfBooking);
+                } catch (ServiceException e) {
+                    LOG.error(e.getMessage());
                 }
-                booking.setBookedVehicles(vehiclesOfBooking);
-            } catch (ServiceException e) {
-                LOG.error(e.getMessage());
             }
         }
 
         for (Booking booking : bookingsInTimeframe) {
+            if(!booking.getStatus().equals(BookingStatus.CANCELED)) {
 
-            //If whole booking is in the timeframe
-            if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isBefore(endDate)) {
-                LocalDate start = booking.getStartDate().toLocalDate();
-                while (start.isBefore(booking.getEndDate().toLocalDate())) {
-                    String dayOfWeek = start.getDayOfWeek().toString();
-                    int numberOfBookings = dailyData.get(dayOfWeek);
-                    numberOfBookings += booking.getBookedVehicles().size();
-                    dailyData.put(dayOfWeek, numberOfBookings);
-                    start = start.plusDays(1);
-                }
+                //If whole booking is in the timeframe
+                if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isBefore(endDate)) {
+                    LocalDate start = booking.getStartDate().toLocalDate();
+                    while (start.isBefore(booking.getEndDate().toLocalDate())) {
+                        String dayOfWeek = start.getDayOfWeek().toString();
+                        int numberOfBookings = dailyData.get(dayOfWeek);
+                        numberOfBookings += booking.getBookedVehicles().size();
+                        dailyData.put(dayOfWeek, numberOfBookings);
+                        start = start.plusDays(1);
+                    }
 
-                //If the booking starts before the timeframe
-            }
-            if (booking.getStartDate().isBefore(startDate) && booking.getEndDate().isBefore(endDate)) {
-                LocalDate start = startDate.toLocalDate();
-                while (start.isBefore(booking.getEndDate().toLocalDate())) {
-                    String dayOfWeek = start.getDayOfWeek().toString();
-                    int numberOfBookings = dailyData.get(dayOfWeek);
-                    numberOfBookings += booking.getBookedVehicles().size();
-                    dailyData.put(dayOfWeek, numberOfBookings);
-                    start = start.plusDays(1);
+                    //If the booking starts before the timeframe
                 }
-            }
-            //If booking ends after the timeframe
-            if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isAfter(endDate)) {
-                LocalDate start = booking.getStartDate().toLocalDate();
-                while (start.isBefore(endDate.toLocalDate())) {
-                    String dayOfWeek = start.getDayOfWeek().toString();
-                    int numberOfBookings = dailyData.get(dayOfWeek);
-                    numberOfBookings += booking.getBookedVehicles().size();
-                    dailyData.put(dayOfWeek, numberOfBookings);
-                    start = start.plusDays(1);
+                if (booking.getStartDate().isBefore(startDate) && booking.getEndDate().isBefore(endDate)) {
+                    LocalDate start = startDate.toLocalDate();
+                    while (start.isBefore(booking.getEndDate().toLocalDate())) {
+                        String dayOfWeek = start.getDayOfWeek().toString();
+                        int numberOfBookings = dailyData.get(dayOfWeek);
+                        numberOfBookings += booking.getBookedVehicles().size();
+                        dailyData.put(dayOfWeek, numberOfBookings);
+                        start = start.plusDays(1);
+                    }
                 }
-            }
-            //If booking starts before and ends after timeframe
-            if (booking.getStartDate().isBefore(startDate) && booking.getEndDate().isAfter(endDate)) {
-                LocalDate start = startDate.toLocalDate();
-                while (start.isBefore(endDate.toLocalDate())) {
-                    String dayOfWeek = start.getDayOfWeek().toString();
-                    int numberOfBookings = dailyData.get(dayOfWeek);
-                    numberOfBookings += booking.getBookedVehicles().size();
-                    dailyData.put(dayOfWeek, numberOfBookings);
-                    start = start.plusDays(1);
+                //If booking ends after the timeframe
+                if (booking.getStartDate().isAfter(startDate) && booking.getEndDate().isAfter(endDate)) {
+                    LocalDate start = booking.getStartDate().toLocalDate();
+                    while (start.isBefore(endDate.toLocalDate())) {
+                        String dayOfWeek = start.getDayOfWeek().toString();
+                        int numberOfBookings = dailyData.get(dayOfWeek);
+                        numberOfBookings += booking.getBookedVehicles().size();
+                        dailyData.put(dayOfWeek, numberOfBookings);
+                        start = start.plusDays(1);
+                    }
+                }
+                //If booking starts before and ends after timeframe
+                if (booking.getStartDate().isBefore(startDate) && booking.getEndDate().isAfter(endDate)) {
+                    LocalDate start = startDate.toLocalDate();
+                    while (start.isBefore(endDate.toLocalDate())) {
+                        String dayOfWeek = start.getDayOfWeek().toString();
+                        int numberOfBookings = dailyData.get(dayOfWeek);
+                        numberOfBookings += booking.getBookedVehicles().size();
+                        dailyData.put(dayOfWeek, numberOfBookings);
+                        start = start.plusDays(1);
+                    }
                 }
             }
 

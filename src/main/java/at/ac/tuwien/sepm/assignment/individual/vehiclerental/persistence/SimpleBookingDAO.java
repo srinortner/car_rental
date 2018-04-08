@@ -312,16 +312,18 @@ public class SimpleBookingDAO implements BookingDAO{
             throw new IllegalArgumentException("Booking is null");
         }
         PreparedStatement preparedStatement = null;
+        LocalDateTime currentpaidtime = LocalDateTime.now();
 
 
         try {
             preparedStatement = connection.prepareStatement("UPDATE BOOKING SET TYPE = ?, PAIDTIME = ?, ivoice_number_booking = invoice_number.nextval WHERE ID = ?");
             preparedStatement.setString(1,"PAID");
-            preparedStatement.setTimestamp(2,Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setTimestamp(2,Timestamp.valueOf(currentpaidtime));
             preparedStatement.setLong(3,booking.getId());
             preparedStatement.executeUpdate();
 
             preparedStatement.close();
+            booking.setPaidtime(Timestamp.valueOf(currentpaidtime));
             LOG.info("Booking was updated!");
         } catch (SQLException e) {
             LOG.error("Booking status couldn't be updated!",e);
